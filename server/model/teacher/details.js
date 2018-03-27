@@ -19,13 +19,8 @@ export default ({ id, email }) => new Promise((resolve, reject) => {
 	if (id || email) {
 		const query = id ? { _id: id } : { email };
 		TeacherModel.findOne(query)
-			.then((teacher) => {
-				if (teacher) {
-					resolve(ResponseUtility.SUCCESS_DATA(teacher));
-				} else {
-					resolve(false);
-				}
-			}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error looking for user', error: err })));
+			.then(teacher => resolve(ResponseUtility.SUCCESS_DATA(teacher)))
+			.catch(err => reject(ResponseUtility.ERROR({ message: 'Error looking for user', error: err })));
 	} else {
 		reject(ResponseUtility.MISSING_REQUIRED_PROPS);
 	}

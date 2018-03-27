@@ -13,14 +13,14 @@ const Teacher = new Schema({
 		suburb: String,
 		state: String,
 		type: { type: String },
-		coordinates: [Number]
+		coordinates: [Number],
 	},
 	availability: {},
 	deleted: Boolean,
 	blocked: Boolean,
 	passChangeToken: Number,
 	passChangeTimestamp: Number,
-	deviceId: String
+	deviceId: String,
 });
 
 export default Teacher;

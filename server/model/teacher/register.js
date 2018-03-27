@@ -6,7 +6,6 @@ import {
 	HashUtility,
 	RandomCodeUtility,
 } from '../../utility';
-import { TeacherDetailsService } from './';
 
 const TeacherModel = database.model('Teacher', TeacherSchema);
 
@@ -28,10 +27,9 @@ export default ({
 	type,
 }) => new Promise((resolve, reject) => {
 	if (name && email && password) {
-		TeacherDetailsService({ email })
+		TeacherModel.findOne({ email })
 			.then((teacher) => {
-				if (teacher.data) {
-					// already exists
+				if (teacher) {
 					return reject(ResponseUtility.ERROR({ message: 'User already exists' }));
 				}
 
@@ -43,6 +41,9 @@ export default ({
 						password: hash,
 						passChangeToken,
 						passChangeTimestamp: Date.now(),
+						firstLogin: true,
+						deleted: false,
+						blocked: false,
 					});
 
 					teacherModel.save().then(() => {
@@ -55,8 +56,7 @@ export default ({
 							.catch(err => reject(err));
 					}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error saving', error: err })));
 				}, err => reject(ResponseUtility.ERROR({ message: 'Error generating hash', error: err })));
-			})
-			.catch(err => reject(ResponseUtility.ERROR(err)));
+			}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error looking for teacher', error: err })));
 	} else {
 		reject(ResponseUtility.MISSING_REQUIRED_PROPS);
 	}
