@@ -25,7 +25,7 @@ export const {
 	APPLE_KEY_ID,
 	APPLE_TEAM_ID,
 	BUSINESS_EMAIL,
-	BUSINESS_EMAIL_PASSWORD
+	BUSINESS_EMAIL_PASSWORD,
 } = process.env;
 
 export const MB = 1024 * 1024;
@@ -33,4 +33,10 @@ export const MB = 1024 * 1024;
 export const TYPES = {
 	TEACHER: 1,
 	STUDENT: 2,
+};
+
+export const STUDENT_LEVEL = {
+	BEGINNER: 1,
+	INTERMEDIATE: 2,
+	ADVANCED: 3,
 };
