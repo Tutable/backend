@@ -3,6 +3,9 @@ import { expect } from 'chai';
 import { TeacherServices } from '../../../server/model';
 import { SUCCESS_CODE } from '../../../server/constants';
 
+/**
+ * test case to update the teacher
+ */
 export default () => {
 	describe('This will test the Teacher update', () => {
 		it('should update user name', (done) => {
