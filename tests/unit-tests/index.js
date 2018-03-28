@@ -14,14 +14,14 @@ const files = fs.readdirSync(__dirname);
  */
 const call = func => func();
 
-files.reverse().map((file) => {
+files.map((file) => {
 	const found = skip.find(skipThisFile => skipThisFile === file);
 	if(!found) {
 		const fileName = `${file.charAt(0).toUpperCase()}${file.split('.')[0].substring(1, file.length)}`;
 		if (!fileName.startsWith('.')) {
 			const loadedTests = require(`./${file}`);
-			Object.keys(loadedTests).map(test => console.log(test));
-			// Object.keys(loadedTests).reverse().map(testName => call(loadedTests[testName]));
+			// Object.keys(loadedTests).map(test => console.log(test));
+			Object.keys(loadedTests).map(testName => call(loadedTests[testName]));
 		}
 	}
 });
