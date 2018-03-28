@@ -9,16 +9,25 @@ import { SUCCESS_CODE } from '../../../server/constants';
 export default () => {
 	describe('This will test the Teacher update', () => {
 		it('should update user name', (done) => {
-			const request = {
-				id: '5aba07bebaca800baf42f772',
-				email: 'sharma02gaurav@gmail.com',
-			};
-			TeacherServices.TeacherUpdateService(request)
-				.then((success) => {
-					expect(success.code).to.eq(SUCCESS_CODE);
-					done();
-				})
-				.catch(err => done(err));
+			const email = 'sharma02gaurav@gmail.com';
+			TeacherServices.TeacherDetailsService({ email })
+				.then((response) => {
+					if (response) {
+						const { data: { _id } } = response;
+						const request = {
+							id: _id,
+							name: 'Gaurav Sharma',
+						};
+						TeacherServices.TeacherUpdateService(request)
+							.then((success) => {
+								expect(success.code).to.eq(SUCCESS_CODE);
+								done();
+							})
+							.catch(err => done(err));
+					} else {
+						done(Error('User not found.'));
+					}
+				}).catch(err => done(err));
 		});
 	});
 };
