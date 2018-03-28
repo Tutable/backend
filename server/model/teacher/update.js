@@ -103,7 +103,7 @@ export default ({
 						});
 					}
 				} else {
-					reject(ResponseUtility.USER_NOT_FOUND);
+					resolve(ResponseUtility.SUCCESS_MMESSAGE({ message: 'Nothing updated. USer not found.' }));
 				}
 			}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error looking for teacher', error: err })));
 	} else {
