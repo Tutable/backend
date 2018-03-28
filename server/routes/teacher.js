@@ -1,5 +1,5 @@
 import { TeacherControllers } from '../controllers';
-import { CompressionServices } from '../services';
+import { CompressionServices, PassportServices } from '../services';
 
 const prefix = '/api/teachers/';
 
@@ -11,4 +11,5 @@ const prefix = '/api/teachers/';
 export default (app) => {
 	app.post(`${prefix}register`, CompressionServices, TeacherControllers.register);
 	app.post(`${prefix}verify`, TeacherControllers.verify);
+	app.post(`${prefix}login`, PassportServices.TeacherLoginHandler);
 };
