@@ -1,0 +1,16 @@
+node_modules
+.vscode
+*.log
+docker-deploy.sh
+docker-compose.yml
+apiary.apib
+src
+ssh
+uploads
+tests
+.eslintrc.json
+.gitignore
+README.md
+.circleci
+tsconfig.json
+webpck.config.js
