@@ -16,14 +16,5 @@ export default () => {
 					done();
 				}).catch(err => done(err));
 		});
-		it('should create a new category as child', (done) => {
-			const title = 'Numeracy';
-			const parent = '5aba2f8922aa9f15e24015e6';
-			CategoriesServices.CategoriesCreateService({ title, parent })
-				.then((success) => {
-					expect(success.code).to.eq(SUCCESS_CODE);
-					done();
-				}).catch(err => done(err));
-		});
 	});
 };

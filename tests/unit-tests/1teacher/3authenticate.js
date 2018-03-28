@@ -10,7 +10,7 @@ export default () => {
 			const upassword = 'password';
 			TeacherServices.TeacherAuthenticateService({ email, upassword })
 				.then((success) => {
-					expect(success.code).to.eq(SUCCESS_CODE);
+					expect(success.matched).to.eq(true);
 					done();
 				})
 				.catch(err => done(err));
