@@ -27,8 +27,6 @@ export default ({ email, upassword }) => new Promise((resolve, reject) => {
 					HashUtility.compare(password, upassword)
 						.then((matched) => {
 							if (matched) {
-								const teacherDoc = teacher._doc;
-								delete teacherDoc.password;
 								resolve({ matched, user: teacher });
 							} else {
 								reject(ResponseUtility.ERROR({ message: 'Password is incoreect.' }))
