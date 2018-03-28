@@ -8,7 +8,7 @@ export default () => {
 			const id = '5aba2bebca66351553e91280';
 			CategoriesServices.CategoriesDetailsService({ id })
 				.then((response) => {
-					expect(response.data.categories.length).to.eq(2);
+					expect(response.data.categories.length).to.eq(0);
 					done();
 				}).catch(err => done(err));
 		});

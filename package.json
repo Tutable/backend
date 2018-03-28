@@ -60,12 +60,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "{{gitURL}}"
+    "url": "https://github.com/App-Knit/tutable-app"
   },
   "author": "gaurav sharma",
   "license": "ISC",
   "bugs": {
-    "url": "{{gitURL}}/issues"
+    "url": "https://github.com/App-Knit/tutable-app/issues"
   },
-  "homepage": "{{gitURL}}#readme"
+  "homepage": "https://github.com/App-Knit/tutable-app#readme"
 }
