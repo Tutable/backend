@@ -4,7 +4,7 @@ import { ClassServices } from '../../../server/model';
 import { SUCCESS_CODE, STUDENT_LEVEL } from '../../../server/constants';
 
 export default () => {
-	describe.skip('This will test the creaation of new class', () => {
+	describe('This will test the creation of new class', () => {
 		it('should create a new class', (done) => {
 			const request = {
 				id: '5aba07bebaca800baf42f772',

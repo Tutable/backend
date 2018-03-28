@@ -9,7 +9,6 @@ export default () => {
 			const id = '5abb3fd78f94603e46a6216b';
 			ClassServices.ClassDetailsService({ id })
 				.then((responseClass) => {
-					console.log(responseClass);
 					expect(responseClass.code).to.eq(SUCCESS_CODE);
 					done();
 				}).catch(err => done(err));
