@@ -8,8 +8,6 @@ import fs from 'fs';
 const skip = ['index.js',];
 const files = fs.readdirSync(__dirname);
 
-const directoryIndex = {};
-
 files.map((file) => {
 	const found = skip.find(skipThisFile => skipThisFile === file);
 	if(!found) {
