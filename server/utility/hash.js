@@ -22,5 +22,5 @@ export default {
 			if (err) return reject(err);
 			return resolve(compare);
 		});
-	})
-}
+	}),
+};
