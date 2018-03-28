@@ -1,8 +1,7 @@
-import { TeacherControllers } from '../controllers';
+import { TeacherControllers, AuthenticationControllers } from '../controllers';
 import { CompressionServices, PassportServices } from '../services';
 
 const prefix = '/api/teachers/';
-
 /**
  * routes descriptor for teacher
  * @author gaurav sharma
@@ -12,4 +11,5 @@ export default (app) => {
 	app.post(`${prefix}register`, CompressionServices, TeacherControllers.register);
 	app.post(`${prefix}verify`, TeacherControllers.verify);
 	app.post(`${prefix}login`, PassportServices.TeacherLoginHandler);
+	app.post(`${prefix}update`, AuthenticationControllers.authenticateTeacher, TeacherControllers.update);
 };

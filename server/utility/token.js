@@ -25,6 +25,8 @@ const decodeToken = token =>
 		if (err) {
 			return undefined;
 		} else if (decoded.exp) {
+			// @TODO implement any token related condition
+			// e.g.
 			// if (new Date(decoded.exp).getTime() <= new Date().getTime()) {
 			// 	return undefined;
 			// }
@@ -35,5 +37,5 @@ const decodeToken = token =>
 
 export default {
 	generateToken,
-	decodeToken
-}
+	decodeToken,
+};

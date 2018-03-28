@@ -25,8 +25,8 @@ passport.use('TeacherLogin', new LocalStrategy((username, password, done) => {
 		const query = { email: username, upassword: password };
 		TeacherServices.TeacherAuthenticateService(query)
 			.then((success) => {
-				const { data } = success;
-				const teacher = Object.assign({}, data, { role: 'teacher' });
+				const { user } = success;
+				const teacher = Object.assign({}, user._doc, { role: 'teacher' });
 				done(undefined, { code: 100, message: 'Authenticated', accessToken: TokenUtility.generateToken(teacher) });
 			}).catch(err => done({ code: 102, message: 'Username/password is incorrect', error: err }));
 	} else {
