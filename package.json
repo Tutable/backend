@@ -6,8 +6,8 @@
   "scripts": {
     "test": "mocha -t 20000 --compilers js:babel-core/register tests",
     "deploy": "npm i && npm start",
-    "server": "node server/loader.js",
-    "server:dev": "./node_modules/.bin/nodemon server/loader.js",
+    "server": "node loader.js",
+    "server:dev": "./node_modules/.bin/nodemon loader.js",
     "babel-build": "./node_modules/.bin/babel -d ./babel_build ./server -s"
   },
   "dependencies": {
