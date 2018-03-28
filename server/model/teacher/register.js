@@ -44,6 +44,7 @@ export default ({
 						firstLogin: true,
 						deleted: false,
 						blocked: false,
+						isVerified: false,
 					});
 
 					teacherModel.save().then(() => {

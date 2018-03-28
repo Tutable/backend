@@ -16,6 +16,7 @@ const Teacher = new Schema({
 		coordinates: [Number],
 	},
 	availability: {},
+	isVerified: Boolean,
 	degree: String,
 	qualification: String,
 	school: String,
