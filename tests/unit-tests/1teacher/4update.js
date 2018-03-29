@@ -13,9 +13,9 @@ export default () => {
 			TeacherServices.TeacherDetailsService({ email })
 				.then((response) => {
 					if (response) {
-						const { data: { _id } } = response;
+						const { data: { id } } = response;
 						const request = {
-							id: _id,
+							id,
 							name: 'Gaurav Sharma',
 						};
 						TeacherServices.TeacherUpdateService(request)
