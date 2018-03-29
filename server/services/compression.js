@@ -16,17 +16,18 @@ import { STANDARD_IMAGE_SIZE, MB } from '../constants';
 
 export default (req, res, next) => {
 	const { files, body: { data, id } } = req;
-	if (data) {
-		req.body = JSON.parse(data);
+	if (data || files) {
+		req.body = data ? JSON.parse(data) : {};
 		if (id) {
 			req.body.id = id;
 		}
 
 		if (files && Object.keys(files).length) {
-			if (Object.keys(files).length > 1) {
-				// todo handle the multiple files upload here
-				next();
-			} else if (files.picture) {
+			// if (Object.keys(files).length > 1) {
+			// 	// todo handle the multiple files upload here
+			// 	next();
+			// } else 
+			if (files.picture) {
 				// single file here
 				if (files.picture.size / MB >= STANDARD_IMAGE_SIZE) {
 					return res.status(200).send({ code: 104, message: 'Image too large. Profile images must be less than 3MB.' });
@@ -56,11 +57,12 @@ export default (req, res, next) => {
 				// other payload that need not to be comoressed
 				// like identity documents
 				// @todo impose restriction later on
-				// limited to single asset yet, bind the input asset buffer to body
+				// upload multiple assets
 				// making it directly uplaodable on s3
-				const key = Object.keys(files)[0];
-				const { data } = files[key];
-				req.body[key] = data;
+				Object.keys(files).map((key) => {
+					const { data } = files[key];
+					req.body[key] = data;
+				});
 
 				next();
 			} else {
