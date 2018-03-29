@@ -12,6 +12,7 @@ export const mongoConnectionString = `mongodb://${host}:${port}/${db}`;
 // this string is unique for each project construction
 export const secretString = '1iXXiNc6D07eQ7ynoMqh66wbIbl4GlcT';
 
+export const S3_ROUTES = ['teachers'];
 export const SUCCESS_CODE = 100;
 
 export const {
@@ -29,6 +30,13 @@ export const {
 } = process.env;
 
 export const MB = 1024 * 1024;
+
+/**
+ * S3 utility URLs
+ */
+export const S3_TEACHER_CLASS = `${S3_BUCKET}/teacher/classes`;
+export const S3_TEACHER_PROFILE = `${S3_BUCKET}/teacher/profile`;
+export const S3_STUDENT_PROFILE = `${S3_BUCKET}/student/profile`;
 
 export const TYPES = {
 	TEACHER: 1,

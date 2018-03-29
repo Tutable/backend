@@ -4,6 +4,8 @@ import {
 	ResponseUtility,
 	SchemaMapperUtility,
 } from '../../utility';
+import { S3Services } from '../../services';
+import { S3_TEACHER_PROFILE } from '../../constants';
 
 const TeacherModel = database.model('Teacher', TeacherSchema);
 
@@ -26,7 +28,7 @@ export default ({
 	school,
 	degreeAsset,
 	picture,
-}) => new Promise((resolve, reject) => {
+}) => new Promise(async (resolve, reject) => {
 	if (id && (name || dob || gender || bio || availability ||
 		address || degree || qualification || school || degreeAsset ||
 		picture || email)) {
@@ -35,6 +37,34 @@ export default ({
 		TeacherModel.findOne(query)
 			.then(async (teacher) => {
 				if (teacher) {
+					// trigger uploading assets
+					const degreeKey = `degree-${id}-${Date.now()}`;
+					const pictureKey = `picture-${id}-${Date.now()}`;
+
+					const degreeAssetURL = degreeAsset ? degreeKey : undefined;
+					const pictureURL = picture ? pictureKey : undefined;
+
+					if (picture || degreeAsset) {
+						// upload picture to s3
+						const Bucket = S3_TEACHER_PROFILE;
+						if (picture) {
+							console.log('uplaoding profile pic');
+							try {
+								await S3Services.uploadToBucket({ Bucket, data: picture, Key: pictureKey });
+							} catch (err) {
+								reject(ResponseUtility.Error({ message: 'Error uploding profile picture', error: err }));
+							}
+						}
+						if (degreeAsset) {
+							console.log('uplaoding user degree');
+							try {
+								await S3Services.uploadToBucket({ Bucket, data: degreeAsset, Key: degreeKey });
+							} catch (err) {
+								reject(ResponseUtility.Error({ message: 'Error uploding degree. Please try again.', error: err }));
+							}
+						}
+					}
+
 					// update
 					let updateQuery = await SchemaMapperUtility({
 						name,
@@ -47,8 +77,8 @@ export default ({
 						degree,
 						qualification,
 						school,
-						degreeAsset,
-						picture,
+						degreeAsset: degreeAssetURL,
+						picture: pictureURL,
 					});
 					if (email) {
 						// check if email already assigned to someone else
@@ -67,8 +97,8 @@ export default ({
 											degree,
 											qualification,
 											school,
-											degreeAsset,
-											picture,
+											degreeAsset: degreeAssetURL,
+											picture: pictureURL,
 										});
 									} catch (err) {
 										resolve(ResponseUtility.SUCCESS_MESSAGE({ message: 'Nothing updated' }));
@@ -103,7 +133,7 @@ export default ({
 						});
 					}
 				} else {
-					resolve(ResponseUtility.SUCCESS_MMESSAGE({ message: 'Nothing updated. USer not found.' }));
+					resolve(ResponseUtility.SUCCESS_MMESSAGE({ message: 'Nothing updated. User not found.' }));
 				}
 			}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error looking for teacher', error: err })));
 	} else {

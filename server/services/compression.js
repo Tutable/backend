@@ -52,6 +52,17 @@ export default (req, res, next) => {
 						});
 					});
 				});
+			} else if (Object.keys(files).length) {
+				// other payload that need not to be comoressed
+				// like identity documents
+				// @todo impose restriction later on
+				// limited to single asset yet, bind the input asset buffer to body
+				// making it directly uplaodable on s3
+				const key = Object.keys(files)[0];
+				const { data } = files[key];
+				req.body[key] = data;
+
+				next();
 			} else {
 				return res.status(200).send(ResponseUtility.ERROR({ message: 'Expected an image or group of input images in this API.' }));
 			}

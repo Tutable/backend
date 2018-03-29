@@ -20,7 +20,7 @@ const Teacher = new Schema({
 	degree: String,
 	qualification: String,
 	school: String,
-	degreePayload: String,
+	degreeAsset: String,
 	deleted: Boolean,
 	blocked: Boolean,
 	firstLogin: Boolean,

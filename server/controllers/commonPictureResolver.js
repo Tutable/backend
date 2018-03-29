@@ -1,4 +1,4 @@
-import S3Services from '../services/S3Services';
+import { S3Services } from '../services';
 import { S3_BUCKET, S3_ROUTES } from '../constants';
 /**
  * This moudule acts as a common handler for picture fetching since all the controllers
@@ -13,11 +13,11 @@ import { S3_BUCKET, S3_ROUTES } from '../constants';
  * @todo Handle authentication middleware injections?
 */
 export default (req, res) => {
-	const { body: { path }, params: { imageKey } } = req;
+	const { body: { path }, params: { bucket, userType, folder, asset } } = req;
 	const route = path.split('/')[2];
 	if (S3_ROUTES.indexOf(route) !== -1) {
-		const Bucket = `${S3_BUCKET}/${route}`;
-		const Key = `${imageKey}`;
+		const Bucket = `${bucket}/${userType}/${folder}`;
+		const Key = `${asset}`;
 
 		S3Services.findFile({ Bucket, Key })
 			.then((success) => {

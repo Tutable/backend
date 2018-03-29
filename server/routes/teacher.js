@@ -11,5 +11,7 @@ export default (app) => {
 	app.post(`${prefix}register`, CompressionServices, TeacherControllers.register);
 	app.post(`${prefix}verify`, TeacherControllers.verify);
 	app.post(`${prefix}login`, PassportServices.TeacherLoginHandler);
-	app.post(`${prefix}update`, AuthenticationControllers.authenticateTeacher, TeacherControllers.update);
+	app.post(`${prefix}details`, AuthenticationControllers.authenticateTeacher, TeacherControllers.details);
+	app.post(`${prefix}update`, AuthenticationControllers.authenticateTeacher, CompressionServices, TeacherControllers.update);
+	app.get(`${prefix}assets/:bucket/:userType/:folder/:asset`, TeacherControllers.assets);
 };
