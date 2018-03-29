@@ -12,6 +12,7 @@ export default {
 	verify: (req, res) => commonResolver(req, res, TeacherServices.TeacherVerifyService),
 	update: (req, res) => commonResolver(req, res, TeacherServices.TeacherUpdateService),
 	details: (req, res) => commonResolver(req, res, TeacherServices.TeacherDetailsService),
+	resendVerifiation: (req, res) => commonResolver(req, res, TeacherServices.TeacherResendVerificationService),
 
 	assets: commonPictureResolver,
 };

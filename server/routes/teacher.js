@@ -13,5 +13,7 @@ export default (app) => {
 	app.post(`${prefix}login`, PassportServices.TeacherLoginHandler);
 	app.post(`${prefix}details`, AuthenticationControllers.authenticateTeacher, TeacherControllers.details);
 	app.post(`${prefix}update`, AuthenticationControllers.authenticateTeacher, CompressionServices, TeacherControllers.update);
+	app.post(`${prefix}resendVerification`, TeacherControllers.resendVerifiation);
+
 	app.get(`${prefix}assets/:bucket/:userType/:folder/:asset`, TeacherControllers.assets);
 };
