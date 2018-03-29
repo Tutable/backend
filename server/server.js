@@ -43,7 +43,7 @@ app.use(flash());
 ActivateRoutes(app);
 
 const env = process.env.NODE_ENV ? process.env.NODE_ENV : 'development';
-app.get('/', (req, res) => res.send(`<h1>care app ${env} environment</h1>`));
+app.get('/', (req, res) => res.send(`<h1>Tutable app ${env} environment</h1>`));
 
 const port = process.env.NODE_ENV === 'development' ? 3000 : 3001;
 
