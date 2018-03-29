@@ -28,7 +28,7 @@ passport.use('TeacherLogin', new LocalStrategy((username, password, done) => {
 				const { user } = success;
 				const teacher = Object.assign({}, user._doc, { role: 'teacher' });
 				done(undefined, { code: 100, message: 'Authenticated', accessToken: TokenUtility.generateToken(teacher) });
-			}).catch(err => done({ code: 102, message: 'Username/password is incorrect', error: err }));
+			}).catch(err => done(err));
 	} else {
 		done(null, false, { message: 'Missing required properties.' });
 	}
@@ -39,7 +39,7 @@ export const teacherLoginHandler = (req, res, next) => {
 		if (teacher) {
 			res.status(200).send(teacher);
 		} else {
-			res.status(200).send(ResponseUtility.ERROR({ message: 'Authentication Failed.', error: err }));
+			res.status(200).send(ResponseUtility.ERROR(err));
 		}
 	})(req, res, next);
 };

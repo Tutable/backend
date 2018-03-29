@@ -20,9 +20,12 @@ export default ({ email, upassword }) => new Promise((resolve, reject) => {
 		TeacherModel.findOne(query, projection)
 			.then((teacher) => {
 				if (teacher) {
-					const { _doc: { password, blocked } } = teacher;
+					const { _doc: { password, blocked, isVerified } } = teacher;
 					if (blocked) {
 						return reject(ResponseUtility.ERROR({ message: 'You are blocked from login. Contact admin for support.' }));
+					}
+					if (!isVerified) {
+						return reject(ResponseUtility.NOT_VERIFIED);
 					}
 					HashUtility.compare(password, upassword)
 						.then((matched) => {
