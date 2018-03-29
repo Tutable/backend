@@ -36,6 +36,7 @@ export const MB = 1024 * 1024;
  */
 export const S3_TEACHER_CLASS = `${S3_BUCKET}/teacher/classes`;
 export const S3_TEACHER_PROFILE = `${S3_BUCKET}/teacher/profile`;
+export const S3_TEACHER_CERTS = `${S3_BUCKET}/teacher/certificates`;
 export const S3_STUDENT_PROFILE = `${S3_BUCKET}/student/profile`;
 
 export const TYPES = {
