@@ -39,8 +39,8 @@ export default ({ email }) => new Promise((resolve, reject) => {
 							const { nModified } = modified;
 							if (nModified >= 1) {
 								// send email
-								const subject = 'tutable Password change token';
-								const text = `Your password change token is ${token}.`;
+								const subject = 'Tutable Authnetication token';
+								const text = `Your tutable password change token is ${token}.`;
 								EmailServices({ to: email, subject, text })
 									.then(() => resolve(ResponseUtility.SUCCESS_MESSAGE({ message: 'Verification code has been sent ot you via email.' })))
 									.catch(error => reject(ResponseUtility.ERROR({ message: 'Error sending email', error })));
