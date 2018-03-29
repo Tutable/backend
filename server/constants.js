@@ -12,7 +12,7 @@ export const mongoConnectionString = `mongodb://${host}:${port}/${db}`;
 // this string is unique for each project construction
 export const secretString = '1iXXiNc6D07eQ7ynoMqh66wbIbl4GlcT';
 
-export const S3_ROUTES = ['teachers'];
+export const S3_ROUTES = ['teachers', 'certificates'];
 export const SUCCESS_CODE = 100;
 
 export const {
