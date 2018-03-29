@@ -14,6 +14,8 @@ export default (app) => {
 	app.post(`${prefix}details`, AuthenticationControllers.authenticateTeacher, TeacherControllers.details);
 	app.post(`${prefix}update`, AuthenticationControllers.authenticateTeacher, CompressionServices, TeacherControllers.update);
 	app.post(`${prefix}resendVerification`, TeacherControllers.resendVerifiation);
+	app.post(`${prefix}passwordToken`, TeacherControllers.passwordToken);
+	app.post(`${prefix}changePassword`, TeacherControllers.changePassword);
 
 	app.get(`${prefix}assets/:bucket/:userType/:folder/:asset`, TeacherControllers.assets);
 };

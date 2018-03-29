@@ -1,6 +1,6 @@
 import { TeacherSchema } from '../schemas';
 import database from '../../db';
-import { ResponseUtility } from '../../utility';
+import { ResponseUtility, RandomCodeUtility } from '../../utility';
 
 const TeacherModel = database.model('Teacher', TeacherSchema);
 
@@ -11,14 +11,14 @@ const TeacherModel = database.model('Teacher', TeacherSchema);
  */
 export default ({ email, token }) => new Promise((resolve, reject) => {
 	if (email && token) {
-		const query = { $and: [{ email }, { passChangeToken: token }] };
+		const query = { $and: [{ email }, { verificationToken: token }] };
 		TeacherModel.findOne(query)
 			.then((teacher) => {
 				if (teacher) {
-					const updateQuery = { isVerified: true, passChangeToken: -1 };
+					const updateQuery = { isVerified: true, verificationToken: RandomCodeUtility(), verificationTokenTimestamp: -1 };
 					TeacherModel.update({ email }, updateQuery, (err, modified) => {
 						if (err) {
-							return reject(ResponseUtility.ERROR({ message: 'Error updating teacher schema', error: err }))
+							return reject(ResponseUtility.ERROR({ message: 'Error updating teacher schema', error: err }));
 						}
 						const { nModified } = modified;
 						if (nModified >= 1) {

@@ -34,13 +34,13 @@ export default ({
 				}
 
 				HashUtility.generate(password).then((hash) => {
-					const passChangeToken = RandomCodeUtility();
+					const verificationToken = RandomCodeUtility();
 					const teacherModel = new TeacherModel({
 						name,
 						email,
 						password: hash,
-						passChangeToken,
-						passChangeTimestamp: Date.now(),
+						verificationToken,
+						verificationTokenTimestamp: Date.now(),
 						firstLogin: true,
 						deleted: false,
 						blocked: false,
@@ -50,8 +50,8 @@ export default ({
 					teacherModel.save().then(() => {
 						EmailServices({
 							to: email,
-							text: `Your verification code is ${passChangeToken}`,
-							subject: 'Tutable Verification Code',
+							text: `Your verification token is ${verificationToken}`,
+							subject: 'Tutable Verification token',
 						})
 							.then(() => resolve(ResponseUtility.SUCCESS))
 							.catch(err => reject(err));

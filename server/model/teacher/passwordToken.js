@@ -8,7 +8,7 @@ import { EmailServices } from '../../services';
 
 const TeacherModel = database.model('Teacher', TeacherSchema);
 /**
- * this is a microservice to resend the user verification code
+ * this is a microservice to resend the PASSWORD CHANGE TOKEN
  * @author gaurav sharma
  * @since 29th March 2018
  */
@@ -16,13 +16,10 @@ export default ({ email }) => new Promise((resolve, reject) => {
 	if (email) {
 		const query = { email };
 		// check timestamp is not frequent
-		TeacherModel.findOne(query, { verificationCodeTimestamp: 1, isVerified: 1 })
+		TeacherModel.findOne(query, { passChangeTimestamp: 1, isVerified: 1 })
 			.then((teacher) => {
-				const { _doc: { verificationTokenTimestamp, isVerified } } = teacher;
-				if (isVerified) {
-					return resolve(ResponseUtility.SUCCESS_MESSAGE({ message: 'User is already verified.' }));
-				}
-				const expiry = verificationTokenTimestamp + (60000 * 2);
+				const { _doc: { passChangeTimestamp } } = teacher;
+				const expiry = passChangeTimestamp + (60000 * 2);
 				const now = Date.now();
 				if (now <= expiry) {
 					reject(ResponseUtility.ERROR({ message: 'Cannot send token instantly. Just wait for token via email for 2 minutes before regenerating a new token.' }));
@@ -30,8 +27,8 @@ export default ({ email }) => new Promise((resolve, reject) => {
 					const token = RandomCodeUtility();
 					const lookupQuery = { email };
 					const updateQuery = {
-						verificationToken: token,
-						verificationTokenTimestamp: now,
+						passChangeToken: token,
+						passChangeTimestamp: now,
 					};
 
 					TeacherModel.update(lookupQuery, updateQuery)
@@ -39,8 +36,8 @@ export default ({ email }) => new Promise((resolve, reject) => {
 							const { nModified } = modified;
 							if (nModified >= 1) {
 								// send email
-								const subject = 'Tutable Authnetication token';
-								const text = `Your tutable authentication token is ${token}.`;
+								const subject = 'Tutable Password change token';
+								const text = `Your tutable password change token is ${token}.`;
 								EmailServices({ to: email, subject, text })
 									.then(() => resolve(ResponseUtility.SUCCESS_MESSAGE({ message: 'Verification code has been sent ot you via email.' })))
 									.catch(error => reject(ResponseUtility.ERROR({ message: 'Error sending email', error })));

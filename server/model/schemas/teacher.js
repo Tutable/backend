@@ -24,6 +24,8 @@ const Teacher = new Schema({
 	deleted: Boolean,
 	blocked: Boolean,
 	firstLogin: Boolean,
+	verificationToken: Number,
+	verificationTokenTimestamp: Number,
 	passChangeToken: Number,
 	passChangeTimestamp: Number,
 	deviceId: String,

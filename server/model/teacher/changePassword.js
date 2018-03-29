@@ -24,7 +24,11 @@ export default ({ email, token, password }) => new Promise((resolve, reject) => 
 			if (teacher) {
 				HashUtility.generate(password).then((hash) => {
 					const findQuery = { email };
-					const updateQuery = { passChangeToken: RandomCodeUtility(), password: hash };
+					const updateQuery = {
+						passChangeToken: RandomCodeUtility(),
+						password: hash,
+						passChangeTimestamp: -1,
+					};
 
 					TeacherModel.update(findQuery, updateQuery)
 						.then((modified) => {
