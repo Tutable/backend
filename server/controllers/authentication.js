@@ -22,6 +22,7 @@ const prepareDecodedData = ({ authorization, type }) => new Promise((resolve, re
 	console.log(decoded);
 	if (decoded) {
 		const { data: { email, _id, role } } = decoded;
+		console.log(role === type);
 		if (type === 'global') {
 			if (APPLICATION_ROLES.find(validRole => validRole === role)) {
 				return resolve({ type, email, id: _id });
