@@ -10,4 +10,5 @@ import commonPictureResolver from './commonPictureResolver';
 export default {
 	create: (req, res) => commonResolver(req, res, ClassServices.ClassCreateService),
 	details: (req, res) => commonResolver(req, res, ClassServices.ClassDetailsService),
+	assets: commonPictureResolver,
 };

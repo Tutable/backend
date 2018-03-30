@@ -9,6 +9,7 @@ const Class = new Schema({
 	descripton: String,
 	bio: String,
 	created: Number,
+	rate: Number,
 	timeline: Number,
 	deleted: Boolean,
 	cancelled: Boolean,
