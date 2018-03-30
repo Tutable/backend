@@ -19,6 +19,7 @@ import { APPLICATION_ROLES } from '../constants';
  */
 const prepareDecodedData = ({ authorization, type }) => new Promise((resolve, reject) => {
 	const decoded = TokenUtility.decodeToken(authorization);
+	console.log(decoded);
 	if (decoded) {
 		const { data: { email, _id, role } } = decoded;
 		if (type === 'global') {
