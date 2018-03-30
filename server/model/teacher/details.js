@@ -43,8 +43,8 @@ export default ({ id, email }) => new Promise((resolve, reject) => {
 					deleted,
 					blocked,
 					isVerified,
-					picture: `/teachers/assets/${S3_TEACHER_PROFILE}/${picture}`,
-					degreeAsset: `/teachers/assets/${S3_TEACHER_PROFILE}/${degreeAsset}`,
+					picture: picture ? `/teachers/assets/${S3_TEACHER_PROFILE}/${picture}` : undefined,
+					degreeAsset: degreeAsset ? `/teachers/assets/${S3_TEACHER_PROFILE}/${degreeAsset}` : undefined,
 				}));
 			})
 			.catch(err => reject(ResponseUtility.ERROR({ message: 'Error looking for user', error: err })));
