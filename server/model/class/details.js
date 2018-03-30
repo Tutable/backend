@@ -5,6 +5,7 @@ import {
 } from '../schemas';
 import database from '../../db';
 import { ResponseUtility } from '../../utility';
+import { S3_TEACHER_CLASS } from '../../constants';
 
 const ClassModel = database.model('Classes', ClassSchema);
 const CategoryModel = database.model('Categories', CategorySchema);
@@ -20,9 +21,9 @@ const TeacherModel = database.model('Teachers', TeacherSchema);
  * @param {String} id is the id of teacher
  * @returns Promise
  */
-export default ({ id }) => new Promise((resolve, reject) => {
-	if (id) {
-		const query = { $and: [{ _id: id }, { deleted: false }] };
+export default ({ classId }) => new Promise((resolve, reject) => {
+	if (classId) {
+		const query = { $and: [{ _id: classId }, { deleted: false }] };
 		// const query = { _id: id };
 		const projection = { __v: 0 };
 		const categoryPopulation = { path: 'categoryName', model: CategoryModel, select: 'title parent' };
@@ -39,6 +40,7 @@ export default ({ id }) => new Promise((resolve, reject) => {
 						timeline,
 						created,
 						cancelled,
+						payload,
 					},
 					$$populatedVirtuals: {
 						categoryName,
@@ -54,6 +56,7 @@ export default ({ id }) => new Promise((resolve, reject) => {
 					timeline,
 					created,
 					cancelled,
+					payload: `${S3_TEACHER_CLASS}/${payload}`,
 				}));
 			})
 			.catch(err => reject(ResponseUtility.ERROR({ message: 'Error looking for details', error: err })));

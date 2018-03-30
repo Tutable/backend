@@ -10,6 +10,7 @@
  * @since 28th March 2018
  */
 import { TokenUtility } from '../utility';
+import { APPLICATION_ROLES } from '../constants';
 
 /**
  * common authenticator function
@@ -20,7 +21,11 @@ const prepareDecodedData = ({ authorization, type }) => new Promise((resolve, re
 	const decoded = TokenUtility.decodeToken(authorization);
 	if (decoded) {
 		const { data: { email, _id, role } } = decoded;
-		if (role === type) {
+		if (type === 'global') {
+			if (APPLICATION_ROLES.find(validRole => validRole === role)) {
+				return resolve({ type, email, id: _id });
+			}
+		} else if (role === type) {
 			return resolve({ type, email, id: _id });
 		}
 	}
@@ -56,7 +61,33 @@ const commonDecodingHandler = ({
 };
 
 export default {
-	authenticateTeacher: (req, res, next) => commonDecodingHandler({ req, res, next, type: 'teacher' }),
-	authenticateStudent: (req, res, next) => commonDecodingHandler({ req, res, next, type: 'student' }),
-	authenticateAdmin: (req, res, next) => commonDecodingHandler({ req, res, next, type: 'admin' }),
+	authenticateTeacher: (req, res, next) => commonDecodingHandler({
+		req,
+		res,
+		next,
+		type: 'teacher',
+	}),
+	authenticateStudent: (req, res, next) => commonDecodingHandler({
+		req,
+		res,
+		next,
+		type: 'student',
+	}),
+	authenticateAdmin: (req, res, next) => commonDecodingHandler({
+		req,
+		res,
+		next,
+		type: 'admin',
+	}),
+	/**
+	 * This will handle the authentication of a global user. Global users are all
+	 * of the users of the application. This common authentication controller is defined
+	 * to authenticate the APIs that are accessible to all application users.
+	 */
+	authenticateGlobalEntity: (req, res, next) => commonDecodingHandler({
+		req,
+		res,
+		next,
+		type: 'global',
+	}),
 };
