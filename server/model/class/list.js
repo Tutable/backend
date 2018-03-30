@@ -1,9 +1,14 @@
-import { ClassSchema, CategorySchema } from '../schemas';
+import {
+	ClassSchema,
+	CategorySchema,
+	TeacherSchema,
+} from '../schemas';
 import database from '../../db';
 import { ResponseUtility } from '../../utility';
 
 const ClassModel = database.model('Classes', ClassSchema);
 const CategoryModel = database.model('Categories', CategorySchema);
+const TeacherModel = database.model('Teachers', TeacherSchema);
 
 /**
  * microservice to get the details of the classes created by a
@@ -18,14 +23,51 @@ const CategoryModel = database.model('Categories', CategorySchema);
 export default ({ id, page = 1, limit = 30 }) => new Promise((resolve, reject) => {
 	if (id) {
 		const skip = limit * (page - 1);
-		const query = { ref: id };
+		const query = { $and: [{ ref: id }, { deleted: false }] };
 		const projection = { __v: 0 };
 		const options = { sort: { created: -1 }, skip, limit };
-		const populationQuery = { path: 'categoryName', model: CategoryModel, select: 'title parent' };
+
+		const categoryPopulation = { path: 'categoryName', model: CategoryModel, select: 'title parent' };
+		const teacherPopulation = { path: 'teacher', model: TeacherModel, select: 'name address picture' };
 
 		ClassModel.find(query, projection, options)
-			.populate(populationQuery)
-			.then(classes => resolve(ResponseUtility.SUCCESS_DATA(classes)))
+			.populate(categoryPopulation)
+			.populate(teacherPopulation)
+			.then((classes) => {
+				const resultant = [];
+				if (classes.length) {
+					classes.map((singleClass, index) => {
+						const {
+							_doc: {
+								level,
+								bio,
+								timeline,
+								created,
+								cancelled,
+							},
+							$$populatedVirtuals: {
+								categoryName,
+								teacher,
+							},
+						} = singleClass;
+
+						resultant.push({
+							teacher,
+							category: categoryName,
+							level,
+							bio,
+							timeline,
+							created,
+							cancelled,
+						});
+						if (index === classes.length - 1) {
+							return resolve(ResponseUtility.SUCCESS_DATA(resultant));
+						}
+					});
+				} else {
+					return resolve(ResponseUtility.SUCCESS_DATA(resultant));
+				}
+			})
 			.catch(err => reject(ResponseUtility.ERROR({ message: 'Error looking for classes', error: err })));
 	} else {
 		reject(ResponseUtility.MISSING_REQUIRED_PROPS);

@@ -11,6 +11,7 @@ const Class = new Schema({
 	created: Number,
 	timeline: Number,
 	deleted: Boolean,
+	cancelled: Boolean,
 }, {
 	toJSON: { virtuals: true },
 	toObject: { virtuals: true },
@@ -19,6 +20,12 @@ const Class = new Schema({
 Class.virtual('categoryName', {
 	ref: 'categories',
 	localField: 'category',
+	foreignField: '_id',
+	justOne: true,
+});
+Class.virtual('teacher', {
+	ref: 'Teachers',
+	localField: 'ref',
 	foreignField: '_id',
 	justOne: true,
 });

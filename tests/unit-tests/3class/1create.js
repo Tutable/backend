@@ -4,16 +4,17 @@ import { ClassServices } from '../../../server/model';
 import { SUCCESS_CODE, STUDENT_LEVEL } from '../../../server/constants';
 
 export default () => {
-	describe('This will test the creation of new class', () => {
+	describe.skip('This will test the creation of new class', () => {
 		it('should create a new class', (done) => {
 			const request = {
-				id: '5aba07bebaca800baf42f772',
+				id: '5abcc2a593170a92e6f25223',
 				name: 'Crafting',
-				payload: 'payload',
-				category: '5aba2c6a7e7ad71583952342',
+				picture: 'payload',
+				category: '5aba2bebca66351553e91280',
 				level: STUDENT_LEVEL.BEGINNER,
 				description: 'sample class',
 				bio: 'I have been doing this for years',
+				timeline: new Date('2018/04/01').getTime(),
 				rate: 54,
 			};
 

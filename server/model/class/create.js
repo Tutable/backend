@@ -1,6 +1,8 @@
 import { ClassSchema } from '../schemas';
 import database from '../../db';
 import { ResponseUtility } from '../../utility';
+import { S3Services } from '../../services';
+import { S3_TEACHER_CLASS } from '../../constants';
 
 const ClassModel = database.model('Class', ClassSchema);
 
@@ -22,26 +24,36 @@ const ClassModel = database.model('Class', ClassSchema);
 export default ({
 	id,
 	name,
-	payload,
+	picture,
 	category,
 	level,
 	description,
+	timeline,
 	bio,
 	rate,
-}) => new Promise((resolve, reject) => {
-	if (id && name && payload && category && level && description && rate && bio) {
+}) => new Promise(async (resolve, reject) => {
+	if (id && name && picture && category && level && description && rate && bio && timeline) {
 		// @todo upload payload to s3
+		const Key = `class-${id}-${Date.now()}`;
+		try {
+			const Bucket = S3_TEACHER_CLASS;
+			await S3Services.uploadToBucket({ Bucket, Key, data: picture });
+		} catch (err) {
+			return reject(ResponseUtility.ERROR({ message: 'Error uploading class image', error: err }));
+		}
 		const classObject = new ClassModel({
 			ref: id,
 			name,
-			payload,
+			payload: Key,
 			category,
 			level,
 			description,
 			bio,
 			rate,
+			timeline,
 			created: Date.now(),
 			deleted: false,
+			cancelled: false,
 		});
 
 		classObject.save().then(() => {
