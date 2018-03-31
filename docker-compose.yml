@@ -15,7 +15,7 @@ services:
     environment:
       - NODE_ENV=development
       - MONGO_HOST=database
-      - MONGO_DB=pre-r-development
+      - MONGO_DB=tutable-development
     env_file:
       - .env
 
@@ -32,7 +32,7 @@ services:
     environment:
       - NODE_ENV=production
       - MONGO_HOST=database
-      - MONGO_DB=pre-r
+      - MONGO_DB=tutable
     env_file:
       - .env
 
