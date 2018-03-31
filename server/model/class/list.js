@@ -44,6 +44,7 @@ export default ({ teacherId, page = 1, limit = 30 }) => new Promise((resolve, re
 								timeline,
 								created,
 								cancelled,
+								rate,
 							},
 							$$populatedVirtuals: {
 								categoryName,
@@ -59,6 +60,7 @@ export default ({ teacherId, page = 1, limit = 30 }) => new Promise((resolve, re
 							timeline,
 							created,
 							cancelled,
+							rate,
 						});
 						if (index === classes.length - 1) {
 							return resolve(ResponseUtility.SUCCESS_DATA(resultant));
