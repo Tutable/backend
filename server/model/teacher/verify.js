@@ -15,7 +15,7 @@ export default ({ email, token }) => new Promise((resolve, reject) => {
 		TeacherModel.findOne(query)
 			.then((teacher) => {
 				if (teacher) {
-					const updateQuery = { isVerified: true, verificationToken: RandomCodeUtility(), verificationTokenTimestamp: -1 };
+					const updateQuery = { isVerified: true, verificationToken: RandomCodeUtility(), verificationTokenTimestamp: -1, firstLogin: false };
 					TeacherModel.update({ email }, updateQuery, (err, modified) => {
 						if (err) {
 							return reject(ResponseUtility.ERROR({ message: 'Error updating teacher schema', error: err }));
