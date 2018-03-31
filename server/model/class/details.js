@@ -20,6 +20,7 @@ const TeacherModel = database.model('Teachers', TeacherSchema);
  *
  * @param {String} id is the id of teacher
  * @returns Promise
+ * @todo populate the details with the latest 5 reviews.
  */
 export default ({ classId }) => new Promise((resolve, reject) => {
 	if (classId) {
