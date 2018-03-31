@@ -9,7 +9,8 @@ const CategoryModel = database.model('Categories', CategorySchema);
 export default ({ title, parent }) => new Promise((resolve, reject) => {
 	if (title) {
 		// check if title already exists
-		CategoryModel.findOne({ title })
+		const query = { $and: [{ title }, { parent }] };
+		CategoryModel.findOne(query)
 			.then((result) => {
 				if (result) {
 					return reject(ResponseUtility.ERROR({ message: 'Duplicate category name.' }));
