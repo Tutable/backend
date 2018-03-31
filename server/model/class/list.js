@@ -20,10 +20,10 @@ const TeacherModel = database.model('Teachers', TeacherSchema);
  * @param {String} id is the id of teacher
  * @returns Promise
  */
-export default ({ id, page = 1, limit = 30 }) => new Promise((resolve, reject) => {
-	if (id) {
+export default ({ teacherId, page = 1, limit = 30 }) => new Promise((resolve, reject) => {
+	if (teacherId) {
 		const skip = limit * (page - 1);
-		const query = { $and: [{ ref: id }, { deleted: false }] };
+		const query = { $and: [{ ref: teacherId }, { deleted: false }] };
 		const projection = { __v: 0 };
 		const options = { sort: { created: -1 }, skip, limit };
 
