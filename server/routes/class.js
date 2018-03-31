@@ -10,6 +10,7 @@ const prefix = '/api/class/';
 export default (app) => {
 	app.post(`${prefix}create`, AuthenticationControllers.authenticateTeacher, CompressionServices, ClassControllers.create);
 	app.post(`${prefix}details`, AuthenticationControllers.authenticateGlobalEntity, ClassControllers.details);
+	app.post(`${prefix}list`, AuthenticationControllers.authenticateGlobalEntity, ClassControllers.list);
 
 	app.get(`${prefix}assets/:bucket/:userType/:folder/:asset`, ClassControllers.assets);
 };
