@@ -24,7 +24,7 @@ export default ({
 	ref,
 	stars,
 	review,
-}) => new Promise(async (resolve, reject) => {
+}) => new Promise((resolve, reject) => {
 	if (id && ref && stars && review) {
 		const query = { _id: ref };
 		const projection = { name: 1 };
