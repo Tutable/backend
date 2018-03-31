@@ -1,9 +1,9 @@
-import { ReviewSchema, ClasSchema } from '../schemas';
+import { ReviewSchema, ClassSchema } from '../schemas';
 import database from '../../db';
 import { ResponseUtility } from '../../utility';
 
 const ReviewModel = database.model('Reviews', ReviewSchema);
-const ClassModel = database.model('classes', ClasSchema);
+const ClassModel = database.model('Class', ClassSchema);
 
 /**
  * microservice to create a new class for the teacher
