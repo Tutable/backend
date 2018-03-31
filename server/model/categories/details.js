@@ -15,16 +15,16 @@ const CategoryModel = database.model('Category', CategorySchema);
  * be picked up by default.
  * @return Promise
  */
-export default ({ id, title }) => new Promise((resolve, reject) => {
-	if (id || title) {
+export default ({ categoryId, title }) => new Promise((resolve, reject) => {
+	if (categoryId || title) {
 		// const query = { $or: [{ _id: id }, { title }, { parent: id }] };
-		if (id) {
+		if (categoryId) {
 			// process for id. Includes the subcategories
 			// upto one level
 			CategoryModel.aggregate([
-				{ $match: { parent: id } },
+				{ $match: { parent: categoryId } },
 			]).exec((err, categories) => {
-				const parentQuery = id ? { _id: id } : { title };
+				const parentQuery = categoryId ? { _id: categoryId } : { title };
 				CategoryModel.findOne(parentQuery)
 					.then((category) => {
 						const { _doc } = category;
