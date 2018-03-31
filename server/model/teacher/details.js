@@ -32,6 +32,13 @@ export default ({ id, email }) => new Promise((resolve, reject) => {
 						isVerified,
 						picture,
 						degreeAsset,
+						school,
+						qualification,
+						degree,
+						bio,
+						gender,
+						availability,
+						deviceId,
 					},
 				} = teacher;
 
@@ -45,6 +52,13 @@ export default ({ id, email }) => new Promise((resolve, reject) => {
 					isVerified,
 					picture: picture ? `/teachers/assets/${S3_TEACHER_PROFILE}/${picture}` : undefined,
 					degreeAsset: degreeAsset ? `/teachers/assets/${S3_TEACHER_PROFILE}/${degreeAsset}` : undefined,
+					school,
+					qualification,
+					degree,
+					bio,
+					gender,
+					availability,
+					deviceId,
 				}));
 			})
 			.catch(err => reject(ResponseUtility.ERROR({ message: 'Error looking for user', error: err })));
