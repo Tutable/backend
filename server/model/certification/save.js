@@ -31,8 +31,8 @@ export default ({ id, policeCert, childrenCert }) => new Promise(async (resolve,
 
 			const checkCertificates = new TeacherCertificationModel({
 				ref: id,
-				policeCertificate: policeKey,
-				childrenCertificate: childKey,
+				policeCertificate: policeCert ? policeKey : undefined,
+				childrenCertificate: childrenCert ? childKey : undefined,
 			});
 			checkCertificates.save()
 				.then(() => resolve(ResponseUtility.SUCCESS))
