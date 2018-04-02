@@ -5,6 +5,7 @@ import {
 } from '../schemas';
 import database from '../../db';
 import { ResponseUtility } from '../../utility';
+import { S3_TEACHER_CLASS } from '../../constants';
 
 const ClassModel = database.model('Classes', ClassSchema);
 const CategoryModel = database.model('Categories', CategorySchema);
@@ -39,12 +40,15 @@ export default ({ teacherId, page = 1, limit = 30 }) => new Promise((resolve, re
 					classes.map((singleClass, index) => {
 						const {
 							_doc: {
+								_id,
+								name,
 								level,
 								bio,
 								timeline,
 								created,
 								cancelled,
 								rate,
+								payload,
 							},
 							$$populatedVirtuals: {
 								categoryName,
@@ -53,6 +57,8 @@ export default ({ teacherId, page = 1, limit = 30 }) => new Promise((resolve, re
 						} = singleClass;
 
 						resultant.push({
+							id: _id,
+							name,
 							teacher,
 							category: categoryName,
 							level,
@@ -61,6 +67,7 @@ export default ({ teacherId, page = 1, limit = 30 }) => new Promise((resolve, re
 							created,
 							cancelled,
 							rate,
+							payload: `${S3_TEACHER_CLASS}/${payload}`,
 						});
 						if (index === classes.length - 1) {
 							return resolve(ResponseUtility.SUCCESS_DATA(resultant));

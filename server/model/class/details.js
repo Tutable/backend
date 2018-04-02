@@ -2,6 +2,7 @@ import {
 	ClassSchema,
 	CategorySchema,
 	TeacherSchema,
+	ReviewSchema,
 } from '../schemas';
 import database from '../../db';
 import { ResponseUtility } from '../../utility';
@@ -10,6 +11,7 @@ import { S3_TEACHER_CLASS } from '../../constants';
 const ClassModel = database.model('Classes', ClassSchema);
 const CategoryModel = database.model('Categories', CategorySchema);
 const TeacherModel = database.model('Teachers', TeacherSchema);
+const ReviewModel = database.model('Reviews', ReviewSchema);
 
 /**
  * microservice to get the details of the classes created by a
@@ -30,12 +32,32 @@ export default ({ classId }) => new Promise((resolve, reject) => {
 		const categoryPopulation = { path: 'categoryName', model: CategoryModel, select: 'title parent' };
 		const teacherPopulation = { path: 'teacher', model: TeacherModel, select: 'name address picture' };
 
+		// const aggregationQuery = [{
+		// 	$unwind: '$ref',
+		// }, {
+		// 	$match: {
+		// 		deleted: false,
+		// 	},
+		// }, {
+		// 	$group: {
+		// 		_id: '$ref',
+		// 		count: { $sum: 1 },
+		// 	},
+		// }];
+
+		// ReviewModel.aggregate(aggregationQuery)
+		// 	.exec((err, reviews) => {
+		// 		console.log(reviews);
+		// 	});
+
 		ClassModel.findOne(query, projection)
 			.populate(categoryPopulation)
 			.populate(teacherPopulation)
 			.then((success) => {
 				const {
 					_doc: {
+						_id,
+						name,
 						level,
 						bio,
 						timeline,
@@ -50,6 +72,8 @@ export default ({ classId }) => new Promise((resolve, reject) => {
 				} = success;
 
 				resolve(ResponseUtility.SUCCESS_DATA({
+					id: _id,
+					name,
 					teacher,
 					category: categoryName,
 					level,
