@@ -48,7 +48,7 @@ export default ({
 						// upload picture to s3
 						const Bucket = S3_TEACHER_PROFILE;
 						if (picture) {
-							console.log('uplaoding profile pic');
+							// console.log('uplaoding profile pic');
 							try {
 								await S3Services.uploadToBucket({ Bucket, data: picture, Key: pictureKey });
 							} catch (err) {
@@ -56,7 +56,7 @@ export default ({
 							}
 						}
 						if (degreeAsset) {
-							console.log('uplaoding user degree');
+							// console.log('uplaoding user degree');
 							try {
 								await S3Services.uploadToBucket({ Bucket, data: degreeAsset, Key: degreeKey });
 							} catch (err) {

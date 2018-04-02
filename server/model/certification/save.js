@@ -15,7 +15,7 @@ const TeacherCertificationModel = database.model('Certification', TeacherCertifi
  * @param {Buffer} childrenCert to be injected by controller
  */
 export default ({ id, policeCert, childrenCert }) => new Promise(async (resolve, reject) => {
-	if (id && policeCert && childrenCert) {
+	if (id && (childrenCert || policeCert)) {
 		// trigger updaling cert to s3 and save url.
 		// @todo upload to s3 and save payload url in database
 		const Bucket = S3_TEACHER_CERTS;

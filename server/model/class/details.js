@@ -11,7 +11,7 @@ import { S3_TEACHER_CLASS } from '../../constants';
 const ClassModel = database.model('Classes', ClassSchema);
 const CategoryModel = database.model('Categories', CategorySchema);
 const TeacherModel = database.model('Teachers', TeacherSchema);
-const ReviewModel = database.model('Reviews', ReviewSchema);
+// const ReviewModel = database.model('Reviews', ReviewSchema);
 
 /**
  * microservice to get the details of the classes created by a
