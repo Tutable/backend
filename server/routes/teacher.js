@@ -12,6 +12,7 @@ export default (app) => {
 	app.post(`${prefix}verify`, TeacherControllers.verify);
 	app.post(`${prefix}login`, PassportServices.TeacherLoginHandler);
 	app.post(`${prefix}details`, AuthenticationControllers.authenticateTeacher, TeacherControllers.details);
+	app.post(`${prefix}teacherDetails`, TeacherControllers.details);
 	app.post(`${prefix}update`, AuthenticationControllers.authenticateTeacher, CompressionServices, TeacherControllers.update);
 	app.post(`${prefix}resendVerification`, TeacherControllers.resendVerifiation);
 	app.post(`${prefix}passwordToken`, TeacherControllers.passwordToken);
