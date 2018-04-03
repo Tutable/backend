@@ -52,3 +52,8 @@ export const STUDENT_LEVEL = {
 	INTERMEDIATE: 2,
 	ADVANCED: 3,
 };
+
+export const TOKEN_TYPE = {
+	VERIFICATION: 1,
+	PASS_CHANGE: 2,
+};
