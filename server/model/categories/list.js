@@ -14,8 +14,12 @@ const CategoryModel = database.model('Category', CategorySchema);
  * be picked up by default.
  * @return Promise
  */
-export default () => new Promise((resolve, reject) => {
-	CategoryModel.find({})
+export default ({ parent = false }) => new Promise((resolve, reject) => {
+	let query = {};
+	if (parent) {
+		query = { parent: undefined };
+	}
+	CategoryModel.find(query)
 		.then(response => resolve(ResponseUtility.SUCCESS_DATA(response)))
 		.catch(err => reject(ResponseUtility.ERROR({ message: 'Error looking for categories', error: err })));
 });
