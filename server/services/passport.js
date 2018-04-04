@@ -58,7 +58,6 @@ passport.use('StudentLogin', new LocalStrategy((username, password, done) => {
 	}
 }));
 
-
 export const studentLoginHandler = (req, res, next) => {
 	passport.authenticate('StudentLogin', (err, student, info) => {
 		if (student) {
