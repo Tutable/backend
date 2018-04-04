@@ -12,5 +12,6 @@ export default {
 	verify: (req, res) => commonResolver(req, res, StudentServices.StudentsVerifyService),
 	token: (req, res) => commonResolver(req, res, StudentServices.StudentsResendVerificationService),
 	details: (req, res) => commonResolver(req, res, StudentServices.StudentsDetailsService),
+	password: (req, res) => commonResolver(req, res, StudentServices.StudentsChangePasswordService),
 	asset: commonPictureResolver,
 };
