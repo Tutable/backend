@@ -7,7 +7,7 @@ import {
 } from '../../../server/constants';
 
 export default () => {
-	describe('This will resend the pass change token and verification token', () => {
+	describe.skip('This will resend the pass change token and verification token', () => {
 		it('should send the pass change token', (done) => {
 			const user = {
 				email: 'sharma02gaurav@gmail.com',
@@ -16,7 +16,7 @@ export default () => {
 			StudentServices.StudentResendVerificationService(user)
 				.then((success) => {
 					expect(success.code).to.eq(SUCCESS_CODE);
-					done();
+					done('');
 				}).catch(err => done(err));
 		});
 	});

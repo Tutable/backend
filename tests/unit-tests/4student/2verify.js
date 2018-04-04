@@ -4,7 +4,7 @@ import { StudentServices } from '../../../server/model';
 import { SUCCESS_CODE } from '../../../server/constants';
 
 export default () => {
-	describe('This will test the student verification service', () => {
+	describe.skip('This will test the student verification service', () => {
 		it('should verify a student', (done) => {
 			const user = {
 				email: 'sharma02gaurav@gmail.com',
