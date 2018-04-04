@@ -5,7 +5,7 @@
  */
 import { ReviewsServices } from '../model';
 import commonResolver from './commonResolver';
-import commonPictureResolver from './commonPictureResolver';
+// import commonPictureResolver from './commonPictureResolver';
 
 export default {
 	create: (req, res) => commonResolver(req, res, ReviewsServices.ReviewsCreateService),
