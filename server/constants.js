@@ -15,7 +15,7 @@ export const secretString = '1iXXiNc6D07eQ7ynoMqh66wbIbl4GlcT';
 // global defines all of the other defined users.
 export const APPLICATION_ROLES = ['admin', 'student', 'teacher', 'global'];
 
-export const S3_ROUTES = ['teachers', 'certificates', 'class'];
+export const S3_ROUTES = ['teachers', 'certificates', 'class', 'student'];
 export const SUCCESS_CODE = 100;
 
 export const {

@@ -11,4 +11,6 @@ export default {
 	register: (req, res) => commonResolver(req, res, StudentServices.StudentsRegisterService),
 	verify: (req, res) => commonResolver(req, res, StudentServices.StudentsVerifyService),
 	token: (req, res) => commonResolver(req, res, StudentServices.StudentsResendVerificationService),
+	details: (req, res) => commonResolver(req, res, StudentServices.StudentsDetailsService),
+	asset: commonPictureResolver,
 };

@@ -11,4 +11,7 @@ export default (app) => {
 	app.post(`${prefix}register`, CompressionServices, StudentControllers.register);
 	app.post(`${prefix}verify`, StudentControllers.verify);
 	app.post(`${prefix}token`, StudentControllers.token);
+	app.post(`${prefix}details`, StudentControllers.details);
+
+	app.get(`${prefix}assets/:bucket/:userType/:folder/:asset`, StudentControllers.asset);
 };
