@@ -11,7 +11,7 @@ export default () => {
 				email: 'sharma02gaurav@gmail.com',
 				password: 'password',
 			};
-			StudentServices.StudentRegisterService(user)
+			StudentServices.StudentsRegisterService(user)
 				.then((success) => {
 					console.log(success);
 					done();
