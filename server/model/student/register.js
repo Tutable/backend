@@ -47,13 +47,15 @@ export default ({
 					 * save the image url (in case of google and facebook),
 					 * picture field will be provided in case of email/password registration
 					 */
-					// console.log(typeof picture);
+					// console.log(typeof picture);					
 					const Key = `picture-${email}-${Date.now()}`;
 					const Bucket = S3_STUDENT_PROFILE;
-					try {
-						await S3Services.uploadToBucket({ Key, Bucket, data: picture });
-					} catch (err) {
-						return reject(ResponseUtility.ERROR({ message: 'Error uploading profile picture', error: err }));
+					if (picture) {
+						try {
+							await S3Services.uploadToBucket({ Key, Bucket, data: picture });
+						} catch (err) {
+							return reject(ResponseUtility.ERROR({ message: 'Error uploading profile picture', error: err }));
+						}
 					}
 
 					let encryptedPassword;
