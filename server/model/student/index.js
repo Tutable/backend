@@ -13,7 +13,7 @@ files.map((file) => {
 	if (!found) {
 		const fileName = `${file.charAt(0).toUpperCase()}${file.split('.')[0].substring(1, file.length)}`;
 		if (!fileName.startsWith('.')) {
-			module.exports[`Student${fileName}Service`] = require(`./${file}`).default;
+			module.exports[`Students${fileName}Service`] = require(`./${file}`).default;
 		}
 	}
 });

@@ -5,7 +5,8 @@ import {
 	HashUtility,
 	RandomCodeUtility,
 } from '../../utility';
-import { EmailServices } from '../../services';
+import { EmailServices, S3Services } from '../../services';
+import { S3_STUDENT_PROFILE } from '../../constants';
 
 
 const StudentModel = database.model('Student', StudentSchema);
@@ -44,7 +45,16 @@ export default ({
 					 * check for image type,
 					 * if buffer then push to s3 otherwise
 					 * save the image url (in case of google and facebook),
+					 * picture field will be provided in case of email/password registration
 					 */
+					// console.log(typeof picture);
+					const Key = `picture-${email}-${Date.now()}`;
+					const Bucket = S3_STUDENT_PROFILE;
+					try {
+						await S3Services.uploadToBucket({ Key, Bucket, data: picture });
+					} catch (err) {
+						return reject(ResponseUtility.ERROR({ message: 'Error uploading profile picture', error: err }));
+					}
 
 					let encryptedPassword;
 					let verificationToken;
@@ -59,7 +69,7 @@ export default ({
 						email,
 						password: encryptedPassword,
 						address,
-						picture,
+						picture: typeof picture === 'object' ? Key : picture,
 						google,
 						facebook,
 						profileCompleted: address ? true : false,

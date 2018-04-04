@@ -8,7 +8,7 @@ const prefix = '/api/student/';
  * @since 28th March 2018
  */
 export default (app) => {
-	app.post(`${prefix}register`, AuthenticationControllers.authenticateStudent, CompressionServices, StudentControllers.register);
+	app.post(`${prefix}register`, CompressionServices, StudentControllers.register);
 	app.post(`${prefix}verify`, StudentControllers.verify);
 	app.post(`${prefix}token`, StudentControllers.token);
 };
