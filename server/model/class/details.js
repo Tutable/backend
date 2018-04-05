@@ -96,6 +96,7 @@ export default ({ classId }) => new Promise((resolve, reject) => {
 						const teacherObject = Object.assign({}, teacher._doc, {
 							picture: teacher.picture ? `/teachers/assets/${S3_TEACHER_PROFILE}/${teacher.picture}` : undefined,
 							id: teacher._id,
+							_id: undefined,
 						});
 						const {
 							avgStars = 0,

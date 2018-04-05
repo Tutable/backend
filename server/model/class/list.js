@@ -5,7 +5,7 @@ import {
 } from '../schemas';
 import database from '../../db';
 import { ResponseUtility } from '../../utility';
-import { S3_TEACHER_CLASS } from '../../constants';
+import { S3_TEACHER_CLASS, S3_TEACHER_PROFILE } from '../../constants';
 
 const ClassModel = database.model('Classes', ClassSchema);
 const CategoryModel = database.model('Categories', CategorySchema);
@@ -55,11 +55,15 @@ export default ({ teacherId, page = 1, limit = 30 }) => new Promise((resolve, re
 								teacher,
 							},
 						} = singleClass;
-
+						const teacherObject = Object.assign({}, teacher._doc, {
+							picture: teacher.picture ? `/teachers/assets/${S3_TEACHER_PROFILE}/${teacher.picture}` : undefined,
+							id: teacher._id,
+							_id: undefined,
+						});
 						resultant.push({
 							id: _id,
 							name,
-							teacher,
+							teacher: teacherObject,
 							category: categoryName,
 							level,
 							bio,
@@ -67,7 +71,7 @@ export default ({ teacherId, page = 1, limit = 30 }) => new Promise((resolve, re
 							created,
 							cancelled,
 							rate,
-							payload: `${S3_TEACHER_CLASS}/${payload}`,
+							payload: payload ? `/class/asset/${S3_TEACHER_CLASS}/${payload}` : undefined,
 						});
 						if (index === classes.length - 1) {
 							return resolve(ResponseUtility.SUCCESS_DATA(resultant));
