@@ -38,18 +38,18 @@ export default ({
 				}
 				// fetch the class details along with teacher email
 				// to send email verification about the class request
+
 				ClassModel.findOne({ _id: ref })
 					.populate(teacherPopulation)
-					.exec()
 					.then((classDetails) => {
 						const {
-							_doc: {
+							_doc,
+							$$populatedVirtuals: {
 								teacher: {
 									name,
 									email,
 								},
 							},
-							_doc,
 						} = classDetails;
 						const bookingObject = new BookingsModel({
 							by: id,
@@ -64,26 +64,12 @@ export default ({
 							.then(() => {
 								EmailServices({ to: email, subject: `Request to attend ${_doc.name} class`, text: `${name} has requested you to attend ${_doc.name} class.` })
 									.then(() => resolve(ResponseUtility.SUCCESS))
-									.catch(err => resolve(ResponseUtility.SUCCESS_MESSAGE({ message: 'Error sending email to teacher', error: err })));
+									.catch(err => resolve(ResponseUtility.ERROR({ message: 'Error sending email to teacher', error: err })));
 								// resolve(ResponseUtility.SUCCESS);
 							})
 							.catch(err => reject(ResponseUtility.ERROR({ message: 'Error saving booking', error: err })));
 					})
 					.catch(err => reject(ResponseUtility.ERROR({ message: 'Error populating teacher details.', error: err })));
-				// const bookingObject = new BookingsModel({
-				// 	by: id,
-				// 	ref,
-				// 	slots,
-				// 	timestamp: Date.now(),
-				// 	deleted: false,
-				// 	confirmed: false,
-				// });
-
-				// bookingObject.save()
-				// 	.then(() => {
-				// 		resolve(ResponseUtility.SUCCESS);
-				// 	})
-				// 	.catch(err => reject(ResponseUtility.ERROR({ message: 'Error saving booking', error: err })));
 			}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error looking for earlier bookings.', error: err })));
 	} else {
 		reject(ResponseUtility.MISSING_REQUIRED_PROPS);
