@@ -13,5 +13,6 @@ export default {
 	token: (req, res) => commonResolver(req, res, StudentServices.StudentsResendVerificationService),
 	details: (req, res) => commonResolver(req, res, StudentServices.StudentsDetailsService),
 	password: (req, res) => commonResolver(req, res, StudentServices.StudentsChangePasswordService),
+	update: (req, res) => commonResolver(req, res, StudentServices.StudentsUpdateService),
 	asset: commonPictureResolver,
 };

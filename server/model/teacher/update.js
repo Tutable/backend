@@ -51,6 +51,7 @@ export default ({
 							// console.log('uplaoding profile pic');
 							try {
 								await S3Services.uploadToBucket({ Bucket, data: picture, Key: pictureKey });
+								// @todo delete the old picture from s3
 							} catch (err) {
 								reject(ResponseUtility.Error({ message: 'Error uploding profile picture', error: err }));
 							}
@@ -59,6 +60,7 @@ export default ({
 							// console.log('uplaoding user degree');
 							try {
 								await S3Services.uploadToBucket({ Bucket, data: degreeAsset, Key: degreeKey });
+								// @todo delete the old degree asset from s3 if exists
 							} catch (err) {
 								reject(ResponseUtility.Error({ message: 'Error uploding degree. Please try again.', error: err }));
 							}

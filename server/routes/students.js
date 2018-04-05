@@ -15,6 +15,7 @@ export default (app) => {
 	app.post(`${prefix}studentDetails`, AuthenticationControllers.authenticateStudent, StudentControllers.details);
 	app.post(`${prefix}details`, StudentControllers.details);
 	app.post(`${prefix}changePassword`, StudentControllers.password);
+	app.post(`${prefix}update`, AuthenticationControllers.authenticateStudent, CompressionServices, StudentControllers.update);
 
 	app.get(`${prefix}asset/:bucket/:userType/:folder/:asset`, StudentControllers.asset);
 };
