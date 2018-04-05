@@ -1,0 +1,59 @@
+<link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+<style>
+	*{
+		font-family: Montserrat;
+	}
+	.container {
+		background: #fff;
+		padding: 10px;
+	}
+	.header {
+		background: rgb(170,237,181);
+background: linear-gradient(90deg, rgba(170,237,181,1) 0%, rgba(74,214,168,1) 35%, rgba(65,212,167,1) 100%);
+		padding: 20px;
+		border-top-left-radius: 10px;
+		border-top-right-radius: 10px;
+	}
+	.header h1 {
+		text-align: center;
+	}
+	span {
+		padding: 10px;
+		color: #41d4a7;
+		border-radius: 10px;
+	}
+	
+	.verification-code {
+		text-align: center;
+	}
+	.footer {
+		background: rgb(170,237,181);
+background: linear-gradient(90deg, rgba(170,237,181,1) 0%, rgba(74,214,168,1) 35%, rgba(65,212,167,1) 100%);
+		padding: 10px;
+		border-bottom-right-radius: 10px;
+		border-bottom-left-radius: 10px;
+		color: #fff;
+		text-align: center;
+	}
+</style>
+<section class='container'>
+	<section class='header'>
+		<h1>
+			Tutable app
+		</h1>
+	</section>
+	<br/>
+	Hello {{name}}!,<br/><br/>
+	Greetings from <b>tutable app</b>. Your account has been created and your verification code is <br/>
+	<p class='verification-code'>
+		<span><code>{{verification_code}}</code></span>
+	</p>
+	Please do not share this code with anyone and use this code to authenticate your account. If you still face some issue then reach the admin.<br/><br/>
+	Regards,<br/>
+	<b>Team tutable.</b><br/><br/>
+	<section class='footer'>
+		<p>
+			&copy;2018
+		</p>
+	</section>
+</section>
