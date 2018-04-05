@@ -6,7 +6,7 @@ import {
 } from '../schemas';
 import database from '../../db';
 import { ResponseUtility } from '../../utility';
-import { S3_TEACHER_CLASS } from '../../constants';
+import { S3_TEACHER_CLASS, S3_TEACHER_PROFILE } from '../../constants';
 
 const ClassModel = database.model('Classes', ClassSchema);
 const CategoryModel = database.model('Categories', CategorySchema);
@@ -93,7 +93,10 @@ export default ({ classId }) => new Promise((resolve, reject) => {
 								teacher,
 							},
 						} = success;
-
+						const teacherObject = Object.assign({}, teacher._doc, {
+							picture: teacher.picture ? `/teachers/assets/${S3_TEACHER_PROFILE}/${teacher.picture}` : undefined,
+							id: teacher._id,
+						});
 						const {
 							avgStars = 0,
 							count = 0,
@@ -106,7 +109,7 @@ export default ({ classId }) => new Promise((resolve, reject) => {
 						resolve(ResponseUtility.SUCCESS_DATA({
 							id: _id,
 							name,
-							teacher,
+							teacher: teacherObject,
 							category: categoryName,
 							level,
 							bio,
@@ -114,7 +117,7 @@ export default ({ classId }) => new Promise((resolve, reject) => {
 							rate,
 							created,
 							cancelled,
-							payload: `${S3_TEACHER_CLASS}/${payload}`,
+							payload: payload ? `/class/asset/${S3_TEACHER_CLASS}/${payload}` : undefined,
 							reviews: matching ? {
 								avgStars,
 								count,
