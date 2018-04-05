@@ -1,6 +1,9 @@
 import { TeacherSchema } from '../schemas';
 import database from '../../db';
-import { EmailServices } from '../../services';
+import {
+	EmailServices,
+	TemplateMailServices,
+} from '../../services';
 import {
 	ResponseUtility,
 	HashUtility,
@@ -48,13 +51,21 @@ export default ({
 					});
 
 					teacherModel.save().then(() => {
-						EmailServices({
+						TemplateMailServices.NewAccountMail({
 							to: email,
-							text: `Your verification token is ${verificationToken}`,
-							subject: 'Tutable Verification token',
+							verificationCode: verificationToken,
+							name,
 						})
 							.then(() => resolve(ResponseUtility.SUCCESS))
 							.catch(err => reject(err));
+
+						// EmailServices({
+						// 	to: email,
+						// 	text: `Your verification token is ${verificationToken}`,
+						// 	subject: 'Tutable Verification token',
+						// })
+						// 	.then(() => resolve(ResponseUtility.SUCCESS))
+						// 	.catch(err => reject(err));
 					}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error saving', error: err })));
 				}, err => reject(ResponseUtility.ERROR({ message: 'Error generating hash', error: err })));
 			}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error looking for teacher', error: err })));
