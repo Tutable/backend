@@ -23,10 +23,6 @@ export default (req, res, next) => {
 		}
 
 		if (files && Object.keys(files).length) {
-			// if (Object.keys(files).length > 1) {
-			// 	// todo handle the multiple files upload here
-			// 	next();
-			// } else 
 			if (files.picture) {
 				// single file here
 				if (files.picture.size / MB >= STANDARD_IMAGE_SIZE) {
