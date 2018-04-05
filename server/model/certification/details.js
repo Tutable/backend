@@ -20,8 +20,8 @@ export default ({ id }) => new Promise(async (resolve, reject) => {
 					const { _doc: { ref, policeCertificate, childrenCertificate } } = certificate;
 					resolve(ResponseUtility.SUCCESS_DATA({
 						ref,
-						policeCertificate: policeCertificate ? `${S3_BUCKET}/teacher/certificates/${policeCertificate}` : undefined,
-						childrenCertifiate: childrenCertificate ? `${S3_BUCKET}/teacher/certificates/${childrenCertificate}` : undefined,
+						policeCertificate: policeCertificate ? `/certificates/asset/${S3_BUCKET}/teacher/certificates/${policeCertificate}` : undefined,
+						childrenCertifiate: childrenCertificate ? `/certificates/asset/${S3_BUCKET}/teacher/certificates/${childrenCertificate}` : undefined,
 					}));
 				} else {
 					reject(ResponseUtility.ERROR({ message: 'Nothing found.' }));
