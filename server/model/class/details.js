@@ -29,7 +29,7 @@ export default ({ classId }) => new Promise((resolve, reject) => {
 		// const query = { _id: id };
 		const projection = { __v: 0 };
 		const categoryPopulation = { path: 'categoryName', model: CategoryModel, select: 'title parent' };
-		const teacherPopulation = { path: 'teacher', model: TeacherModel, select: 'name address picture' };
+		const teacherPopulation = { path: 'teacher', model: TeacherModel, select: 'name address picture availability' };
 
 		/**
 		 * this aggregation query will append the reviews stats associated with the requested class
@@ -91,11 +91,13 @@ export default ({ classId }) => new Promise((resolve, reject) => {
 							$$populatedVirtuals: {
 								categoryName,
 								teacher,
+								availability,
 							},
 						} = success;
 						const teacherObject = Object.assign({}, teacher._doc, {
 							picture: teacher.picture ? `/teachers/assets/${S3_TEACHER_PROFILE}/${teacher.picture}` : undefined,
 							id: teacher._id,
+							availability,
 							_id: undefined,
 						});
 						const {
