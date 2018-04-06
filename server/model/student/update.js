@@ -32,7 +32,6 @@ export default ({
 				// console.log(S3Service÷s);
 				await S3Services.uploadToBucket({ Key, Bucket, data: picture });
 				// delete the old picture
-
 			} catch (err) {
 				return reject(ResponseUtility.ERROR({ message: 'Error uploading image to s3', error: err }));
 			}
