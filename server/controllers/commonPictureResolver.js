@@ -13,10 +13,31 @@ import { S3_BUCKET, S3_ROUTES } from '../constants';
  * @todo Handle authentication middleware injections?
 */
 export default (req, res) => {
-	const { body: { path }, params: { bucket, userType, folder, asset } } = req;
+	const {
+		body: {
+			path,
+		},
+		params: {
+			bucket,
+			userType,
+			folder,
+			asset,
+		},
+	} = req;
 	const route = path.split('/')[2];
 	if (S3_ROUTES.indexOf(route) !== -1) {
-		const Bucket = `${bucket}/${userType}/${folder}`;
+		// let userType;
+		// if (!userType) {
+		// 	userType = `${Bucket}/${asset}`;
+		// } else {
+		// 	Bucket = `${bucket}/${userType}/${folder}`;
+		// }
+		let Bucket;
+		if (!userType && !folder) {
+			Bucket = `${bucket}`;
+		} else {
+			Bucket = `${bucket}/${userType}/${folder}`;
+		}
 		const Key = `${asset}`;
 
 		S3Services.findFile({ Bucket, Key })
