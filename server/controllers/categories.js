@@ -12,4 +12,5 @@ export default {
 	details: (req, res) => commonResolver(req, res, CategoriesServices.CategoriesDetailsService),
 	update: (req, res) => commonResolver(req, res, CategoriesServices.CategoriesUpdateService),
 	list: (req, res) => commonResolver(req, res, CategoriesServices.CategoriesListService),
+	asset: commonPictureResolver,
 };

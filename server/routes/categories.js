@@ -12,4 +12,6 @@ export default (app) => {
 	app.post(`${prefix}details`, CategoriesControllers.details);
 	app.post(`${prefix}update`, AuthenticationControllers.authenticateTeacher, CompressionServices, CategoriesControllers.update);
 	app.post(`${prefix}list`, CategoriesControllers.list);
+
+	app.get(`${prefix}asset/:bucket/:asset`, CategoriesControllers.asset);
 };
