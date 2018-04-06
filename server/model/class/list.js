@@ -18,13 +18,23 @@ const TeacherModel = database.model('Teachers', TeacherSchema);
  * @author gaurav sharma
  * @since 28th March 2018
  *
- * @param {String} id is the id of teacher
+ * @param {String} teacherId is the id of teacher
+ * @param {String} categoryId the category to fetch for.
+ * @param {Number} page
+ * @param {Number} limit
+ * Either the teacher Id or categoryId must be provided. If both provided, teacher ID will
+ * be considered.
  * @returns Promise
  */
-export default ({ teacherId, page = 1, limit = 30 }) => new Promise((resolve, reject) => {
-	if (teacherId) {
+export default ({
+	teacherId,
+	categoryId,
+	page = 1,
+	limit = 30,
+}) => new Promise((resolve, reject) => {
+	if (teacherId || categoryId) {
 		const skip = limit * (page - 1);
-		const query = { $and: [{ ref: teacherId }, { deleted: false }] };
+		const query = { $and: [teacherId ? { ref: teacherId } : { category: categoryId }, { deleted: false }] };
 		const projection = { __v: 0 };
 		const options = { sort: { created: -1 }, skip, limit };
 
