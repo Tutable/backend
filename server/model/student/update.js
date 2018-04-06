@@ -14,8 +14,15 @@ const StudentModel = database.model('Student', StudentSchema);
  * @param {String} email
  * @param {String} picture
  * @param {String} name
+ * @param {String} address
  */
-export default ({ id, email, picture, name }) => new Promise(async (resolve, reject) => {
+export default ({
+	id,
+	email,
+	picture,
+	name,
+	address,
+}) => new Promise(async (resolve, reject) => {
 	if (id && (email || picture || name)) {
 		const query = { _id: id };
 		const Key = `picture-${id}-${Date.now()}`;
@@ -37,16 +44,21 @@ export default ({ id, email, picture, name }) => new Promise(async (resolve, rej
 			StudentModel.findOne(lookupQuery)
 				.then(async (student) => {
 					if (student) {
+						if (picture) {
+							// fetch the picture value and then delete it
+						}
 						// ignore email
 						updateQuery = await SchemaMapperUtility({
 							name,
 							picture: picture ? Key : undefined,
+							address,
 						});
 					} else {
 						updateQuery = await SchemaMapperUtility({
 							name,
 							email,
 							picture: picture ? Key : undefined,
+							address,
 						});
 					}
 
@@ -63,6 +75,7 @@ export default ({ id, email, picture, name }) => new Promise(async (resolve, rej
 			updateQuery = await SchemaMapperUtility({
 				picture: picture ? Key : undefined,
 				name,
+				address,
 			});
 			StudentModel.update(updateQuery)
 				.then((modified) => {

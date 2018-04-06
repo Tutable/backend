@@ -94,9 +94,7 @@ export default ({
 						} else {
 							resolve(ResponseUtility.SUCCESS_MESSAGE({ message: 'Created new user' }));
 						}
-						// resolve(ResponseUtility.SUCCESS);
 					});
-					// resolve();
 				}
 			}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error looking for student', error: err })));
 	} else {
