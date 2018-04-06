@@ -42,23 +42,6 @@ const sendMail = ({ to, subject = 'Mail from tutable app', html }) => new Promis
 		return resolve(ResponseUtility.SUCCESS);
 	});
 });
-// export default ({ to, text, subject = 'Mail from tutable app' }) => new Promise((resolve, reject) => {
-
-// 	// read html file here
-// 	const html = fs.readFileSync(path.resolve(__dirname, 'template', 'account_created.html'), { encoding: 'utf-8' });
-
-// 	transporter.sendMail({
-// 		from: user,
-// 		to,
-// 		html,
-// 		subject,
-// 	}, (err) => {
-// 		if (err) {
-// 			return reject(ResponseUtility.ERROR({ message: 'Error sending email.', error: err }));
-// 		}
-// 		return resolve(ResponseUtility.SUCCESS);
-// 	});
-// });
 
 /**
  * send this email template for now account registering
@@ -75,7 +58,27 @@ const NewAccountMail = ({ to, name, verificationCode }) => new Promise((resolve,
 		.catch(err => reject(err));
 });
 
+/**
+ * send the class confirmation mail to the student
+ * @param {} param0 
+ */
+const ClassConfirmedMail = ({ to, name, teacher, className, time, teacherImage = 'https://image.freepik.com/free-icon/male-user-shadow_318-34042.jpg' }) => new Promise((resolve, reject) => {
+	if (to && name && teacher && className && time && teacherImage) {
+		const html = fs.readFileSync(path.resolve(__dirname, 'template', 'class_confirmed.html'), { encoding: 'utf-8' });
+		const template = handlebars.compile(html);
+		const props = { name, teacher, class_name: className, time, teacher_image: teacherImage };
+		const compiled = template(props);
+
+		sendMail({ to, subject: 'Class confirmed!', html: compiled })
+			.then(success => resolve(success))
+			.catch(err => reject(err));
+	} else {
+		reject(ResponseUtility.MISSING_REQUIRED_PROPS);
+	}
+});
+
 export default {
 	NewAccountMail,
+	ClassConfirmedMail,
 };
 
