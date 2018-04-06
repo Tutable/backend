@@ -10,6 +10,7 @@ const prefix = '/api/bookings/';
 export default (app) => {
 	app.post(`${prefix}create`, AuthenticationControllers.authenticateStudent, BookingsControllers.create);
 	app.post(`${prefix}details`, AuthenticationControllers.authenticateGlobalEntity, BookingsControllers.details);
-	// app.post(`${prefix}details`, CategoriesControllers.details);
+	// only a teacher can perform confirm/reject actions on a booking.
+	app.post(`${prefix}action`, AuthenticationControllers.authenticateTeacher, BookingsControllers.action);
 	// app.post(`${prefix}list`, CategoriesControllers.list);
 };
