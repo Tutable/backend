@@ -1,6 +1,7 @@
 import { CategorySchema } from '../schemas';
 import database from '../../db';
 import { ResponseUtility } from '../../utility';
+import { S3_CATEGORY } from '../../constants';
 
 const CategoryModel = database.model('Category', CategorySchema);
 /**
@@ -25,13 +26,29 @@ export default ({ categoryId, title }) => new Promise((resolve, reject) => {
 				{ $match: { parent: categoryId } },
 			]).exec((err, categories) => {
 				const parentQuery = categoryId ? { _id: categoryId } : { title };
-				CategoryModel.findOne(parentQuery)
+				CategoryModel.findOne(parentQuery, { __v: 0 })
 					.then((category) => {
-						const { _doc } = category;
-						const resultant = _doc;
-						resultant.categories = categories;
+						const {
+							_doc: {
+								_id,
+								title,
+								picture,
+								parent,
+							},
+							_doc,
+						} = category;
+						const categoryObject = Object.assign({}, _doc, {
+							_id: undefined,
+							id: _id,
+							title,
+							picture: picture ? `/categories/asset/${S3_CATEGORY}/${picture}` : undefined,
+							parent,
+							categories,
+						});
+						// const resultant = _doc;
+						// resultant.categories = categories;
 
-						resolve(ResponseUtility.SUCCESS_DATA(resultant));
+						resolve(ResponseUtility.SUCCESS_DATA(categoryObject));
 					}).catch(categoryError => reject(ResponseUtility.ERROR({ message: 'Error fetching category', error: categoryError })));
 			});
 		} else {
@@ -41,13 +58,28 @@ export default ({ categoryId, title }) => new Promise((resolve, reject) => {
 			CategoryModel.findOne(query, projection)
 				.then((category) => {
 					if (category) {
-						const { _doc: { _id }, _doc } = category;
+						const {
+							_doc: {
+								_id,
+								title,
+								picture,
+								parent,
+							},
+							_doc,
+						} = category;
 						// aggregate child categories
 						CategoryModel.aggregate([
 							{ $match: { parent: _id } },
 						]).exec((err, categories) => {
-							_doc.categories = categories;
-							resolve(ResponseUtility.SUCCESS_DATA(_doc));
+							const categoryDoc = Object.assign({}, _doc, {
+								id: _id,
+								_id: undefined,
+								title,
+								picture: picture ? `/categories/asset/${S3_CATEGORY}/${picture}` : undefined,
+								parent,
+								categories,
+							});
+							resolve(ResponseUtility.SUCCESS_DATA(categoryDoc));
 						});
 					} else {
 						reject(ResponseUtility.ERROR({ message: 'Nothing found.' }));
