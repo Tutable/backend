@@ -4,7 +4,7 @@ const Bookings = new Schema({
 	ref: String, // the class id to book for
 	teacher: String, // the id of the teacher for the class
 	by: String, // the user booking the class,
-	slots: Number,
+	slot: Number,
 	timestamp: Number,
 	deleted: Boolean,
 	confirmed: Boolean,
