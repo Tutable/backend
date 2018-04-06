@@ -9,6 +9,7 @@ const prefix = '/api/bookings/';
  */
 export default (app) => {
 	app.post(`${prefix}create`, AuthenticationControllers.authenticateStudent, BookingsControllers.create);
+	app.post(`${prefix}details`, AuthenticationControllers.authenticateGlobalEntity, BookingsControllers.details);
 	// app.post(`${prefix}details`, CategoriesControllers.details);
 	// app.post(`${prefix}list`, CategoriesControllers.list);
 };

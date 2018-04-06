@@ -9,4 +9,5 @@ import commonResolver from './commonResolver';
 
 export default {
 	create: (req, res) => commonResolver(req, res, BookingsServices.BookingsCreateService),
+	details: (req, res) => commonResolver(req, res, BookingsServices.BookingsDetailsService),
 };

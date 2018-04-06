@@ -15,7 +15,7 @@ const Bookings = new Schema({
 	toObject: { virtuals: true },
 });
 
-Bookings.virtual('class', {
+Bookings.virtual('classDetails', {
 	ref: 'classes',
 	localField: 'ref',
 	foreignField: '_id',
