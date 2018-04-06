@@ -58,3 +58,9 @@ export const TOKEN_TYPE = {
 	VERIFICATION: 1,
 	PASS_CHANGE: 2,
 };
+
+export const BOOKING_TYPE = {
+	UPCOMING: 1,
+	PAST: 2,
+	BOTH: 3,
+};

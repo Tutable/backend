@@ -25,12 +25,12 @@ const TeacherModel = database.model('Teacher', TeacherSchema);
 export default ({
 	id,
 	ref,
-	slots,
+	slot,
 }) => new Promise((resolve, reject) => {
-	if (id && ref && slots) {
+	if (id && ref && slot) {
 		const teacherPopulation = { path: 'teacher', model: TeacherModel, select: 'name address picture email' };
 		// check if user has already enrolled in this class
-		const checkQuery = { $and: [{ _id: id }, { ref }] };
+		const checkQuery = { $and: [{ by: id }, { ref }] };
 		BookingsModel.findOne(checkQuery)
 			.then((booking) => {
 				if (booking) {
@@ -46,6 +46,7 @@ export default ({
 							_doc,
 							$$populatedVirtuals: {
 								teacher: {
+									_id,
 									name,
 									email,
 								},
@@ -54,10 +55,13 @@ export default ({
 						const bookingObject = new BookingsModel({
 							by: id,
 							ref,
-							slots,
+							teacher: _id,
+							slot,
 							timestamp: Date.now(),
 							deleted: false,
 							confirmed: false,
+							cancelled: false,
+							completed: false,
 						});
 
 						bookingObject.save()
