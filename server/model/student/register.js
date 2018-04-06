@@ -70,7 +70,9 @@ export default ({
 						name,
 						email,
 						password: encryptedPassword,
-						address,
+						address: address ? {
+							location: address,
+						} : undefined,
 						picture: typeof picture === 'object' ? Key : picture,
 						google,
 						facebook,

@@ -51,14 +51,18 @@ export default ({
 						updateQuery = await SchemaMapperUtility({
 							name,
 							picture: picture ? Key : undefined,
-							address,
+							address: address ? {
+								location: address,
+							} : undefined,
 						});
 					} else {
 						updateQuery = await SchemaMapperUtility({
 							name,
 							email,
 							picture: picture ? Key : undefined,
-							address,
+							address: address ? {
+								location: address,
+							} : undefined,
 						});
 					}
 
@@ -75,7 +79,9 @@ export default ({
 			updateQuery = await SchemaMapperUtility({
 				picture: picture ? Key : undefined,
 				name,
-				address,
+				address: address ? {
+					location: address,
+				} : undefined,
 			});
 			StudentModel.update(updateQuery)
 				.then((modified) => {
