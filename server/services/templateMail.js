@@ -77,7 +77,27 @@ const ClassConfirmedMail = ({ to, name, teacher, className, time, teacherImage =
 	}
 });
 
+/**
+ * email template for the declined request
+ * @param {*} param0 
+ */
+const ClassDeclinedMail = ({ to, name, teacher, className }) => new Promise((resolve, reject) => {
+	if (to && name && teacher && className) {
+		const html = fs.readFileSync(path.resolve(__dirname, 'template', 'class_declined.html'), { encoding: 'utf-8' });
+		const template = handlebars.compile(html);
+		const props = { name, teacher, class_name: className };
+		const compiled = template(props);
+
+		sendMail({ to, subject: 'Class confirmed!', html: compiled })
+			.then(success => resolve(success))
+			.catch(err => reject(err));
+	} else {
+		reject(ResponseUtility.MISSING_REQUIRED_PROPS);
+	}
+});
+
 export default {
 	NewAccountMail,
 	ClassConfirmedMail,
+	ClassDeclinedMail
 };
