@@ -77,6 +77,7 @@ export default ({
 							_id,
 							timestamp,
 							deleted,
+							slot,
 							confirmed,
 							completed,
 						},
@@ -89,6 +90,7 @@ export default ({
 					finalBookings.push({
 						id: _id,
 						_id: undefined,
+						slot,
 						// class: ref,
 						// by,
 						// teacher,
