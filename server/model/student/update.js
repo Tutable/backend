@@ -2,7 +2,7 @@ import { StudentSchema } from '../schemas';
 import database from '../../db';
 import { S3Services } from '../../services';
 import { ResponseUtility, SchemaMapperUtility } from '../../utility';
-import { S3_STUDENT_PROFILE, SUCCESS_CODE } from '../../constants';
+import { S3_STUDENT_PROFILE } from '../../constants';
 
 const StudentModel = database.model('Student', StudentSchema);
 /**
@@ -23,7 +23,7 @@ export default ({
 	name,
 	address,
 }) => new Promise(async (resolve, reject) => {
-	if (id && (email || picture || name)) {
+	if (id && (email || picture || name || address)) {
 		const query = { _id: id };
 		const Key = `picture-${id}-${Date.now()}`;
 		if (picture) {
