@@ -38,11 +38,11 @@ export default ({ id, bookingId, confirmed }) => new Promise((resolve, reject) =
 
 	const studentPopulation = { path: 'student', model: StudentModel, select: 'name email' };
 	const classPopulation = { path: 'classDetails', model: ClassModel, select: 'name payload' };
-	const teacherPopulation = { path: 'teacherDetails', model: TeacherModel, select: 'name picture' };
+	const teacherPopulation = { path: 'teacherDetails', model: TeacherModel, select: 'name picture availability' };
 
 	if (id && bookingId && confirmed !== undefined) {
 		// assigned to the teacher, not deleted and haven't confirmed yet.
-		const query = { $and: [{ _id: bookingId }, { teacher: id }, { deleted: false }, { confirmed: false }] };
+		const query = { $and: [{ _id: bookingId }, { teacher: id }, { deleted: false }, { confirmed: false }, { cancelled: false }] };
 		const projection = { __v: 0 };
 		BookingsModel.findOne(query, projection)
 			.populate(studentPopulation)
@@ -64,7 +64,7 @@ export default ({ id, bookingId, confirmed }) => new Promise((resolve, reject) =
 					},
 				} = booking;
 				// const lookupQuery = { $and: [{ _id: bookingId }, { teacher: id }] };
-				const updateQuery = confirmed ? { confirmed } : { cancelled: true };
+				const updateQuery = confirmed ? { confirmed, cancelled: false } : { cancelled: true };
 				BookingsModel.update(query, updateQuery)
 					.then((modified) => {
 						const { nModified } = modified;
@@ -73,18 +73,45 @@ export default ({ id, bookingId, confirmed }) => new Promise((resolve, reject) =
 							 * @todo remove the availability slot
 							 * from the teacher list.
 							 */
+							const requestedSlot = Object.keys(slot)[0];
+							const availabilityObject = Object.assign({}, teacherDetails.availability);
+							availabilityObject[requestedSlot].splice(availabilityObject[requestedSlot].indexOf(slot[requestedSlot].toString()), 1);
 
-							// send the mail notification
-							TemplateMailServices.ClassConfirmedMail({
-								to: student.email,
-								name: student.name,
-								teacher: teacherDetails.name,
-								teacherImage: teacherDetails.picture ? `http://localhost:3000/api/${teacherDetails}` : undefined,
-								className: classDetails.name,
-								time: slot || moment.unix(Date.now()).format('MM/DD/YYY'),
-							})
-								.then(() => resolve(ResponseUtility.SUCCESS))
-								.catch(err => reject(ResponseUtility.ERROR({ message: 'Error sending mail', error: err })));
+							if (confirmed) {
+								TeacherModel.update({ _id: teacherDetails._id }, { availability: availabilityObject })
+									.then((modified) => {
+										const { nModified } = modified;
+										if (nModified) {
+											// send the mail notification
+											TemplateMailServices.ClassConfirmedMail({
+												to: student.email,
+												name: student.name,
+												teacher: teacherDetails.name,
+												teacherImage: teacherDetails.picture ? `http://localhost:3000/api/${teacherDetails}` : undefined,
+												className: classDetails.name,
+												time: slot || moment.unix(Object.keys(slot)[0]).format('MM/DD/YYY'),
+											})
+												.then(() => resolve(ResponseUtility.SUCCESS))
+												.catch(err => reject(ResponseUtility.ERROR({ message: 'Error sending mail', error: err })));
+										} else {
+											reject(ResponseUtility.ERROR({ message: 'Nothing modified' }));
+										}
+									}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error removing the availability slot from teacher', error: err })));
+							} else {
+								// send the cancellation notification
+								// send the push notification to cancel the request. Mail is not required
+								TemplateMailServices.ClassDeclinedMail({
+									to: student.email,
+									name: student.name,
+									teacher: teacherDetails.name,
+									className: classDetails.name,
+								})
+									.then(() => resolve(ResponseUtility.SUCCESS))
+									.catch(err => reject(ResponseUtility.ERROR({ message: 'Error sending mail', error: err })));
+							}
+						} else {
+							// do nothing if no changes are made in the bakend
+							resolve(ResponseUtility.ERROR({ message: 'Nothing updated.' }));
 						}
 						// return resolve(ResponseUtility.SUCCESS_MESSAGE({ message: 'Noting modified.' }));
 					}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error updating booking', error: err })));

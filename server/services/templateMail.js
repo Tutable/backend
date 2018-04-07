@@ -99,5 +99,5 @@ const ClassDeclinedMail = ({ to, name, teacher, className }) => new Promise((res
 export default {
 	NewAccountMail,
 	ClassConfirmedMail,
-	ClassDeclinedMail
+	ClassDeclinedMail,
 };

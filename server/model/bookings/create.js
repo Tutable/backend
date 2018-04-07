@@ -93,18 +93,20 @@ export default ({
 							.then(() => {
 								// trigger removing the assigned slot from the teachers
 								// availability
-								const availabilityObject = Object.assign({}, availability);
-								availabilityObject[requestedSlot].splice(availabilityObject[requestedSlot].indexOf(slot[requestedSlot].toString()), 1);
+								// const availabilityObject = Object.assign({}, availability);
+								// availabilityObject[requestedSlot].splice(availabilityObject[requestedSlot].indexOf(slot[requestedSlot].toString()), 1);
+
+								resolve(ResponseUtility.SUCCESS);
 								// console.log(availabilityObject);
-								TeacherModel.update({ _id }, { availability })
-									.then((modified) => {
-										const { nModified } = modified;
-										if (nModified) {
-											resolve(ResponseUtility.SUCCESS);
-										} else {
-											resolve(ResponseUtility.ERROR({ message: 'Nothing modified' }));
-										}
-									}).catch(err => reject(ResponseUtility.ERROR({ message: '', error: err })));
+								// TeacherModel.update({ _id }, { availability })
+								// 	.then((modified) => {
+								// 		const { nModified } = modified;
+								// 		if (nModified) {
+								// 			resolve(ResponseUtility.SUCCESS);
+								// 		} else {
+								// 			resolve(ResponseUtility.ERROR({ message: 'Nothing modified' }));
+								// 		}
+								// 	}).catch(err => reject(ResponseUtility.ERROR({ message: '', error: err })));
 							})
 							.catch(err => resolve(ResponseUtility.ERROR({ message: 'Error sending email to teacher', error: err })));
 						// resolve(ResponseUtility.SUCCESS);
