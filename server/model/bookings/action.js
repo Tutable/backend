@@ -73,15 +73,7 @@ export default ({ id, bookingId, confirmed }) => new Promise((resolve, reject) =
 							 * @todo remove the availability slot
 							 * from the teacher list.
 							 */
-							// console.log({
-							// 	to: student.email,
-							// 	name: student.name,
-							// 	teacher: teacherDetails.name,
-							// 	teacher_image: teacherDetails.picture ? `http://localhost:3000/api/${teacherDetails}` : 'https://image.freepik.com/free-icon/male-user-shadow_318-34042.jpg',
-							// 	className: classDetails.name,
-							// 	time: slot || moment.unix(Date.now()).format('MM/DD/YYY'),
-							// });
-							// resolve();
+
 							// send the mail notification
 							TemplateMailServices.ClassConfirmedMail({
 								to: student.email,
