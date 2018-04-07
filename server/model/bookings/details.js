@@ -80,6 +80,7 @@ export default ({
 							slot,
 							confirmed,
 							completed,
+							cancelled,
 						},
 						$$populatedVirtuals: {
 							classDetails,
@@ -98,6 +99,7 @@ export default ({
 						deleted,
 						confirmed,
 						completed,
+						cancelled,
 						classDetails: {
 							id: classDetails._id,
 							name: classDetails.name,
