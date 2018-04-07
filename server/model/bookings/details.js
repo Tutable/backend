@@ -6,7 +6,7 @@ import {
 } from '../schemas';
 import database from '../../db';
 import { ResponseUtility } from '../../utility';
-import { BOOKING_TYPE, S3_CATEGORY } from '../../constants';
+import { BOOKING_TYPE, S3_TEACHER_CLASS, S3_STUDENT_PROFILE, S3_TEACHER_PROFILE } from '../../constants';
 
 const BookingsModel = database.model('Bookings', BookingSchema);
 const TeacherModel = database.model('Teachers', TeacherSchema);
@@ -102,18 +102,18 @@ export default ({
 							id: classDetails._id,
 							name: classDetails.name,
 							rate: classDetails.rate,
-							picture: classDetails.payload ? `/class/asset/${S3_CATEGORY}/${classDetails.payload}` : undefined,
+							picture: classDetails.payload ? `/class/asset/${S3_TEACHER_CLASS}/${classDetails.payload}` : undefined,
 						},
 						student: {
 							id: student._id,
 							name: student.name,
-							picture: student.picture ? `/student/asset/${S3_CATEGORY}/${student.picture}` : undefined,
+							picture: student.picture ? `/student/asset/${S3_STUDENT_PROFILE}/${student.picture}` : undefined,
 						},
 						teacher: {
 							id: teacherDetails._id,
 							name: teacherDetails.name,
 							availability: teacherDetails.availability,
-							picture: teacherDetails.picture ? `/teachers/asset/${teacherDetails.picture}` : undefined,
+							picture: teacherDetails.picture ? `/teachers/assets/${S3_TEACHER_PROFILE}/${teacherDetails.picture}` : undefined,
 						},
 					});
 				});
