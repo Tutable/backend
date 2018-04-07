@@ -6,7 +6,7 @@ import {
 } from '../schemas';
 import database from '../../db';
 import { ResponseUtility } from '../../utility';
-import { BOOKING_TYPE } from '../../constants';
+import { BOOKING_TYPE, S3_CATEGORY } from '../../constants';
 
 const BookingsModel = database.model('Bookings', BookingSchema);
 const TeacherModel = database.model('Teachers', TeacherSchema);
@@ -31,8 +31,8 @@ export default ({
 	page = 1,
 	limit = 30,
 }) => new Promise((resolve, reject) => {
-	const classPopulation = { path: 'classDetails', model: ClassModel, select: 'name rate' };
-	const studentPopulation = { path: 'student', model: StudentModel, select: 'name picture' };
+	const classPopulation = { path: 'classDetails', model: ClassModel, select: 'name rate payload' };
+	const studentPopulation = { path: 'student', model: StudentModel, select: 'name picture picture' };
 	const teacherPopulation = { path: 'teacherDetails', model: TeacherModel, select: 'name picture' };
 
 	const skip = limit * (page - 1);
@@ -70,15 +70,11 @@ export default ({
 			.populate(teacherPopulation)
 			.populate(classPopulation)
 			.then((bookings) => {
-				// console.log(bookings);
 				const finalBookings = [];
 				bookings.map((booking) => {
 					const {
 						_doc: {
 							_id,
-							// ref,
-							// teacher,
-							// by,
 							timestamp,
 							deleted,
 							confirmed,
@@ -104,21 +100,24 @@ export default ({
 							id: classDetails._id,
 							name: classDetails.name,
 							rate: classDetails.rate,
+							picture: classDetails.payload ? `/class/asset/${S3_CATEGORY}/${classDetails.payload}` : undefined,
 						},
 						student: {
 							id: student._id,
 							name: student.name,
+							picture: student.picture ? `/student/asset/${S3_CATEGORY}/${student.picture}` : undefined,
 						},
 						teacher: {
 							id: teacherDetails._id,
 							name: teacherDetails.name,
 							availability: teacherDetails.availability,
+							picture: teacherDetails.picture ? `/teachers/asset/${teacherDetails.picture}` : undefined,
 						},
 					});
 				});
 				resolve(ResponseUtility.SUCCESS_PAGINATION(finalBookings, page, limit));
 			})
-			.catch(err => reject(ResponseUtility.ERROR({ message: 'Error looking for books', error: err })));
+			.catch(err => reject(ResponseUtility.ERROR({ message: 'Error looking for bookings', error: err })));
 	} else {
 		reject(ResponseUtility.MISSING_REQUIRED_PROPS);
 	}
