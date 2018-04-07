@@ -88,7 +88,7 @@ const ClassDeclinedMail = ({ to, name, teacher, className }) => new Promise((res
 		const props = { name, teacher, class_name: className };
 		const compiled = template(props);
 
-		sendMail({ to, subject: 'Class confirmed!', html: compiled })
+		sendMail({ to, subject: 'Class declined!', html: compiled })
 			.then(success => resolve(success))
 			.catch(err => reject(err));
 	} else {
