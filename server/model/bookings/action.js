@@ -64,7 +64,7 @@ export default ({ id, bookingId, confirmed }) => new Promise((resolve, reject) =
 					},
 				} = booking;
 				// const lookupQuery = { $and: [{ _id: bookingId }, { teacher: id }] };
-				const updateQuery = confirmed ? { confirmed, cancelled: false } : { cancelled: true };
+				const updateQuery = confirmed ? { confirmed } : { cancelled: true };
 				BookingsModel.update(query, updateQuery)
 					.then((modified) => {
 						const { nModified } = modified;

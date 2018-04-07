@@ -61,7 +61,7 @@ export default ({
 			return reject(ResponseUtility.ERROR({ message: 'You are not authorized to access booking history of toher users.' }));
 		}
 
-		const query = { $and: [timelineQuery, primaryQuery, { deleted: false }] };
+		const query = { $and: [timelineQuery, primaryQuery, { deleted: false }, { confirmed: true }] };
 		const projection = { __v: 0 };
 		const options = { sort: { timestamp: -1 }, skip, limit };
 
