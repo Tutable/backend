@@ -7,7 +7,11 @@ import {
 } from '../schemas';
 import database from '../../db';
 import { ResponseUtility } from '../../utility';
-import { TemplateMailServices } from '../../services';
+import {
+	TemplateMailServices,
+	APNServices,
+} from '../../services';
+import { NotificationsServices } from '../../model';
 
 const BookingsModel = database.model('Bookings', BookingSchema);
 const StudentModel = database.model('Students', StudentSchema);
@@ -36,9 +40,9 @@ const TeacherModel = database.model('Teacher', TeacherSchema);
  */
 export default ({ id, bookingId, confirmed }) => new Promise((resolve, reject) => {
 
-	const studentPopulation = { path: 'student', model: StudentModel, select: 'name email' };
+	const studentPopulation = { path: 'student', model: StudentModel, select: 'name email deviceId' };
 	const classPopulation = { path: 'classDetails', model: ClassModel, select: 'name payload' };
-	const teacherPopulation = { path: 'teacherDetails', model: TeacherModel, select: 'name picture availability' };
+	const teacherPopulation = { path: 'teacherDetails', model: TeacherModel, select: 'name picture availability deviceId' };
 
 	if (id && bookingId && confirmed !== undefined) {
 		// assigned to the teacher, not deleted and haven't confirmed yet.
@@ -91,7 +95,27 @@ export default ({ id, bookingId, confirmed }) => new Promise((resolve, reject) =
 												className: classDetails.name,
 												time: slot || moment.unix(Object.keys(slot)[0]).format('MM/DD/YYY'),
 											})
-												.then(() => resolve(ResponseUtility.SUCCESS))
+												.then(() => {
+													/**
+													 * @todo push notification to student about acceptance
+													 * @todo remove notification from teachers notification screen.
+													 */
+													NotificationsServices.NotificationCreateService({
+														id: student._id,
+														bookingRef: bookingId,
+														originator: id,
+														time: Date.now(),
+														title: 'Confirmed your request',
+													})
+														.then(() => {
+															// push noitification here..
+															APNServices({ deviceToken: student.deviceId, alert: 'Class confirmed!', payload: {} })
+																.then(() => {
+																	resolve(ResponseUtility.SUCCESS);
+																}).catch(err => resolve(ResponseUtility.ERROR({ message: 'Error sending push notification', error: err })));
+														})
+														.catch(err => reject(ResponseUtility.ERROR({ message: 'Error pushing the notification', error: err })));
+												})
 												.catch(err => reject(ResponseUtility.ERROR({ message: 'Error sending mail', error: err })));
 										} else {
 											reject(ResponseUtility.ERROR({ message: 'Nothing modified' }));
@@ -106,7 +130,29 @@ export default ({ id, bookingId, confirmed }) => new Promise((resolve, reject) =
 									teacher: teacherDetails.name,
 									className: classDetails.name,
 								})
-									.then(() => resolve(ResponseUtility.SUCCESS))
+									.then(() => {
+										/**
+										 * @todo push notification to student about declining
+										 * @todo remove the notification from teacher notifications listing
+										 */
+										NotificationsServices.NotificationCreateService({
+											id: student._id,
+											bookingRef: bookingId,
+											originator: id,
+											time: Date.now(),
+											title: 'Declined your request',
+										})
+											.then(() => {
+												// push noitification here..
+												APNServices({ deviceToken: student.deviceId, alert: 'Class confirmed!', payload: {} })
+													.then(() => {
+														resolve(ResponseUtility.SUCCESS);
+													}).catch(err => resolve(ResponseUtility.ERROR({ message: 'Error sending push notification', error: err })));
+												// resolve(ResponseUtility.SUCCESS);
+											})
+											.catch(err => reject(ResponseUtility.ERROR({ message: 'Error pushing the notification', error: err })));
+										// resolve(ResponseUtility.SUCCESS);
+									})
 									.catch(err => reject(ResponseUtility.ERROR({ message: 'Error sending mail', error: err })));
 							}
 						} else {
