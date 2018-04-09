@@ -8,7 +8,6 @@ import {
 import { EmailServices, S3Services } from '../../services';
 import { S3_STUDENT_PROFILE } from '../../constants';
 
-
 const StudentModel = database.model('Student', StudentSchema);
 /**
  * microservice to register a new student into the system.
@@ -35,11 +34,24 @@ export default ({
 }) => new Promise((resolve, reject) => {
 	if (name && ((email && password) || (google || facebook))) {
 		// check if the user already exists
-		const query = { email };
+		// a common query to lookup for user email, facebook id or google id by a commong
+		// query function
+		let query;
+		if (facebook) {
+			query = { $and: [{ 'facebook.id': facebook.id }, { deleted: false }] };
+		} else if (google) {
+			query = { $and: [{ 'google.id': google.id }, { deleted: false }] };
+		} else {
+			query = { $and: [{ email }, { deleted: false }] };
+		}
 		StudentModel.findOne(query)
 			.then(async (student) => {
 				if (student) {
-					reject(ResponseUtility.ERROR({ message: 'User already exists' }));
+					// enhanced the response to support new feature of data
+					// by handling the backward compatility of the response
+					// the this function was previously sending.
+					reject(ResponseUtility.ERROR_DATA({ data: student, message: 'User already exists' }));
+					// reject(ResponseUtility.ERROR({ message: 'User already exists' }));
 				} else {
 					/**
 					 * check for image type,
@@ -47,10 +59,14 @@ export default ({
 					 * save the image url (in case of google and facebook),
 					 * picture field will be provided in case of email/password registration
 					 */
-					// console.log(typeof picture);					
-					const Key = `picture-${email}-${Date.now()}`;
+
+					// if picture does contains the binary data then map it's name to  S3 URL otherwise
+					// it represents an image URL sent via google or facebook API.
+					const Key = typeof picture === 'object' ? `picture-${email}-${Date.now()}` : picture;
 					const Bucket = S3_STUDENT_PROFILE;
-					if (picture) {
+					// if picture is object type then process uploading it otherwise
+					// skip this step
+					if (picture && typeof picture === 'object') {
 						try {
 							await S3Services.uploadToBucket({ Key, Bucket, data: picture });
 						} catch (err) {
@@ -65,6 +81,7 @@ export default ({
 						// also generate the verification code for email verification
 						verificationToken = RandomCodeUtility();
 					}
+
 					// create a new student
 					const studentObject = new StudentModel({
 						name,
@@ -94,7 +111,7 @@ export default ({
 								.then(() => resolve(ResponseUtility.SUCCESS))
 								.catch(err => reject(ResponseUtility.ERROR({ message: 'Error sending verification mail.', error: err })));
 						} else {
-							resolve(ResponseUtility.SUCCESS_MESSAGE({ message: 'Created new user' }));
+							resolve(ResponseUtility.SUCCESS_DATA({ message: 'Created new user', data: studentObject }));
 						}
 					});
 				}

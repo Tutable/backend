@@ -6,6 +6,7 @@
 import { StudentServices } from '../model';
 import commonResolver from './commonResolver';
 import commonPictureResolver from './commonPictureResolver';
+import commonSocialLoginResolver from './commonSocialLoginResolver';
 
 export default {
 	register: (req, res) => commonResolver(req, res, StudentServices.StudentsRegisterService),
@@ -15,4 +16,5 @@ export default {
 	password: (req, res) => commonResolver(req, res, StudentServices.StudentsChangePasswordService),
 	update: (req, res) => commonResolver(req, res, StudentServices.StudentsUpdateService),
 	asset: commonPictureResolver,
+	socialLogin: (req, res) => commonSocialLoginResolver(req, res, StudentServices.StudentsRegisterService),
 };

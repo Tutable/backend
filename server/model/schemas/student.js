@@ -6,15 +6,17 @@ const Student = new Schema({
 	picture: String,
 	password: String,
 	google: {
-		id: Number,
+		id: String,
 		accessToken: String,
+		refreshToken: String,
 		firstName: String,
 		lastName: String,
 		email: String,
 	}, // if authenticated via google
 	facebook: {
-		id: Number,
+		id: String,
 		accessToken: String,
+		refreshToken: String,
 		firstName: String,
 		lastName: String,
 		email: String,
