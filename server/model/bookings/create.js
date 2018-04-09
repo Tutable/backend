@@ -2,14 +2,20 @@ import {
 	BookingSchema,
 	ClassSchema,
 	TeacherSchema,
+	NotificationSchema,
 } from '../schemas';
 import database from '../../db';
 import { ResponseUtility } from '../../utility';
-import { EmailServices } from '../../services';
+import {
+	EmailServices,
+	APNServices,
+} from '../../services';
+
+const TeacherModel = database.model('Teacher', TeacherSchema);
+const ClassModel = database.model('Classes', ClassSchema);
+const NotificationModel = database.model('Notifications', NotificationSchema);
 
 const BookingsModel = database.model('Bookings', BookingSchema);
-const ClassModel = database.model('Classes', ClassSchema);
-const TeacherModel = database.model('Teacher', TeacherSchema);
 
 /**
  * microservice to create a new class booking into the system
@@ -50,6 +56,7 @@ export default ({
 							name,
 							email,
 							availability,
+							deviceId,
 						},
 					},
 				} = classDetails;
@@ -73,14 +80,21 @@ export default ({
 				if (!containsSlot) {
 					return reject(ResponseUtility.ERROR({ message: 'Teacher not available for specified time slot.' }));
 				}
+				const date = new Date(Number(slotTimestamp));
+				const hours = Number(containsSlot.charAt(0));
+				const newDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), hours, 0, 0);
+
+				console.log(newDate.getTime());
 				// console.log('Yes. It contains slot.');
 				// add a new booking
+				const eventTimeline = newDate.getTime();
 				const bookingObject = new BookingsModel({
 					by: id,
 					ref,
 					teacher: _id,
 					slot,
 					timestamp: Date.now(),
+					timeline: eventTimeline,
 					deleted: false,
 					confirmed: false,
 					cancelled: false,
@@ -88,25 +102,40 @@ export default ({
 				});
 
 				bookingObject.save()
-					.then(() => {
+					.then((doc) => {
 						EmailServices({ to: email, subject: `Request to attend ${_doc.name} class`, text: `${name} has requested you to attend ${_doc.name} class.` })
 							.then(() => {
 								// trigger removing the assigned slot from the teachers
 								// availability
 								// const availabilityObject = Object.assign({}, availability);
 								// availabilityObject[requestedSlot].splice(availabilityObject[requestedSlot].indexOf(slot[requestedSlot].toString()), 1);
+								/**
+								 * @todo handle push notifications
+								 * @todo handle notiifcation push
+								 */
+								const notificationObject = new NotificationModel({
+									ref: _id,	// notification for
+									bookingRef: doc._id,	// the id of booking
+									originator: doc.by,		// id of the student
+									time: doc.timeline,
+									title: 'Requested for class',
+									deleted: false,
+									timestamp: Date.now(),
+								});
 
-								resolve(ResponseUtility.SUCCESS);
-								// console.log(availabilityObject);
-								// TeacherModel.update({ _id }, { availability })
-								// 	.then((modified) => {
-								// 		const { nModified } = modified;
-								// 		if (nModified) {
-								// 			resolve(ResponseUtility.SUCCESS);
-								// 		} else {
-								// 			resolve(ResponseUtility.ERROR({ message: 'Nothing modified' }));
-								// 		}
-								// 	}).catch(err => reject(ResponseUtility.ERROR({ message: '', error: err })));
+								notificationObject.save().then(() => {
+									// send push notification
+									if (deviceId) {
+										APNServices({ deviceToken: deviceId, alert: 'Request to attend class', payload: {} })
+											.then(() => resolve(ResponseUtility.SUCCESS))
+											.catch(err => reject(ResponseUtility.ERROR({ message: 'Error sending push notification', error: err })));
+									} else {
+										return resolve(ResponseUtility.SUCCESS_MESSAGE({ message: 'Push notification not sent.' }));
+									}
+								}).catch((err) => {
+									reject(ResponseUtility.ERROR({ message: 'Error saving notification', error: err }));
+								});
+								// resolve(ResponseUtility.SUCCESS);
 							})
 							.catch(err => resolve(ResponseUtility.ERROR({ message: 'Error sending email to teacher', error: err })));
 						// resolve(ResponseUtility.SUCCESS);

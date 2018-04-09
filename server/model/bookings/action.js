@@ -109,6 +109,9 @@ export default ({ id, bookingId, confirmed }) => new Promise((resolve, reject) =
 													})
 														.then(() => {
 															// push noitification here..
+															if (!student.deviceId) {
+																return resolve(ResponseUtility.ERROR({ message: 'Cannot send APN without deviceId' }));
+															}
 															APNServices({ deviceToken: student.deviceId, alert: 'Class confirmed!', payload: {} })
 																.then(() => {
 																	resolve(ResponseUtility.SUCCESS);
@@ -144,6 +147,9 @@ export default ({ id, bookingId, confirmed }) => new Promise((resolve, reject) =
 										})
 											.then(() => {
 												// push noitification here..
+												if (!student.deviceId) {
+													return resolve(ResponseUtility.ERROR({ message: 'Cannot send APN without device id' }));
+												}
 												APNServices({ deviceToken: student.deviceId, alert: 'Class confirmed!', payload: {} })
 													.then(() => {
 														resolve(ResponseUtility.SUCCESS);
