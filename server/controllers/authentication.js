@@ -23,10 +23,10 @@ const prepareDecodedData = ({ authorization, type }) => new Promise((resolve, re
 		const { data: { email, _id, role } } = decoded;
 		if (type === 'global') {
 			if (APPLICATION_ROLES.find(validRole => validRole === role)) {
-				return resolve({ type, email, id: _id });
+				return resolve({ type, email, id: _id, role });
 			}
 		} else if (role === type) {
-			return resolve({ type, email, id: _id });
+			return resolve({ type, email, id: _id, role });
 		}
 	}
 	reject();

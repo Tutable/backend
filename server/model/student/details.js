@@ -31,7 +31,7 @@ export default ({ id, email }) => new Promise((resolve, reject) => {
 		};
 		StudentModel.findOne(query, projection)
 			.then((student) => {
-				console.log(student);
+				// console.log(student);
 				if (student) {
 					const {
 						_doc: {

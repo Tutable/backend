@@ -37,6 +37,11 @@ Notification.virtual('teacher', {
 	foreignField: '_id',
 	justOne: true,
 });
-
+Notification.virtual('booking', {
+	ref: 'Bookings',
+	localField: 'bookingRef',
+	foreignField: '_id',
+	justOne: true,
+});
 
 export default Notification;

@@ -26,17 +26,17 @@ export default ({
 }) => new Promise((resolve, reject) => {
 	if (id) {
 		const skip = limit * (page - 1);
-		const query = { $and: [{ _id: id }, { deleted: false }] };
+		const query = { $and: [{ ref: id }, { deleted: false }] };
 		const projection = { __v: 0 };
 		const options = { sort: { timestamp: -1 }, skip, limit };
 
 		let populationQuery;
 		switch (role) {
 			case 'teacher':
-				populationQuery = { path: 'teacher', model: TeacherModel, select: 'name email picture' };
+				populationQuery = { path: 'student', model: TeacherModel, select: 'name email picture' };
 				break;
 			case 'student':
-				populationQuery = { path: 'student', model: StudentModel, select: 'name email picture' };
+				populationQuery = { path: 'teacher', model: StudentModel, select: 'name email picture' };
 				break;
 			default:
 				break;
@@ -47,6 +47,8 @@ export default ({
 			.then((notifications) => {
 				if (notifications && notifications.length) {
 					resolve(ResponseUtility.SUCCESS_PAGINATION(notifications, page, limit));
+				} else {
+					reject(ResponseUtility.ERROR({ message: 'Nothing found!' }));
 				}
 			}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error looking for notifications', error: err })));
 	} else {
