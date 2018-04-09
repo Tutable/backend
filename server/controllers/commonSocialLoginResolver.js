@@ -14,10 +14,13 @@ import { TokenUtility } from '../utility';
 */
 export default (req, res, modelPromise) => {
 	const { body } = req;
-	modelPromise(body).then(
-		// return the generated token
-		// success => res.status(200).send(success),
-		success => res.status(200).send({ code: 100, message: 'Authenticated', accessToken: TokenUtility.generateToken(success.data) }),
-		error => res.status(200).send({ code: 100, message: 'Authenticated', accessToken: TokenUtility.generateToken(error.data) }),
-	);
+	modelPromise(body).then((success) => {
+		const { data } = success;
+		data.role = 'student';
+		res.status(200).send({ code: 100, message: 'Authenticated', accessToken: TokenUtility.generateToken(data) });
+	}).catch((err) => {
+		const { data } = err;
+		data.role = 'student';
+		res.status(200).send({ code: 100, message: 'Authenticated', accessToken: TokenUtility.generateToken(data) });
+	});
 };

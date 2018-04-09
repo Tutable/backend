@@ -9,6 +9,7 @@ import { EmailServices, S3Services } from '../../services';
 import { S3_STUDENT_PROFILE } from '../../constants';
 
 const StudentModel = database.model('Student', StudentSchema);
+const keys = ['__v', 'password', 'verificationToken', 'verificationTokenTimestamp', 'passChangeToken', 'passChangeTimestamp'];
 /**
  * microservice to register a new student into the system.
  * This will first check the students email existence
@@ -50,7 +51,9 @@ export default ({
 					// enhanced the response to support new feature of data
 					// by handling the backward compatility of the response
 					// the this function was previously sending.
-					reject(ResponseUtility.ERROR_DATA({ data: student, message: 'User already exists' }));
+					const refactoredObject = Object.assign({}, student._doc);
+					keys.map(key => delete refactoredObject[key]);
+					reject(ResponseUtility.ERROR_DATA({ data: refactoredObject, message: 'User already exists' }));
 					// reject(ResponseUtility.ERROR({ message: 'User already exists' }));
 				} else {
 					/**
@@ -90,7 +93,7 @@ export default ({
 						address: address ? {
 							location: address,
 						} : undefined,
-						picture: typeof picture === 'object' ? Key : picture,
+						picture: Key,
 						google,
 						facebook,
 						profileCompleted: address ? true : false,
@@ -111,7 +114,9 @@ export default ({
 								.then(() => resolve(ResponseUtility.SUCCESS))
 								.catch(err => reject(ResponseUtility.ERROR({ message: 'Error sending verification mail.', error: err })));
 						} else {
-							resolve(ResponseUtility.SUCCESS_DATA({ message: 'Created new user', data: studentObject }));
+							const refactoredObject = Object.assign({}, studentObject._doc);
+							keys.map(key => delete refactoredObject[key]);
+							resolve(ResponseUtility.SUCCESS_DATA(refactoredObject));
 						}
 					});
 				}
