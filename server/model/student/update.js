@@ -65,7 +65,7 @@ export default ({
 						});
 					}
 
-					StudentModel.update(updateQuery)
+					StudentModel.update({ _id: id }, updateQuery)
 						.then((modified) => {
 							const { nModified } = modified;
 							if (nModified) {
@@ -82,7 +82,7 @@ export default ({
 					location: address,
 				} : undefined,
 			});
-			StudentModel.update(updateQuery)
+			StudentModel.update({ _id: id }, updateQuery)
 				.then((modified) => {
 					const { nModified } = modified;
 					if (nModified) {
