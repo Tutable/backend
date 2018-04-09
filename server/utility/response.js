@@ -14,6 +14,12 @@ const SUCCESS_PAGINATION = (data, page, limit) => ({ code: 100, message: 'succes
 const NOT_VERIFIED = { code: 105, message: 'User is not verified. Verify with the token sent via email or regenerate token.' };
 const DATABASE_ERROR = error => ({ code: 103, message: 'Database error.', error });
 const ERROR = ({ error, message = 'error' }) => ({ code: 104, message, error });
+const ERROR_DATA = ({ error, message, data }) => ({
+	code: 104,
+	error,
+	message,
+	data,
+});
 const USER_NOT_FOUND = { code: 104, message: 'Requested user not found' };
 
 export default {
@@ -26,4 +32,5 @@ export default {
 	ERROR,
 	USER_NOT_FOUND,
 	NOT_VERIFIED,
+	ERROR_DATA,
 };
