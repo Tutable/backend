@@ -50,7 +50,7 @@ export default ({ id, email }) => new Promise((resolve, reject) => {
 						id: _id,
 						name,
 						email,
-						picture: picture ? `/student/asset/${S3_STUDENT_PROFILE}/${picture}` : undefined,
+						picture: picture ? picture.indexOf('http') !== -1 ?  picture :  `/student/asset/${S3_STUDENT_PROFILE}/${picture}` : undefined,
 						profileCompleted,
 						created,
 						isVerified,
