@@ -11,5 +11,6 @@ export default {
 	create: (req, res) => commonResolver(req, res, ClassServices.ClassCreateService),
 	details: (req, res) => commonResolver(req, res, ClassServices.ClassDetailsService),
 	list: (req, res) => commonResolver(req, res, ClassServices.ClassListService),
+	update: (req, res) => commonResolver(req, res, ClassServices.ClassUpdateService),
 	assets: commonPictureResolver,
 };

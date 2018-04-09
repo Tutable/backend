@@ -11,7 +11,7 @@ const { APPLE_BUNDLE, APPLE_KEYID, APPLE_TEAMID } = process.env;
 
 const options = {
 	token: {
-		key: path.resolve(__dirname, '../../', 'configurations', 'AuthKey_RKFHRAZ4VF-key.p8'),
+		key: path.resolve(__dirname, '../../', 'configurations', 'AuthKey_WVQA5XXHGL.p8'),
 		keyId: APPLE_KEYID,
 		teamId: APPLE_TEAMID,
 	},
