@@ -6,7 +6,7 @@
 import { Schema } from 'mongoose';
 
 const Notification = new Schema({
-	ref: String, // id of teacher to show this notification
+	ref: String, // id of user to show this notification
 	bookingRef: String, // the booking reference number
 	/**
 	 * id of student user who raised this notification.
