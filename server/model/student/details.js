@@ -31,6 +31,7 @@ export default ({ id, email }) => new Promise((resolve, reject) => {
 		};
 		StudentModel.findOne(query, projection)
 			.then((student) => {
+				console.log(student);
 				if (student) {
 					const {
 						_doc: {
@@ -43,6 +44,8 @@ export default ({ id, email }) => new Promise((resolve, reject) => {
 							isVerified,
 							deleted,
 							address,
+							google,
+							facebook,
 						},
 					} = student;
 
@@ -55,6 +58,8 @@ export default ({ id, email }) => new Promise((resolve, reject) => {
 						created,
 						isVerified,
 						deleted,
+						google,
+						facebook,
 						address,
 					}));
 				}
