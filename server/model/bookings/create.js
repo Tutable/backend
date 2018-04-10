@@ -2,6 +2,7 @@ import {
 	BookingSchema,
 	ClassSchema,
 	TeacherSchema,
+	StudentSchema,
 	NotificationSchema,
 } from '../schemas';
 import database from '../../db';
@@ -15,6 +16,7 @@ import { NOTIFICATION_TYPE } from '../../constants';
 
 const TeacherModel = database.model('Teacher', TeacherSchema);
 const ClassModel = database.model('Classes', ClassSchema);
+const StudentModel = database.model('Student', StudentSchema);
 const NotificationModel = database.model('Notifications', NotificationSchema);
 
 const BookingsModel = database.model('Bookings', BookingSchema);
@@ -104,10 +106,10 @@ export default ({
 				});
 
 				bookingObject.save()
-					.then((doc) => {
-						// TemplateMailServices.ClassRequest({ to: email, name, student: _doc.name, student: name, className:});
-						// TemplateMailServices.ClassRequest({ to: email, name, student, });
-						EmailServices({ to: email, subject: `Request to attend ${_doc.name} class`, text: `${name} has requested you to attend ${_doc.name} class.` })
+					.then(async (doc) => {
+						// fetch the the student details
+						const student = await StudentModel.findOne({ _id: id }, { name: 1 });
+						TemplateMailServices.ClassRequest({ to: email, name, student: student.name, className: _doc.name, time: new Date(Number(eventTimeline)).toString() })
 							.then(() => {
 								// trigger removing the assigned slot from the teachers
 								// availability
@@ -124,7 +126,7 @@ export default ({
 									time: doc.timeline,
 									title: 'Requested for class',
 									deleted: false,
-									timestamp: Date.now(),
+									timestamp: eventTimeline.toString(),
 								});
 
 								notificationObject.save().then(() => {
@@ -141,7 +143,6 @@ export default ({
 								});
 							})
 							.catch(err => resolve(ResponseUtility.ERROR({ message: 'Error sending email to teacher', error: err })));
-						// resolve(ResponseUtility.SUCCESS);
 					})
 					.catch(err => reject(ResponseUtility.ERROR({ message: 'Error saving booking', error: err })));
 			})

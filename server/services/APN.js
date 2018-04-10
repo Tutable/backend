@@ -5,7 +5,7 @@
  */
 import apn from 'apn';
 import path from 'path';
-import { ERROR, SUCCESS } from '../utility';
+import { ResponseUtility } from '../utility';
 
 const { APPLE_BUNDLE, APPLE_KEYID, APPLE_TEAMID } = process.env;
 
@@ -44,12 +44,10 @@ export default ({
 	notification.topic = APPLE_BUNDLE;
 
 	apnProvider.send(notification, deviceToken).then((result) => {
-		console.log(result);
-		console.log(result.failed[0].response);
 		apnProvider.shutdown();
-		resolve(SUCCESS);
+		resolve(ResponseUtility.SUCCESS);
 	}).catch((err) => {
 		apnProvider.shutdown();
-		reject(ERROR({ message: 'Error sending push notitication', error: err }));
+		reject(ResponseUtility.ERROR({ message: 'Error sending push notitication', error: err }));
 	});
 });

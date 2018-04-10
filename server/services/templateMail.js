@@ -140,10 +140,11 @@ const ClassRequest = ({ to, name, student, className, time }) => new Promise((re
 		const props = { name, student, class_name: className, time };
 		const compiled = template(props);
 
-		sendMail({ to, subject: 'Your tutable verification code', html: compiled })
+		sendMail({ to, subject: 'Request for new class', html: compiled })
 			.then(success => resolve(success))
 			.catch(err => reject(err));
 	} else {
+		// console.log('here')
 		reject(ResponseUtility.MISSING_REQUIRED_PROPS);
 	}
 });
