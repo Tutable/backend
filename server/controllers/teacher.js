@@ -15,5 +15,10 @@ export default {
 	resendVerifiation: (req, res) => commonResolver(req, res, TeacherServices.TeacherResendVerificationService),
 	passwordToken: (req, res) => commonResolver(req, res, TeacherServices.TeacherPasswordTokenService),
 	changePassword: (req, res) => commonResolver(req, res, TeacherServices.TeacherChangePasswordService),
+	resetNotifications: (req, res) => {
+		TeacherServices.TeacherUpdateService({ id: req.body.id, notifications: 0 })
+			.then(success => res.status(200).send(success))
+			.catch(err => res.status(200).send(err));
+	},
 	assets: commonPictureResolver,
 };

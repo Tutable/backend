@@ -15,6 +15,11 @@ export default {
 	details: (req, res) => commonResolver(req, res, StudentServices.StudentsDetailsService),
 	password: (req, res) => commonResolver(req, res, StudentServices.StudentsChangePasswordService),
 	update: (req, res) => commonResolver(req, res, StudentServices.StudentsUpdateService),
-	asset: commonPictureResolver,
 	socialLogin: (req, res) => commonSocialLoginResolver(req, res, StudentServices.StudentsRegisterService),
+	resetNotifications: (req, res) => {
+		StudentServices.StudentsUpdateService({ id: req.body.id, notifications: 0 })
+			.then(success => res.status(200).send(success))
+			.catch(err => res.status(200).send(err));
+	},
+	asset: commonPictureResolver,
 };
