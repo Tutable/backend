@@ -41,10 +41,13 @@ export default ({
 		let timelineQuery;
 		switch (bookingType) {
 			case BOOKING_TYPE.PAST:
-				timelineQuery = { $and: [{ timeline: { $lte: now } }, { confirmed: true }] };
+				// the cancelled events would be treated as past events
+				timelineQuery = { $or: [{ timeline: { $lte: now } }, { cancelled: true }] };
 				break;
 			case BOOKING_TYPE.UPCOMING:
-				timelineQuery = { $and: [{ timeline: { $lte: now } }, { confirmed: true }] };
+				// accepted events having timelines greater than the current time are treated as
+				// upcoming events
+				timelineQuery = { $and: [{ timeline: { $gte: now } }, { confirmed: true }] };
 				break;
 			case BOOKING_TYPE.BOTH:
 				timelineQuery = {};
@@ -54,9 +57,9 @@ export default ({
 		}
 		let primaryQuery;
 		if (teacherId && teacherId === id) {
-			primaryQuery = { teacher: teacherId };
+			primaryQuery = { $and: [{ teacher: teacherId }, { deleted: false }] };
 		} else if (studentId && studentId === id) {
-			primaryQuery = { by: studentId };
+			primaryQuery = { $and: [{ by: studentId }, { deleted: false }] };
 		} else {
 			return reject(ResponseUtility.ERROR({ message: 'You are not authorized to access booking history of other users.' }));
 		}
@@ -92,9 +95,6 @@ export default ({
 						id: _id,
 						_id: undefined,
 						slot,
-						// class: ref,
-						// by,
-						// teacher,
 						timestamp,
 						deleted,
 						confirmed,
