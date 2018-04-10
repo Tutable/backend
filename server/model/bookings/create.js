@@ -8,8 +8,10 @@ import database from '../../db';
 import { ResponseUtility } from '../../utility';
 import {
 	EmailServices,
+	TemplateMailServices,
 	APNServices,
 } from '../../services';
+import { NOTIFICATION_TYPE } from '../../constants';
 
 const TeacherModel = database.model('Teacher', TeacherSchema);
 const ClassModel = database.model('Classes', ClassSchema);
@@ -103,6 +105,8 @@ export default ({
 
 				bookingObject.save()
 					.then((doc) => {
+						// TemplateMailServices.ClassRequest({ to: email, name, student: _doc.name, student: name, className:});
+						// TemplateMailServices.ClassRequest({ to: email, name, student, });
 						EmailServices({ to: email, subject: `Request to attend ${_doc.name} class`, text: `${name} has requested you to attend ${_doc.name} class.` })
 							.then(() => {
 								// trigger removing the assigned slot from the teachers
@@ -126,7 +130,7 @@ export default ({
 								notificationObject.save().then(() => {
 									// send push notification
 									if (deviceId) {
-										APNServices({ deviceToken: deviceId, alert: 'Request to attend class', payload: { ref: _id } })
+										APNServices({ deviceToken: deviceId, alert: 'Request to attend class', payload: { ref: _id, type: NOTIFICATION_TYPE.BOOKING_REQUEST } })
 											.then(() => resolve(ResponseUtility.SUCCESS))
 											.catch(err => reject(ResponseUtility.ERROR({ message: 'Error sending push notification', error: err })));
 									} else {

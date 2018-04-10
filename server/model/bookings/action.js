@@ -12,6 +12,7 @@ import {
 	APNServices,
 } from '../../services';
 import { NotificationsServices } from '../../model';
+import { NOTIFICATION_TYPE } from '../../constants';
 
 const BookingsModel = database.model('Bookings', BookingSchema);
 const StudentModel = database.model('Students', StudentSchema);
@@ -112,10 +113,9 @@ export default ({ id, bookingId, confirmed }) => new Promise((resolve, reject) =
 															if (!student.deviceId) {
 																return resolve(ResponseUtility.ERROR({ message: 'Cannot send APN without deviceId' }));
 															}
-															APNServices({ deviceToken: student.deviceId, alert: 'Class confirmed!', payload: {} })
-																.then(() => {
-																	resolve(ResponseUtility.SUCCESS);
-																}).catch(err => resolve(ResponseUtility.ERROR({ message: 'Error sending push notification', error: err })));
+															APNServices({ deviceToken: student.deviceId, alert: 'Class confirmed', payload: { type: NOTIFICATION_TYPE.BOOKING_ACCEPTED } })
+																.then(() => resolve(ResponseUtility.SUCCESS))
+																.catch(err => resolve(ResponseUtility.ERROR({ message: 'Error sending push notification', error: err })));
 														})
 														.catch(err => reject(ResponseUtility.ERROR({ message: 'Error pushing the notification', error: err })));
 												})
@@ -150,11 +150,10 @@ export default ({ id, bookingId, confirmed }) => new Promise((resolve, reject) =
 												if (!student.deviceId) {
 													return resolve(ResponseUtility.ERROR({ message: 'Cannot send APN without device id' }));
 												}
-												APNServices({ deviceToken: student.deviceId, alert: 'Class confirmed!', payload: {} })
+												APNServices({ deviceToken: student.deviceId, alert: 'Class declined', payload: { type: NOTIFICATION_TYPE.BOOKING_REJECTED } })
 													.then(() => {
 														resolve(ResponseUtility.SUCCESS);
 													}).catch(err => resolve(ResponseUtility.ERROR({ message: 'Error sending push notification', error: err })));
-												// resolve(ResponseUtility.SUCCESS);
 											})
 											.catch(err => reject(ResponseUtility.ERROR({ message: 'Error pushing the notification', error: err })));
 										// resolve(ResponseUtility.SUCCESS);

@@ -64,3 +64,9 @@ export const BOOKING_TYPE = {
 	PAST: 2,
 	BOTH: 3,
 };
+
+export const NOTIFICATION_TYPE = {
+	BOOKING_REQUEST: 1,
+	BOOKING_ACCEPTED: 2,
+	BOOKING_REJECTED: 3,
+};

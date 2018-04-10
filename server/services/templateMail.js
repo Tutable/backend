@@ -130,10 +130,29 @@ const VerificationToken = ({ to, name, code }) => new Promise((resolve, reject) 
 	}
 });
 
+/**
+ * send the class request mail to teacher
+*/
+const ClassRequest = ({ to, name, student, className, time }) => new Promise((resolve, reject) => {
+	if (to && name && student && className && time) {
+		const html = fs.readFileSync(path.resolve(__dirname, 'template', 'class_request.html'), { encoding: 'utf-8' });
+		const template = handlebars.compile(html);
+		const props = { name, student, class_name: className, time };
+		const compiled = template(props);
+
+		sendMail({ to, subject: 'Your tutable verification code', html: compiled })
+			.then(success => resolve(success))
+			.catch(err => reject(err));
+	} else {
+		reject(ResponseUtility.MISSING_REQUIRED_PROPS);
+	}
+});
+
 export default {
 	NewAccountMail,
 	ClassConfirmedMail,
 	ClassDeclinedMail,
 	ChangePasswordToken,
 	VerificationToken,
+	ClassRequest,
 };
