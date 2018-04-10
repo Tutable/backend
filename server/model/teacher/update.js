@@ -29,10 +29,11 @@ export default ({
 	degreeAsset,
 	picture,
 	deviceId,
+	notifications,
 }) => new Promise(async (resolve, reject) => {
 	if (id && (name || dob || gender || bio || availability ||
 		address || degree || qualification || school || degreeAsset ||
-		picture || email || deviceId)) {
+		picture || email || deviceId || notifications !== undefined)) {
 		// check if teacher exists
 		const query = { _id: id };
 		TeacherModel.findOne(query)
@@ -83,6 +84,7 @@ export default ({
 						degreeAsset: degreeAssetURL,
 						picture: pictureURL,
 						deviceId,
+						notifications,
 					});
 					if (email) {
 						// check if email already assigned to someone else
@@ -104,6 +106,7 @@ export default ({
 											degreeAsset: degreeAssetURL,
 											picture: pictureURL,
 											deviceId,
+											notifications,
 										});
 									} catch (err) {
 										resolve(ResponseUtility.SUCCESS_MESSAGE({ message: 'Nothing updated' }));

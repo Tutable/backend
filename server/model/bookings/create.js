@@ -43,7 +43,7 @@ export default ({
 		 * verify whether the provided slot is valid or not.
 		 */
 
-		const teacherPopulation = { path: 'teacher', model: TeacherModel, select: 'name email availability deviceId' };
+		const teacherPopulation = { path: 'teacher', model: TeacherModel, select: 'name email availability deviceId notifications' };
 		// check if user has already enrolled in this class
 		// const checkQuery = { $and: [{ by: id }, { ref }] };
 		// fetch the class details along with teacher email
@@ -61,6 +61,7 @@ export default ({
 							email,
 							availability,
 							deviceId,
+							notifications,
 						},
 					},
 				} = classDetails;
@@ -133,7 +134,7 @@ export default ({
 								notificationObject.save().then(() => {
 									// send push notification
 									if (deviceId) {
-										APNServices({ deviceToken: deviceId, alert: 'Request to attend class', payload: { ref: _id, type: NOTIFICATION_TYPE.BOOKING_REQUEST } })
+										APNServices({ deviceToken: deviceId, alert: 'Request to attend class', payload: { ref: _id, type: NOTIFICATION_TYPE.BOOKING_REQUEST }, badge: notifications ? notifications + 1 : 0 })
 											.then(() => resolve(ResponseUtility.SUCCESS))
 											.catch(err => reject(ResponseUtility.ERROR({ message: 'Error sending push notification', error: err })));
 									} else {

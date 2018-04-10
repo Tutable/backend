@@ -106,6 +106,7 @@ export default ({
 						deleted: false,
 						verificationToken,
 						verificationTokenTimestamp: Date.now(),
+						notifications: 0,
 					});
 
 					studentObject.save().then(() => {

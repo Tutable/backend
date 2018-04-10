@@ -23,8 +23,9 @@ export default ({
 	name,
 	address,
 	deviceId,
+	notifications,
 }) => new Promise(async (resolve, reject) => {
-	if (id && (email || picture || name || address || deviceId)) {
+	if (id && (email || picture || name || address || deviceId || notifications !== undefined)) {
 		const query = { _id: id };
 		const Key = `picture-${id}-${Date.now()}`;
 		if (picture) {
@@ -55,6 +56,7 @@ export default ({
 								location: address,
 							} : undefined,
 							deviceId,
+							notifications,
 						});
 					} else {
 						updateQuery = await SchemaMapperUtility({
@@ -65,6 +67,7 @@ export default ({
 								location: address,
 							} : undefined,
 							deviceId,
+							notifications,
 						});
 					}
 
@@ -85,6 +88,7 @@ export default ({
 					location: address,
 				} : undefined,
 				deviceId,
+				notifications,
 			});
 			StudentModel.update({ _id: id }, updateQuery)
 				.then((modified) => {

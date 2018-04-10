@@ -45,6 +45,7 @@ export default ({
 						deleted: false,
 						blocked: false,
 						isVerified: false,
+						notifications: 0,
 					});
 
 					teacherModel.save().then(() => {

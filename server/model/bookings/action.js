@@ -41,7 +41,7 @@ const TeacherModel = database.model('Teacher', TeacherSchema);
  */
 export default ({ id, bookingId, confirmed }) => new Promise((resolve, reject) => {
 
-	const studentPopulation = { path: 'student', model: StudentModel, select: 'name email deviceId' };
+	const studentPopulation = { path: 'student', model: StudentModel, select: 'name email deviceId notifications' };
 	const classPopulation = { path: 'classDetails', model: ClassModel, select: 'name payload' };
 	const teacherPopulation = { path: 'teacherDetails', model: TeacherModel, select: 'name picture availability deviceId' };
 
@@ -115,7 +115,7 @@ export default ({ id, bookingId, confirmed }) => new Promise((resolve, reject) =
 															if (!student.deviceId) {
 																return resolve(ResponseUtility.ERROR({ message: 'Cannot send APN without deviceId' }));
 															}
-															APNServices({ deviceToken: student.deviceId, alert: 'Class confirmed', payload: { type: NOTIFICATION_TYPE.BOOKING_ACCEPTED } })
+															APNServices({ deviceToken: student.deviceId, alert: 'Class confirmed', payload: { type: NOTIFICATION_TYPE.BOOKING_ACCEPTED }, badge: student.notifications ? student.notifications + 1 : 0 })
 																.then(() => resolve(ResponseUtility.SUCCESS))
 																.catch(err => resolve(ResponseUtility.ERROR({ message: 'Error sending push notification', error: err })));
 														})
@@ -153,7 +153,7 @@ export default ({ id, bookingId, confirmed }) => new Promise((resolve, reject) =
 												if (!student.deviceId) {
 													return resolve(ResponseUtility.ERROR({ message: 'Cannot send APN without device id' }));
 												}
-												APNServices({ deviceToken: student.deviceId, alert: 'Class declined', payload: { type: NOTIFICATION_TYPE.BOOKING_REJECTED } })
+												APNServices({ deviceToken: student.deviceId, alert: 'Class declined', payload: { type: NOTIFICATION_TYPE.BOOKING_REJECTED }, badge: student.notifications ? student.notifications + 1 : 0 })
 													.then(() => {
 														resolve(ResponseUtility.SUCCESS);
 													}).catch(err => resolve(ResponseUtility.ERROR({ message: 'Error sending push notification', error: err })));

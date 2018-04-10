@@ -29,6 +29,7 @@ const Teacher = new Schema({
 	passChangeToken: Number,
 	passChangeTimestamp: Number,
 	deviceId: String,
+	notifications: Number,
 });
 
 export default Teacher;
