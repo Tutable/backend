@@ -4,7 +4,7 @@ import {
 	ResponseUtility,
 	RandomCodeUtility,
 } from '../../utility';
-import { EmailServices } from '../../services';
+import { TemplateMailServices } from '../../services';
 import { TOKEN_TYPE } from '../../constants';
 
 const StudentModel = database.model('Student', StudentSchema);
@@ -20,21 +20,21 @@ const StudentModel = database.model('Student', StudentSchema);
  */
 export default ({ email, tokenType = undefined }) => new Promise((resolve, reject) => {
 	if (email && tokenType) {
-		let subject;
-		let text;
+		// let subject;
+		// let text;
 		let updateQuery;
 		let checkTimestamp;
 		const code = RandomCodeUtility();
 		switch (tokenType) {
 			case TOKEN_TYPE.PASS_CHANGE:
-				subject = 'Password change token for tutable student account';
-				text = `Your password change token is ${code}`;
+				// subject = 'Password change token for tutable student account';
+				// text = `Your password change token is ${code}`;
 				updateQuery = { email, passChangeToken: code, passChangeTimestamp: Date.now() };
 				checkTimestamp = 'passChangeTimestamp';
 				break;
 			case TOKEN_TYPE.VERIFICATION:
-				subject = 'Verification code for tutable student account';
-				text = `Your verification code is ${code}.`;
+				// subject = 'Verification code for tutable student account';
+				// text = `Your verification code is ${code}.`;
 				updateQuery = { email, verificationToken: code, verificationTokenTimestamp: Date.now() };
 				checkTimestamp = 'verificationTokenTimestamp';
 				break;
@@ -58,9 +58,28 @@ export default ({ email, tokenType = undefined }) => new Promise((resolve, rejec
 						.then((modified) => {
 							const { nModified } = modified;
 							if (nModified) {
-								EmailServices({ to: email, subject, text })
-									.then(() => resolve(ResponseUtility.SUCCESS))
-									.catch(err => reject(ResponseUtility.ERROR({ message: 'Error sending email.', error: err })));
+								switch (tokenType) {
+									case TOKEN_TYPE.PASS_CHANGE:
+										TemplateMailServices.ChangePasswordToken({
+											to: email,
+											name: _doc.name,
+											code,
+										})
+											.then(() => resolve(ResponseUtility.SUCCESS_MESSAGE({ message: 'Verification code has been sent ot you via email.' })))
+											.catch(error => reject(ResponseUtility.ERROR({ message: 'Error sending email', error })));
+										break;
+									case TOKEN_TYPE.VERIFICATION:
+										TemplateMailServices.VerificationToken({
+											to: email,
+											name: _doc.name,
+											code,
+										})
+											.then(() => resolve(ResponseUtility.SUCCESS_MESSAGE({ message: 'Verification code has been sent ot you via email.' })))
+											.catch(error => reject(ResponseUtility.ERROR({ message: 'Error sending email', error })));
+										break;
+									default:
+										break;
+								}
 							} else {
 								resolve(ResponseUtility.SUCCESS_MESSAGE({ message: 'Nothing updated' }));
 							}
