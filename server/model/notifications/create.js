@@ -1,10 +1,14 @@
-import { NotificationSchema } from '../schemas';
+import {
+	NotificationSchema,
+	// StudentSchema,
+	// TeacherSchema,
+} from '../schemas';
 import database from '../../db';
 import { ResponseUtility } from '../../utility';
 
-// const StudentNotificationModel = database.model('StudentNotifications', StudentNotificationSchema);
-// const TeacherNotificationModel = database.model('TeacherNotifications', TeacherNotificationSchema);
 const NotificationModel = database.model('Notifications', NotificationSchema);
+// const StudentModel = database.model('Students', StudentSchema);
+// const TeacherModel = database.model('');
 
 /**
  * common service to add notificaitons data to respective databases
@@ -26,6 +30,7 @@ export default ({
 	id,
 	bookingRef,
 	originator,
+	classId,
 	time,
 	title,
 }) => new Promise((resolve, reject) => {
@@ -34,6 +39,7 @@ export default ({
 			ref: id,
 			bookingRef,
 			originator,
+			classId,
 			time,
 			title,
 			timestamp: Date.now(),

@@ -13,6 +13,7 @@ const Notification = new Schema({
 	 * Use population to fetch picture, name etc based on id
 	 */
 	originator: String,
+	classId: String,
 	// for the class request. contains the timestamp of the requested time of class
 	// this is populated for teacher notification and is empty for student notification
 	// @see notifications user stories for more details
@@ -34,6 +35,12 @@ Notification.virtual('student', {
 Notification.virtual('teacher', {
 	ref: 'Teachers',
 	localField: 'ref',
+	foreignField: '_id',
+	justOne: true,
+});
+Notification.virtual('class', {
+	ref: 'Classes',
+	localField: 'classId',
 	foreignField: '_id',
 	justOne: true,
 });

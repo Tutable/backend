@@ -1,6 +1,7 @@
 import {
 	NotificationSchema,
 	StudentSchema,
+	ClassSchema,
 	TeacherSchema,
 } from '../schemas';
 import database from '../../db';
@@ -9,6 +10,7 @@ import { ResponseUtility } from '../../utility';
 const NotificationModel = database.model('Notifications', NotificationSchema);
 const TeacherModel = database.model('Teachers', TeacherSchema);
 const StudentModel = database.model('Students', StudentSchema);
+const ClassModel = database.model('Class', ClassSchema);
 
 /**
  * This will fetch the details about the notification based on user
@@ -41,16 +43,19 @@ export default ({
 			default:
 				break;
 		}
+		const classPopulation = { path: 'class', mode: ClassModel, select: 'name' };
 
 		NotificationModel.find(query, projection, options)
 			.populate(populationQuery)
+			.populate(classPopulation)
 			.then((notifications) => {
 				if (notifications && notifications.length) {
 					resolve(ResponseUtility.SUCCESS_PAGINATION(notifications, page, limit));
 				} else {
 					reject(ResponseUtility.ERROR({ message: 'Nothing found!' }));
 				}
-			}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error looking for notifications', error: err })));
+			})
+			.catch(err => reject(ResponseUtility.ERROR({ message: 'Error looking for notifications', error: err })));
 	} else {
 		reject(ResponseUtility.MISSING_REQUIRED_PROPS);
 	}

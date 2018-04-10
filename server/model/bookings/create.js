@@ -8,7 +8,7 @@ import {
 import database from '../../db';
 import { ResponseUtility } from '../../utility';
 import {
-	EmailServices,
+	// EmailServices,
 	TemplateMailServices,
 	APNServices,
 } from '../../services';
@@ -123,10 +123,11 @@ export default ({
 									ref: _id,	// notification for
 									bookingRef: doc._id,	// the id of booking
 									originator: doc.by,		// id of the student
+									classId: ref,
 									time: doc.timeline,
 									title: 'Requested for class',
 									deleted: false,
-									timestamp: eventTimeline.toString(),
+									timestamp: Date.now(),
 								});
 
 								notificationObject.save().then(() => {
