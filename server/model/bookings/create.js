@@ -135,7 +135,6 @@ export default ({
 								}).catch((err) => {
 									reject(ResponseUtility.ERROR({ message: 'Error saving notification', error: err }));
 								});
-								// resolve(ResponseUtility.SUCCESS);
 							})
 							.catch(err => resolve(ResponseUtility.ERROR({ message: 'Error sending email to teacher', error: err })));
 						// resolve(ResponseUtility.SUCCESS);

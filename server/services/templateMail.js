@@ -79,7 +79,7 @@ const ClassConfirmedMail = ({ to, name, teacher, className, time, teacherImage =
 
 /**
  * email template for the declined request
- * @param {*} param0 
+ * @param {*} param0
  */
 const ClassDeclinedMail = ({ to, name, teacher, className }) => new Promise((resolve, reject) => {
 	if (to && name && teacher && className) {
