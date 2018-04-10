@@ -1,0 +1,39 @@
+<link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+<section class='container' style='font-family: Montserrat, Arial; background: #fff; padding: 10px;'>
+	<section class='header' style='
+								background: rgb(170,237,181);
+								background: linear-gradient(90deg, rgba(170,237,181,1) 0%, rgba(74,214,168,1) 35%, rgba(65,212,167,1) 100%);
+								padding: 20px;
+								border-top-left-radius: 10px;
+								border-top-right-radius: 10px;'>
+		<h1 style='text-align: center'>
+			<img src='https://thumb.ibb.co/f0vePx/tutable_logo.png' height=50>
+		</h1>
+	</section>
+	<br/>
+	<section style='padding: 50px;'>
+		Hello {{name}}!,<br/><br/>
+		You have requested to change your password. Your password change token is<br/>
+		<p class='verification-code' style='text-align: center;'>
+			<span style='padding: 10px;color: #41d4a7;border-radius: 10px;'><code>{{verification_code}}</code></span>
+		</p>
+		Please enter this token along with your new password in the app to reset your password.<br/>
+The token expires in minutes.<br/><br/>
+		<b style='color: red;font-size: 12px'>Do not share this token with anyone and report us if you did not initiate password change request.</b>
+		<br/><br/>
+		Regards,<br/>
+		<b>Team tutable.</b><br/><br/>
+	</section>
+	<section class='footer' style='
+								background: rgb(170,237,181);
+								background: linear-gradient(90deg, rgba(170,237,181,1) 0%, rgba(74,214,168,1) 35%, rgba(65,212,167,1) 100%);
+								padding: 10px;
+								border-bottom-right-radius: 10px;
+								border-bottom-left-radius: 10px;
+								color: #fff;
+								text-align: center;'>
+		<p>
+			&copy;2018
+		</p>
+	</section>
+</section>

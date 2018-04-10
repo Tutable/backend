@@ -4,7 +4,7 @@ import {
 	ResponseUtility,
 	RandomCodeUtility,
 } from '../../utility';
-import { EmailServices } from '../../services';
+import { TemplateMailServices } from '../../services';
 
 const TeacherModel = database.model('Teacher', TeacherSchema);
 /**
@@ -16,7 +16,7 @@ export default ({ email }) => new Promise((resolve, reject) => {
 	if (email) {
 		const query = { email };
 		// check timestamp is not frequent
-		TeacherModel.findOne(query, { passChangeTimestamp: 1, isVerified: 1 })
+		TeacherModel.findOne(query, { passChangeTimestamp: 1, isVerified: 1, name: 1 })
 			.then((teacher) => {
 				const { _doc: { passChangeTimestamp } } = teacher;
 				const expiry = passChangeTimestamp + (60000 * 2);
@@ -36,9 +36,7 @@ export default ({ email }) => new Promise((resolve, reject) => {
 							const { nModified } = modified;
 							if (nModified >= 1) {
 								// send email
-								const subject = 'Tutable Password change token';
-								const text = `Your tutable password change token is ${token}.`;
-								EmailServices({ to: email, subject, text })
+								TemplateMailServices.ChangePasswordToken({ to: email, name: teacher.name, code: token })
 									.then(() => resolve(ResponseUtility.SUCCESS_MESSAGE({ message: 'Verification code has been sent ot you via email.' })))
 									.catch(error => reject(ResponseUtility.ERROR({ message: 'Error sending email', error })));
 							} else {
