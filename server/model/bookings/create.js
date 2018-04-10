@@ -39,7 +39,7 @@ export default ({
 		 * verify whether the provided slot is valid or not.
 		 */
 
-		const teacherPopulation = { path: 'teacher', model: TeacherModel, select: 'name email availability' };
+		const teacherPopulation = { path: 'teacher', model: TeacherModel, select: 'name email availability deviceId' };
 		// check if user has already enrolled in this class
 		// const checkQuery = { $and: [{ by: id }, { ref }] };
 		// fetch the class details along with teacher email
@@ -84,10 +84,10 @@ export default ({
 				const hours = Number(containsSlot.charAt(0));
 				const newDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), hours, 0, 0);
 
-				console.log(newDate.getTime());
+				// console.log(newDate.getTime());
 				// console.log('Yes. It contains slot.');
-				// add a new booking
 				const eventTimeline = newDate.getTime();
+				// add a new booking
 				const bookingObject = new BookingsModel({
 					by: id,
 					ref,
@@ -126,7 +126,7 @@ export default ({
 								notificationObject.save().then(() => {
 									// send push notification
 									if (deviceId) {
-										APNServices({ deviceToken: deviceId, alert: 'Request to attend class', payload: {} })
+										APNServices({ deviceToken: deviceId, alert: 'Request to attend class', payload: { ref: _id } })
 											.then(() => resolve(ResponseUtility.SUCCESS))
 											.catch(err => reject(ResponseUtility.ERROR({ message: 'Error sending push notification', error: err })));
 									} else {

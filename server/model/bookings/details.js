@@ -37,14 +37,14 @@ export default ({
 
 	const skip = limit * (page - 1);
 	if (id && (teacherId || studentId)) {
-		// const now = Date.now();
+		const now = Date.now();
 		let timelineQuery;
 		switch (bookingType) {
 			case BOOKING_TYPE.PAST:
-				timelineQuery = { completed: true };
+				timelineQuery = { $and: [{ timeline: { $lte: now } }, { confirmed: true }] };
 				break;
 			case BOOKING_TYPE.UPCOMING:
-				timelineQuery = { completed: false };
+				timelineQuery = { $and: [{ timeline: { $lte: now } }, { confirmed: true }] };
 				break;
 			case BOOKING_TYPE.BOTH:
 				timelineQuery = {};
@@ -58,7 +58,7 @@ export default ({
 		} else if (studentId && studentId === id) {
 			primaryQuery = { by: studentId };
 		} else {
-			return reject(ResponseUtility.ERROR({ message: 'You are not authorized to access booking history of toher users.' }));
+			return reject(ResponseUtility.ERROR({ message: 'You are not authorized to access booking history of other users.' }));
 		}
 
 		const query = { $and: [timelineQuery, primaryQuery, { deleted: false }, { confirmed: true }] };
