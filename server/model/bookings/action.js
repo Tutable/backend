@@ -116,7 +116,6 @@ export default ({ id, bookingId, confirmed }) => new Promise((resolve, reject) =
 																// send the email alert
 																return resolve(ResponseUtility.ERROR({ message: 'Cannot send APN without deviceId' }));
 															}
-															console.log(student._id);
 															await StudentModel.update({ _id: student._id }, { notifications: student.notifications !== undefined ? student.notifications + 1 : 1 });
 															APNServices({ deviceToken: student.deviceId, alert: 'Class confirmed', payload: { type: NOTIFICATION_TYPE.BOOKING_ACCEPTED }, badge: student.notifications !== undefined ? student.notifications + 1 : 1 })
 																.then(() => resolve(ResponseUtility.SUCCESS))

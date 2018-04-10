@@ -38,7 +38,7 @@ Notification.virtual('teacher', {
 	foreignField: '_id',
 	justOne: true,
 });
-Notification.virtual('class', {
+Notification.virtual('classDetails', {
 	ref: 'Classes',
 	localField: 'classId',
 	foreignField: '_id',

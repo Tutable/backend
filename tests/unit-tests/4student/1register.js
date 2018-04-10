@@ -13,7 +13,6 @@ export default () => {
 			};
 			StudentServices.StudentsRegisterService(user)
 				.then((success) => {
-					console.log(success);
 					done();
 				}).catch(err => done(err));
 			// done();

@@ -35,8 +35,6 @@ export default ({
 }) => new Promise((resolve, reject) => {
 	const notification = new apn.Notification();
 
-
-	console.log(deviceToken, alert, payload);
 	notification.expiry = 500; // Expires 1 hour from now.
 	notification.badge = badge;
 	notification.sound = 'default';
