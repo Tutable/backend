@@ -61,6 +61,7 @@ export default ({ id, bookingId, confirmed }) => new Promise((resolve, reject) =
 					_doc: {
 						_id,
 						slot,
+						ref,
 					},
 					$$populatedVirtuals: {
 						student,
@@ -105,6 +106,7 @@ export default ({ id, bookingId, confirmed }) => new Promise((resolve, reject) =
 														id: student._id,
 														bookingRef: bookingId,
 														originator: id,
+														classId: ref,
 														time: Date.now(),
 														title: 'Confirmed your request',
 													})
@@ -141,6 +143,7 @@ export default ({ id, bookingId, confirmed }) => new Promise((resolve, reject) =
 										NotificationsServices.NotificationCreateService({
 											id: student._id,
 											bookingRef: bookingId,
+											classId: ref,
 											originator: id,
 											time: Date.now(),
 											title: 'Declined your request',
