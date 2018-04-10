@@ -1,3 +1,4 @@
+import { token } from 'apn';
 import { StudentSchema } from '../schemas';
 import database from '../../db';
 import {
@@ -5,7 +6,10 @@ import {
 	HashUtility,
 	RandomCodeUtility,
 } from '../../utility';
-import { EmailServices, S3Services } from '../../services';
+import {
+	S3Services,
+	TemplateMailServices,
+} from '../../services';
 import { S3_STUDENT_PROFILE } from '../../constants';
 
 const StudentModel = database.model('Student', StudentSchema);
@@ -108,9 +112,7 @@ export default ({
 						// send verification email
 						if (email && password) {
 							// email /password register flow
-							const subject = `Welcome to tutable app ${name}!!`;
-							const text = `Your student account has been created. Your verification token is ${verificationToken}.`;
-							EmailServices({ to: email, text, subject })
+							TemplateMailServices.NewAccountMail({ to: email, name, verificationCode: verificationToken })
 								.then(() => resolve(ResponseUtility.SUCCESS))
 								.catch(err => reject(ResponseUtility.ERROR({ message: 'Error sending verification mail.', error: err })));
 						} else {
