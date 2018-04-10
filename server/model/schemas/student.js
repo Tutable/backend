@@ -36,7 +36,7 @@ const Student = new Schema({
 	passChangeToken: Number,
 	passChangeTimestamp: Number,
 	deviceId: String,
-	noitifications: Number,	// maintain a count of unread notifications
+	notifications: Number,	// maintain a count of unread notifications
 });
 
 export default Student;

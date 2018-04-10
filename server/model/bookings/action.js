@@ -110,12 +110,15 @@ export default ({ id, bookingId, confirmed }) => new Promise((resolve, reject) =
 														time: Date.now(),
 														title: 'Confirmed your request',
 													})
-														.then(() => {
+														.then(async () => {
 															// push noitification here..
 															if (!student.deviceId) {
+																// send the email alert
 																return resolve(ResponseUtility.ERROR({ message: 'Cannot send APN without deviceId' }));
 															}
-															APNServices({ deviceToken: student.deviceId, alert: 'Class confirmed', payload: { type: NOTIFICATION_TYPE.BOOKING_ACCEPTED }, badge: student.notifications ? student.notifications + 1 : 0 })
+															console.log(student._id);
+															await StudentModel.update({ _id: student._id }, { notifications: student.notifications !== undefined ? student.notifications + 1 : 1 });
+															APNServices({ deviceToken: student.deviceId, alert: 'Class confirmed', payload: { type: NOTIFICATION_TYPE.BOOKING_ACCEPTED }, badge: student.notifications !== undefined ? student.notifications + 1 : 1 })
 																.then(() => resolve(ResponseUtility.SUCCESS))
 																.catch(err => resolve(ResponseUtility.ERROR({ message: 'Error sending push notification', error: err })));
 														})
@@ -148,12 +151,13 @@ export default ({ id, bookingId, confirmed }) => new Promise((resolve, reject) =
 											time: Date.now(),
 											title: 'Declined your request',
 										})
-											.then(() => {
+											.then(async () => {
 												// push noitification here..
 												if (!student.deviceId) {
 													return resolve(ResponseUtility.ERROR({ message: 'Cannot send APN without device id' }));
 												}
-												APNServices({ deviceToken: student.deviceId, alert: 'Class declined', payload: { type: NOTIFICATION_TYPE.BOOKING_REJECTED }, badge: student.notifications ? student.notifications + 1 : 0 })
+												await StudentModel.update({ _id: student._id }, { notifications: student.notifications !== undefined ? student.notifications + 1 : 1 });
+												APNServices({ deviceToken: student.deviceId, alert: 'Class declined', payload: { type: NOTIFICATION_TYPE.BOOKING_REJECTED }, badge: student.notifications !== undefined ? student.notifications + 1 : 1 })
 													.then(() => {
 														resolve(ResponseUtility.SUCCESS);
 													}).catch(err => resolve(ResponseUtility.ERROR({ message: 'Error sending push notification', error: err })));

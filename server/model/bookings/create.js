@@ -131,12 +131,16 @@ export default ({
 									timestamp: Date.now(),
 								});
 
-								notificationObject.save().then(() => {
+								notificationObject.save().then(async () => {
 									// send push notification
 									if (deviceId) {
-										APNServices({ deviceToken: deviceId, alert: 'Request to attend class', payload: { ref: _id, type: NOTIFICATION_TYPE.BOOKING_REQUEST }, badge: notifications ? notifications + 1 : 0 })
-											.then(() => resolve(ResponseUtility.SUCCESS))
-											.catch(err => reject(ResponseUtility.ERROR({ message: 'Error sending push notification', error: err })));
+										// await TeacherModel.update({ _id }, { notifications: 100 });
+										TeacherModel.updateOne({ _id }, { notifications: notifications !== undefined ? notifications + 1 : 1 })
+											.then((success) => {
+												APNServices({ deviceToken: deviceId, alert: 'Request to attend class', payload: { ref: _id, type: NOTIFICATION_TYPE.BOOKING_REQUEST }, badge: notifications !== undefined ? notifications + 1 : 1 })
+													.then(() => resolve(ResponseUtility.SUCCESS))
+													.catch(err => reject(ResponseUtility.ERROR({ message: 'Error sending push notification', error: err })));
+											}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error updating the notifications count', error: err })));
 									} else {
 										return resolve(ResponseUtility.SUCCESS_MESSAGE({ message: 'Push notification not sent.' }));
 									}
