@@ -30,6 +30,8 @@ export const {
 	APPLE_TEAM_ID,
 	BUSINESS_EMAIL,
 	BUSINESS_EMAIL_PASSWORD,
+	STRIPE_PUB_KEY,
+	STRIPE_SECRET_KEY,
 } = process.env;
 
 export const MB = 1024 * 1024;
