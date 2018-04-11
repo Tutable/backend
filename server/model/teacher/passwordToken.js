@@ -1,4 +1,7 @@
-import { TeacherSchema } from '../schemas';
+import {
+	TeacherSchema,
+	StudentSchema,
+} from '../schemas';
 import database from '../../db';
 import {
 	ResponseUtility,
@@ -7,6 +10,7 @@ import {
 import { TemplateMailServices } from '../../services';
 
 const TeacherModel = database.model('Teacher', TeacherSchema);
+const StudentModel = database.model('Student', StudentSchema);
 /**
  * this is a microservice to resend the PASSWORD CHANGE TOKEN
  * @author gaurav sharma
@@ -31,20 +35,36 @@ export default ({ email }) => new Promise((resolve, reject) => {
 						passChangeTimestamp: now,
 					};
 
-					TeacherModel.update(lookupQuery, updateQuery)
-						.then((modified) => {
-							const { nModified } = modified;
-							if (nModified >= 1) {
-								// send email
-								TemplateMailServices.ChangePasswordToken({ to: email, name: teacher.name, code: token })
-									.then(() => resolve(ResponseUtility.SUCCESS_MESSAGE({ message: 'Verification code has been sent ot you via email.' })))
-									.catch(error => reject(ResponseUtility.ERROR({ message: 'Error sending email', error })));
-							} else {
-								resolve(ResponseUtility.ERROR({ message: 'Nothing modified.' }));
-							}
-						}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error updating token', error: err })));
+					/**
+					 * @todo update both teacher and student database
+					 * for pass change token
+					 */
+					Promise.all([
+						new Promise((_resolve, _reject) => {
+							TeacherModel.update(lookupQuery, updateQuery)
+								.then(({ nModified }) => {
+									if (nModified) {
+										return _resolve(ResponseUtility.SUCCESS);
+									}
+									_reject(ResponseUtility.ERROR({ message: 'Error udpating teacher' }));
+								}).catch(err => _reject(ResponseUtility.ERROR({ message: 'Error updating teacher', error: err })));
+						}),
+						new Promise((_resolve, _reject) => {
+							StudentModel.update(lookupQuery, updateQuery)
+								.then(({ nModified }) => {
+									if (nModified) {
+										return _resolve(ResponseUtility.SUCCESS);
+									}
+									_reject(ResponseUtility.ERROR({ message: 'Error udpating student' }));
+								}).catch(err => _reject(ResponseUtility.ERROR({ message: 'Error updating student', error: err })));
+						}),
+					]).then(() => {
+						// send the verification code
+						TemplateMailServices.ChangePasswordToken({ to: email, name: teacher.name, code: token })
+							.then(() => resolve(ResponseUtility.SUCCESS_MESSAGE({ message: 'Verification code has been sent ot you via email.' })))
+							.catch(error => reject(ResponseUtility.ERROR({ message: 'Error sending email', error })));
+					}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error sending password token', error: err })));
 				}
-				// resolve(teacher);
 			}).catch(error => reject(ResponseUtility.ERROR({ message: 'Error looking for teacher', error })));
 	} else {
 		reject(ResponseUtility.MISSING_REQUIRED_PROPS);
