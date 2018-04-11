@@ -1,4 +1,7 @@
-import { StudentSchema } from '../schemas';
+import {
+	StudentSchema,
+	TeacherSchema,
+} from '../schemas';
 import database from '../../db';
 import {
 	ResponseUtility,
@@ -8,6 +11,7 @@ import { TemplateMailServices } from '../../services';
 import { TOKEN_TYPE } from '../../constants';
 
 const StudentModel = database.model('Student', StudentSchema);
+const TeacherModel = database.model('Teacher', TeacherSchema);
 /**
  * handle this as a common function for re-sending verification
  * code as well as change password token
@@ -25,17 +29,18 @@ export default ({ email, tokenType = undefined }) => new Promise((resolve, rejec
 		let updateQuery;
 		let checkTimestamp;
 		const code = RandomCodeUtility();
+		const query = { email };
 		switch (tokenType) {
 			case TOKEN_TYPE.PASS_CHANGE:
 				// subject = 'Password change token for tutable student account';
 				// text = `Your password change token is ${code}`;
-				updateQuery = { email, passChangeToken: code, passChangeTimestamp: Date.now() };
+				updateQuery = { passChangeToken: code, passChangeTimestamp: Date.now() };
 				checkTimestamp = 'passChangeTimestamp';
 				break;
 			case TOKEN_TYPE.VERIFICATION:
 				// subject = 'Verification code for tutable student account';
 				// text = `Your verification code is ${code}.`;
-				updateQuery = { email, verificationToken: code, verificationTokenTimestamp: Date.now() };
+				updateQuery = { verificationToken: code, verificationTokenTimestamp: Date.now() };
 				checkTimestamp = 'verificationTokenTimestamp';
 				break;
 			default:
@@ -54,36 +59,55 @@ export default ({ email, tokenType = undefined }) => new Promise((resolve, rejec
 						}
 					}
 
-					StudentModel.updateOne({ email }, updateQuery)
-						.then((modified) => {
-							const { nModified } = modified;
-							if (nModified) {
-								switch (tokenType) {
-									case TOKEN_TYPE.PASS_CHANGE:
-										TemplateMailServices.ChangePasswordToken({
-											to: email,
-											name: _doc.name,
-											code,
-										})
-											.then(() => resolve(ResponseUtility.SUCCESS_MESSAGE({ message: 'Verification code has been sent ot you via email.' })))
-											.catch(error => reject(ResponseUtility.ERROR({ message: 'Error sending email', error })));
-										break;
-									case TOKEN_TYPE.VERIFICATION:
-										TemplateMailServices.VerificationToken({
-											to: email,
-											name: _doc.name,
-											code,
-										})
-											.then(() => resolve(ResponseUtility.SUCCESS_MESSAGE({ message: 'Verification code has been sent ot you via email.' })))
-											.catch(error => reject(ResponseUtility.ERROR({ message: 'Error sending email', error })));
-										break;
-									default:
-										break;
-								}
-							} else {
-								resolve(ResponseUtility.SUCCESS_MESSAGE({ message: 'Nothing updated' }));
-							}
-						}).catch(err => ResponseUtility.ERROR({ message: 'Error updating codes', error: err }));
+					/**
+					 * @todo handle for both student and teacher
+					 */
+					Promise.all([
+						new Promise((_resolve, _reject) => {
+							StudentModel.update(query, updateQuery)
+								.then(({ nModified }) => {
+									if (nModified) {
+										return _resolve(ResponseUtility.SUCCESS);
+									}
+									_reject(ResponseUtility.ERROR({ message: 'Nothing modified for student.' }));
+								}).catch(err => _reject(ResponseUtility.ERROR({ message: 'Error updating stduent', error: err })));
+						}),
+						new Promise((_resolve, _reject) => {
+							TeacherModel.update(query, updateQuery)
+								.then(({ nModified }) => {
+									if (nModified) {
+										return _resolve(ResponseUtility.SUCCESS);
+									}
+									_reject(ResponseUtility.ERROR({ message: 'Nothing modified for student.' }));
+								}).catch(err => _reject(ResponseUtility.ERROR({ message: 'Error updating stduent', error: err })));
+						}),
+					]).then(() => {
+						/**
+						 * send the verification mail.
+						 */
+						switch (tokenType) {
+							case TOKEN_TYPE.PASS_CHANGE:
+								TemplateMailServices.ChangePasswordToken({
+									to: email,
+									name: _doc.name,
+									code,
+								})
+									.then(() => resolve(ResponseUtility.SUCCESS_MESSAGE({ message: 'Verification code has been sent ot you via email.' })))
+									.catch(error => reject(ResponseUtility.ERROR({ message: 'Error sending email', error })));
+								break;
+							case TOKEN_TYPE.VERIFICATION:
+								TemplateMailServices.VerificationToken({
+									to: email,
+									name: _doc.name,
+									code,
+								})
+									.then(() => resolve(ResponseUtility.SUCCESS_MESSAGE({ message: 'Verification code has been sent ot you via email.' })))
+									.catch(error => reject(ResponseUtility.ERROR({ message: 'Error sending email', error })));
+								break;
+							default:
+								break;
+						}
+					}).catch(err => reject(ResponseUtility.ERROR({ message: '', error: err })));
 				} else {
 					reject(ResponseUtility.ERROR({ message: 'Not user found' }));
 				}
