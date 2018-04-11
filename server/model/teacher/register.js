@@ -106,15 +106,6 @@ export default ({
 							.then(() => resolve(ResponseUtility.SUCCESS))
 							.catch(err => reject(err));
 					}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error creating new user', error: err })));
-					// teacherModel.save().then(() => {
-					// 	TemplateMailServices.NewAccountMail({
-					// 		to: email,
-					// 		verificationCode: verificationToken,
-					// 		name,
-					// 	})
-					// 		.then(() => resolve(ResponseUtility.SUCCESS))
-					// 		.catch(err => reject(err));
-					// }).catch(err => reject(ResponseUtility.ERROR({ message: 'Error saving', error: err })));
 				}, err => reject(ResponseUtility.ERROR({ message: 'Error generating hash', error: err })));
 			}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error looking for teacher', error: err })));
 	} else {

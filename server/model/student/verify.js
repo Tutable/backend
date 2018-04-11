@@ -61,14 +61,6 @@ export default ({ email, token }) => new Promise((resolve, reject) => {
 					])
 						.then(() => resolve(ResponseUtility.SUCCESS))
 						.catch(err => reject(ResponseUtility.ERROR({ message: 'Error verifying user', error: err })));
-					// StudentModel.update(query, updateQuery)
-					// 	.then((modified) => {
-					// 		const { nModified } = modified;
-					// 		if (nModified) {
-					// 			return resolve(ResponseUtility.SUCCESS);
-					// 		}
-					// 		resolve(ResponseUtility.SUCCESS_MESSAGE({ message: 'Nothing modified' }));
-					// 	}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error updating document', error: err })));
 				} else {
 					reject(ResponseUtility.ERROR({ message: 'Error email/token combination' }));
 				}

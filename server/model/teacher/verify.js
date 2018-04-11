@@ -50,17 +50,6 @@ export default ({ email, token }) => new Promise((resolve, reject) => {
 					])
 						.then(() => resolve(ResponseUtility.SUCCESS))
 						.catch(err => reject(ResponseUtility.ERROR({ message: 'Error verifying user', error: err })));
-					// TeacherModel.update({ email }, updateQuery, (err, modified) => {
-					// 	if (err) {
-					// 		return reject(ResponseUtility.ERROR({ message: 'Error updating teacher schema', error: err }));
-					// 	}
-					// 	const { nModified } = modified;
-					// 	if (nModified >= 1) {
-					// 		resolve(ResponseUtility.SUCCESS);
-					// 	} else {
-					// 		resolve(ResponseUtility.SUCCESS_MESSAGE({ message: 'Nothing updated.' }));
-					// 	}
-					// });
 				} else {
 					reject(ResponseUtility.ERROR({ message: 'Error in email/token combination.' }));
 				}
