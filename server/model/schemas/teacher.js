@@ -15,6 +15,22 @@ const Teacher = new Schema({
 		type: { type: String },
 		coordinates: [Number],
 	},
+	google: {
+		id: String,
+		accessToken: String,
+		refreshToken: String,
+		firstName: String,
+		lastName: String,
+		email: String,
+	}, // if authenticated via google
+	facebook: {
+		id: String,
+		accessToken: String,
+		refreshToken: String,
+		firstName: String,
+		lastName: String,
+		email: String,
+	},	// if authenticated via facebook
 	availability: {},
 	isVerified: Boolean,
 	degree: String,
