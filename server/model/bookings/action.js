@@ -72,8 +72,8 @@ export default ({ id, bookingId, confirmed }) => new Promise((resolve, reject) =
 				// const lookupQuery = { $and: [{ _id: bookingId }, { teacher: id }] };
 				const updateQuery = confirmed ? { confirmed } : { cancelled: true };
 				BookingsModel.update(query, updateQuery)
-					.then((modified) => {
-						const { nModified } = modified;
+					.then(({ nModified }) => {
+						// const { nModified } = modified;
 						if (nModified) {
 							/**
 							 * @todo remove the availability slot
@@ -83,10 +83,16 @@ export default ({ id, bookingId, confirmed }) => new Promise((resolve, reject) =
 							const availabilityObject = Object.assign({}, teacherDetails.availability);
 							availabilityObject[requestedSlot].splice(availabilityObject[requestedSlot].indexOf(slot[requestedSlot].toString()), 1);
 
+							const date = new Date(Number(requestedSlot));
+							const hours = Number(slot[requestedSlot].charAt(0));
+							const newDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), hours, 0, 0);
+
+							const eventTimeline = newDate.getTime();
+
 							if (confirmed) {
 								TeacherModel.update({ _id: teacherDetails._id }, { availability: availabilityObject })
-									.then((modified) => {
-										const { nModified } = modified;
+									.then(({ nModified }) => {
+										// const { nModified } = modified;
 										if (nModified) {
 											// send the mail notification
 											TemplateMailServices.ClassConfirmedMail({
@@ -95,7 +101,7 @@ export default ({ id, bookingId, confirmed }) => new Promise((resolve, reject) =
 												teacher: teacherDetails.name,
 												teacherImage: teacherDetails.picture ? `http://localhost:3000/api/${teacherDetails}` : undefined,
 												className: classDetails.name,
-												time: slot || moment.unix(Object.keys(slot)[0]).format('MM/DD/YYY'),
+												time: eventTimeline,
 											})
 												.then(() => {
 													/**
@@ -107,7 +113,7 @@ export default ({ id, bookingId, confirmed }) => new Promise((resolve, reject) =
 														bookingRef: bookingId,
 														originator: id,
 														classId: ref,
-														time: Date.now(),
+														time: eventTimeline,
 														title: 'Confirmed your request',
 													})
 														.then(async () => {
@@ -147,7 +153,7 @@ export default ({ id, bookingId, confirmed }) => new Promise((resolve, reject) =
 											bookingRef: bookingId,
 											classId: ref,
 											originator: id,
-											time: Date.now(),
+											time: eventTimeline,
 											title: 'Declined your request',
 										})
 											.then(async () => {
