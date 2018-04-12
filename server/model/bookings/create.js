@@ -108,7 +108,7 @@ export default ({
 
 				// console.log(newDate.getTime());
 				// console.log('Yes. It contains slot.');
-				const eventTimeline = newDate.getTime();
+				const eventTimeline = newDate;
 				// add a new booking
 				const bookingObject = new BookingsModel({
 					by: id,
