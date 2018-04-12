@@ -9,4 +9,5 @@ import commonResolver from './commonResolver';
 
 export default {
 	details: (req, res) => commonResolver(req, res, NotificationsServices.NotificationDetailsService),
+	delete: (req, res) => commonResolver(req, res, NotificationsServices.NotificationDeleteService),
 };

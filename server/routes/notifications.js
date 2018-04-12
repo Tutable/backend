@@ -9,4 +9,5 @@ const prefix = '/api/notifications/';
  */
 export default (app) => {
 	app.post(`${prefix}details`, AuthenticationControllers.authenticateGlobalEntity, NotificationsControllers.details);
+	app.post(`${prefix}delete`, AuthenticationControllers.authenticateGlobalEntity, NotificationsControllers.delete);
 };
