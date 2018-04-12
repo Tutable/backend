@@ -4,6 +4,7 @@ import {
 	StudentSchema,
 	ClassSchema,
 	TeacherSchema,
+	PaymentsSchema,
 } from '../schemas';
 import database from '../../db';
 import { ResponseUtility } from '../../utility';
@@ -18,6 +19,7 @@ const BookingsModel = database.model('Bookings', BookingSchema);
 const StudentModel = database.model('Students', StudentSchema);
 const ClassModel = database.model('Classes', ClassSchema);
 const TeacherModel = database.model('Teacher', TeacherSchema);
+const PaymentsModel = database.model('Payment', PaymentsSchema);
 /**
  * microservice to confirm/decline the booking.
  * Only a teacher can perform actions on a booking.
@@ -72,7 +74,7 @@ export default ({ id, bookingId, confirmed }) => new Promise((resolve, reject) =
 				// const lookupQuery = { $and: [{ _id: bookingId }, { teacher: id }] };
 				const updateQuery = confirmed ? { confirmed } : { cancelled: true };
 				BookingsModel.update(query, updateQuery)
-					.then(({ nModified }) => {
+					.then(async ({ nModified }) => {
 						// const { nModified } = modified;
 						if (nModified) {
 							/**
@@ -90,6 +92,18 @@ export default ({ id, bookingId, confirmed }) => new Promise((resolve, reject) =
 							const eventTimeline = newDate.getTime();
 
 							if (confirmed) {
+								/**
+								 * process the payment from  student account
+								 * @todo handle money flow from student account to teacher account
+								 */
+								const payment = await PaymentsModel({ ref: student._id });
+								if (!payment) {
+									return reject(ResponseUtility.ERROR({ message: 'Payment method is not defined by student.' }));
+								}
+
+								// payment defined, now create a payment
+
+
 								TeacherModel.update({ _id: teacherDetails._id }, { availability: availabilityObject })
 									.then(({ nModified }) => {
 										// const { nModified } = modified;
@@ -101,7 +115,7 @@ export default ({ id, bookingId, confirmed }) => new Promise((resolve, reject) =
 												teacher: teacherDetails.name,
 												teacherImage: teacherDetails.picture ? `http://localhost:3000/api/${teacherDetails}` : undefined,
 												className: classDetails.name,
-												time: eventTimeline,
+												time: moment(eventTimeline).format('LLLL'),
 											})
 												.then(() => {
 													/**

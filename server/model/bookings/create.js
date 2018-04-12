@@ -4,6 +4,7 @@ import {
 	TeacherSchema,
 	StudentSchema,
 	NotificationSchema,
+	PaymentsSchema,
 } from '../schemas';
 import database from '../../db';
 import { ResponseUtility } from '../../utility';
@@ -20,6 +21,7 @@ const StudentModel = database.model('Student', StudentSchema);
 const NotificationModel = database.model('Notifications', NotificationSchema);
 
 const BookingsModel = database.model('Bookings', BookingSchema);
+const PaymentsModel = database.model('Payments', PaymentsSchema);
 
 /**
  * microservice to create a new class booking into the system
@@ -36,8 +38,24 @@ export default ({
 	id,
 	ref,
 	slot,
-}) => new Promise((resolve, reject) => {
+}) => new Promise(async (resolve, reject) => {
 	if (id && ref && slot) {
+		/**
+		 * @todo async methd to process the suer payment first to
+		 * transfer amount from users.
+		 * process steps:
+		 * - Check for the sripe user details in the payments collection
+		 * - If details found then allow to create a new booking. Requesting a
+		 *  class booking requires the student to have added the valid payment source
+		 * - If details not found then return an error response so that
+		 * 	user could be redirected to the add payment source screen.
+		 */
+		const usersPaymentOption = await PaymentsModel.findOne({ ref: id });
+		if (!usersPaymentOption) {
+			return reject(ResponseUtility.ERROR({ message: 'Cannot request booking without a vaild payment source. Add a payment source first.' }));
+		}
+
+
 		/**
 		 * get the teacher id to fetch the teacher available slots and
 		 * verify whether the provided slot is valid or not.
