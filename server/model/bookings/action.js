@@ -12,7 +12,11 @@ import {
 	TemplateMailServices,
 	APNServices,
 } from '../../services';
-import { NotificationsServices } from '../../model';
+import {
+	PaymentsServices,
+	NotificationsServices,
+} from '../';
+// import { NotificationsServices } from '../../model';
 import { NOTIFICATION_TYPE } from '../../constants';
 
 const BookingsModel = database.model('Bookings', BookingSchema);
@@ -44,7 +48,7 @@ const PaymentsModel = database.model('Payment', PaymentsSchema);
 export default ({ id, bookingId, confirmed }) => new Promise((resolve, reject) => {
 
 	const studentPopulation = { path: 'student', model: StudentModel, select: 'name email deviceId notifications' };
-	const classPopulation = { path: 'classDetails', model: ClassModel, select: 'name payload' };
+	const classPopulation = { path: 'classDetails', model: ClassModel, select: 'name payload rate' };
 	const teacherPopulation = { path: 'teacherDetails', model: TeacherModel, select: 'name picture availability deviceId' };
 
 	if (id && bookingId && confirmed !== undefined) {
@@ -55,7 +59,7 @@ export default ({ id, bookingId, confirmed }) => new Promise((resolve, reject) =
 			.populate(studentPopulation)
 			.populate(classPopulation)
 			.populate(teacherPopulation)
-			.then((booking) => {
+			.then(async (booking) => {
 				if (!booking) {
 					return reject(ResponseUtility.ERROR({ message: 'No booking found' }));
 				}
@@ -73,6 +77,23 @@ export default ({ id, bookingId, confirmed }) => new Promise((resolve, reject) =
 				} = booking;
 				// const lookupQuery = { $and: [{ _id: bookingId }, { teacher: id }] };
 				const updateQuery = confirmed ? { confirmed } : { cancelled: true };
+				// if confirmed, make a payment
+				// if (confirmed) {
+				// 	/**
+				// 	 * process the payment from  student account
+				// 	 * @todo handle money flow from student account to teacher account
+				// 	 */
+				// 	// const payment = await PaymentsModel({ ref: student._id });
+				// 	// if (!payment) {
+				// 	// 	return reject(ResponseUtility.ERROR({ message: 'Payment method is not defined by student.' }));
+				// 	// }
+				// 	// payment defined, now create a payment
+				// 	try {
+				// 		const payment = await PaymentsServices.PaymentsPayService({ id: student._id, bookingId, amount: classDetails.rate });
+				// 	} catch (err) {
+				// 		return reject();
+				// 	}
+				// }
 				BookingsModel.update(query, updateQuery)
 					.then(async ({ nModified }) => {
 						// const { nModified } = modified;
@@ -86,24 +107,12 @@ export default ({ id, bookingId, confirmed }) => new Promise((resolve, reject) =
 							availabilityObject[requestedSlot].splice(availabilityObject[requestedSlot].indexOf(slot[requestedSlot].toString()), 1);
 
 							const date = new Date(Number(requestedSlot));
-							const hours = Number(slot[requestedSlot].charAt(0));
+							const hours = Number(slot[requestedSlot].split('-')[0]);
 							const newDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), hours, 0, 0);
 
 							const eventTimeline = newDate.getTime();
 
 							if (confirmed) {
-								/**
-								 * process the payment from  student account
-								 * @todo handle money flow from student account to teacher account
-								 */
-								const payment = await PaymentsModel({ ref: student._id });
-								if (!payment) {
-									return reject(ResponseUtility.ERROR({ message: 'Payment method is not defined by student.' }));
-								}
-
-								// payment defined, now create a payment
-
-
 								TeacherModel.update({ _id: teacherDetails._id }, { availability: availabilityObject })
 									.then(({ nModified }) => {
 										// const { nModified } = modified;

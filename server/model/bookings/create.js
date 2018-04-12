@@ -55,7 +55,6 @@ export default ({
 		// 	return reject(ResponseUtility.ERROR({ message: 'Cannot request booking without a vaild payment source. Add a payment source first.' }));
 		// }
 
-
 		/**
 		 * get the teacher id to fetch the teacher available slots and
 		 * verify whether the provided slot is valid or not.
@@ -104,7 +103,7 @@ export default ({
 					return reject(ResponseUtility.ERROR({ message: 'Teacher not available for specified time slot.' }));
 				}
 				const date = new Date(Number(slotTimestamp));
-				const hours = Number(containsSlot.charAt(0));
+				const hours = Number(containsSlot.split('-')[0]);
 				const newDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), hours, 0, 0);
 
 				// console.log(newDate.getTime());
