@@ -13,8 +13,8 @@ export default () => {
 			};
 			StudentServices.StudentsRegisterService(user)
 				.then((success) => {
-					done();
-				}).catch(err => done(err));
+					done(success);
+				}).catch(() => done());
 			// done();
 		});
 	});
