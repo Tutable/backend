@@ -41,6 +41,7 @@ export default ({ id, email }) => new Promise((resolve, reject) => {
 						gender,
 						availability,
 						deviceId,
+						notifications,
 					},
 				} = teacher;
 
@@ -63,6 +64,7 @@ export default ({ id, email }) => new Promise((resolve, reject) => {
 					gender,
 					availability,
 					deviceId,
+					notifications,
 				}));
 			})
 			.catch(err => reject(ResponseUtility.ERROR({ message: 'Error looking for user', error: err })));

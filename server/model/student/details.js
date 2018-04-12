@@ -46,6 +46,7 @@ export default ({ id, email }) => new Promise((resolve, reject) => {
 							address,
 							google,
 							facebook,
+							notifications,
 						},
 					} = student;
 
@@ -61,6 +62,7 @@ export default ({ id, email }) => new Promise((resolve, reject) => {
 						google,
 						facebook,
 						address,
+						notifications,
 					}));
 				}
 				reject(ResponseUtility.USER_NOT_FOUND);
