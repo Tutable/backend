@@ -104,7 +104,7 @@ export default ({
 				}
 				const date = new Date(Number(slotTimestamp));
 				const hours = Number(containsSlot.split('-')[0]);
-				const newDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), hours, 0, 0);
+				const newDate = date.setHours(hours);
 
 				// console.log(newDate.getTime());
 				// console.log('Yes. It contains slot.');
