@@ -81,13 +81,11 @@ export default ({
 							email: teacher._doc.email,
 							picture: teacher._doc.picture ? teacher._doc.picture.indexOf('http') !== -1 ? teacher._doc.picture : `/teachers/assets/${S3_TEACHER_PROFILE}/${teacher._doc.picture}` : undefined,
 						} : undefined;
-						console.log(teacherDetails);
 						const _class = classDetails ? {
 							id: classDetails._id,
 							name: classDetails.name,
 							payload: classDetails.payload ? `/class/asset/${S3_TEACHER_CLASS}/${classDetails.payload}` : undefined,
 						} : undefined;
-						console.log(classDetails)
 						
 						refactoredResponse.push({
 							id: _id,
