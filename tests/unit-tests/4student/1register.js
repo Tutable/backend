@@ -1,7 +1,7 @@
 import { describe, it } from 'mocha';
-import { expect } from 'chai';
+// import { expect } from 'chai';
 import { StudentServices } from '../../../server/model';
-import { SUCCESS_CODE } from '../../../server/constants';
+// import { SUCCESS_CODE } from '../../../server/constants';
 
 export default () => {
 	describe('This will test the student register service', () => {
@@ -15,7 +15,6 @@ export default () => {
 				.then((success) => {
 					done(success);
 				}).catch(() => done());
-			// done();
 		});
 	});
 };
