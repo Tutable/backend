@@ -13,7 +13,7 @@ import {
 	S3Services,
 	TemplateMailServices,
 } from '../../services';
-import { S3_STUDENT_PROFILE } from '../../constants';
+import { S3_STUDENT_PROFILE, S3_TEACHER_PROFILE } from '../../constants';
 
 const StudentModel = database.model('Student', StudentSchema);
 const TeacherModel = database.model('Teacher', TeacherSchema);
@@ -75,11 +75,13 @@ export default ({
 					// it represents an image URL sent via google or facebook API.
 					const Key = typeof picture === 'object' ? `picture-${email}-${Date.now()}` : picture;
 					const Bucket = S3_STUDENT_PROFILE;
+					// const TeacherBucket= S3_TEACHER_PROFILE;
 					// if picture is object type then process uploading it otherwise
 					// skip this step
 					if (picture && typeof picture === 'object') {
 						try {
 							await S3Services.uploadToBucket({ Key, Bucket, data: picture });
+							// await S3Services.uploadToBucket({ Key, Bucket: TeacherBucket, data: picture });
 						} catch (err) {
 							return reject(ResponseUtility.ERROR({ message: 'Error uploading profile picture', error: err }));
 						}
@@ -123,7 +125,7 @@ export default ({
 						verificationToken,
 						google,
 						facebook,
-						picture: Key,	// upload a separate profile picture for teacher object
+						// picture: Key,	// upload a separate profile picture for teacher object
 						verificationTokenTimestamp,
 						firstLogin: true,
 						deleted: false,
