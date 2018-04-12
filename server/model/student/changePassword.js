@@ -1,4 +1,7 @@
-import { StudentSchema } from '../schemas';
+import {
+	StudentSchema,
+	TeacherSchema,
+} from '../schemas';
 import database from '../../db';
 import {
 	ResponseUtility,
@@ -7,6 +10,7 @@ import {
 } from '../../utility';
 
 const StudentModel = database.model('Student', StudentSchema);
+const TeacherModel = database.model('Teacher', TeacherSchema);
 /**
  * change the password of user by verifying the passChangeToken
  * @author gaurav sharma
@@ -28,14 +32,31 @@ export default ({ email, token, password }) => new Promise((resolve, reject) => 
 						.then((hash) => {
 							// save hash
 							const updateQuery = { password: hash, passChangeToken: RandomCodeUtility() };
-							StudentModel.update({ email }, updateQuery)
-								.then((modified) => {
-									const { nModified } = modified;
-									if (nModified) {
-										return resolve(ResponseUtility.SUCCESS);
-									}
-									resolve(ResponseUtility.SUCCESS_MESSAGE({ message: 'Nothing modified' }));
-								}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error updating password', error: err })));
+							/**
+							 * @todo update both user andm teacher password
+							 */
+							Promise.all([
+								new Promise((_resolve, _reject) => {
+									StudentModel.update(query, updateQuery)
+										.then(({ nModified }) => {
+											if (nModified) {
+												return _resolve(ResponseUtility.SUCCESS);
+											}
+											_reject(ResponseUtility.ERROR({ message: 'Notihing modified for student.' }));
+										}).catch(err => _reject(ResponseUtility.ERROR({ message: 'Rrror updating student', error: err })));
+								}),
+								new Promise((_resolve, _reject) => {
+									TeacherModel.update(query, updateQuery)
+										.then(({ nModified }) => {
+											if (nModified) {
+												return _resolve(ResponseUtility.SUCCESS);
+											}
+											_reject(ResponseUtility.ERROR({ message: 'Notihing modified for student.' }));
+										}).catch(err => _reject(ResponseUtility.ERROR({ message: 'Rrror updating student', error: err })));
+								}),
+							])
+								.then(() => resolve(ResponseUtility.SUCCESS))
+								.catch(err => reject(ResponseUtility.ERROR({ message: 'Error changing password', error: err })));
 						}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error generating hash', error: err })));
 				} else {
 					reject(ResponseUtility.ERROR({ message: 'Invalid email/token combination.' }));

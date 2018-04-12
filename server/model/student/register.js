@@ -1,5 +1,8 @@
 import { token } from 'apn';
-import { StudentSchema } from '../schemas';
+import {
+	StudentSchema,
+	TeacherSchema,
+} from '../schemas';
 import database from '../../db';
 import {
 	ResponseUtility,
@@ -13,6 +16,7 @@ import {
 import { S3_STUDENT_PROFILE } from '../../constants';
 
 const StudentModel = database.model('Student', StudentSchema);
+const TeacherModel = database.model('Teacher', TeacherSchema);
 const keys = ['__v', 'password', 'verificationToken', 'verificationTokenTimestamp', 'passChangeToken', 'passChangeTimestamp'];
 /**
  * microservice to register a new student into the system.
@@ -89,6 +93,7 @@ export default ({
 						verificationToken = RandomCodeUtility();
 					}
 
+					const verificationTokenTimestamp = Date.now();
 					// create a new student
 					const studentObject = new StudentModel({
 						name,
@@ -96,6 +101,8 @@ export default ({
 						password: encryptedPassword,
 						address: address ? {
 							location: address,
+							type: 'Point',
+							coordinates: [],
 						} : undefined,
 						picture: Key,
 						google,
@@ -105,23 +112,47 @@ export default ({
 						isVerified: false,
 						deleted: false,
 						verificationToken,
-						verificationTokenTimestamp: Date.now(),
+						verificationTokenTimestamp,
 						notifications: 0,
 					});
 
-					studentObject.save().then(() => {
-						// send verification email
-						if (email && password) {
-							// email /password register flow
-							TemplateMailServices.NewAccountMail({ to: email, name, verificationCode: verificationToken })
-								.then(() => resolve(ResponseUtility.SUCCESS))
-								.catch(err => reject(ResponseUtility.ERROR({ message: 'Error sending verification mail.', error: err })));
-						} else {
-							const refactoredObject = Object.assign({}, studentObject._doc);
-							keys.map(key => delete refactoredObject[key]);
-							resolve(ResponseUtility.SUCCESS_DATA(refactoredObject));
-						}
+					const teacherObject = new TeacherModel({
+						name,
+						email,
+						password: encryptedPassword,
+						verificationToken,
+						google,
+						facebook,
+						picture: Key,	// upload a separate profile picture for teacher object
+						verificationTokenTimestamp,
+						firstLogin: true,
+						deleted: false,
+						blocked: false,
+						isVerified: false,
+						notifications: 0,
+						address: address ? {
+							location: address,
+							type: 'Point',
+							coordinates: [],
+						} : undefined,
 					});
+
+					Promise.all([
+						new Promise((_resolve, _reject) => {
+							studentObject.save()
+								.then(() => _resolve())
+								.catch(err => _reject(err));
+						}),
+						new Promise((_resolve, _reject) => {
+							teacherObject.save()
+								.then(() => _resolve())
+								.catch(err => _reject(err));
+						}),
+					]).then(() => {
+						TemplateMailServices.NewAccountMail({ to: email, name, verificationCode: verificationToken })
+							.then(() => resolve(ResponseUtility.SUCCESS))
+							.catch(err => reject(ResponseUtility.ERROR({ message: 'Error sending verification mail.', error: err })));
+					}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error creating user', error: err })));
 				}
 			}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error looking for student', error: err })));
 	} else {
