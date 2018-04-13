@@ -5,7 +5,7 @@ import { S3Services } from '../../services';
 import { S3_TEACHER_CERTS } from '../../constants';
 // import { SchemaMapperUtility } from '../../utility';
 
-const TeacherCertificationModel = database.model('Certification', TeacherCertificationSchema);
+const TeacherCertificationModel = database.model('Certifications', TeacherCertificationSchema);
 /**
  * microservice to save the doctor certificates
  * @author gaurav sharma
@@ -23,23 +23,27 @@ export default ({ id, policeCert, childrenCert }) => new Promise(async (resolve,
 		const policeKey = `police-check-${id}-${Date.now()}`;
 		const childKey = `child-check-${id}-${Date.now()}`;
 		try {
-			if (policeCert) {
-				await S3Services.uploadToBucket({ Bucket, Key: policeKey, data: policeCert });
-			}
-			if (childrenCert) {
-				await S3Services.uploadToBucket({ Bucket, Key: childKey, data: childrenCert });
-			}
+			// if (policeCert) {
+			// 	await S3Services.uploadToBucket({ Bucket, Key: policeKey, data: policeCert });
+			// }
+			// if (childrenCert) {
+			// 	await S3Services.uploadToBucket({ Bucket, Key: childKey, data: childrenCert });
+			// }
 
-			TeacherCertificationModel.findOne({ ref: id })
+			const query = { ref: id };
+			TeacherCertificationModel.findOne(query)
 				.then(async (certificates) => {
 					if (certificates) {
 						// update existing
-						const updateQuery = await SchemaMapperUitlity({
-							policeCertificate: policeCert ? policeKey : undefined,
-							childrenCertificate: childrenCert ? childKey : undefined,
-						});
+						const updateQuery = {};
+						if (policeCert) {
+							updateQuery.policeCertificate = policeKey;
+						}
+						if (childrenCert) {
+							updateQuery.childrenCertificate = childKey;
+						}
 
-						TeacherCertificationModel.updateOne({ ref: id }, updateQuery)
+						TeacherCertificationModel.updateOne(query, updateQuery)
 							.then(() => resolve(ResponseUtility.SUCCESS))
 							.catch(err => reject(ResponseUtility.ERROR({ message: 'Error updating', error: err })));
 					} else {
