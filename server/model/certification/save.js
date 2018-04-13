@@ -1,8 +1,9 @@
 import { TeacherCertificationSchema } from '../schemas';
 import database from '../../db';
-import { ResponseUtility } from '../../utility';
+import { ResponseUtility, SchemaMapperUitlity } from '../../utility';
 import { S3Services } from '../../services';
 import { S3_TEACHER_CERTS } from '../../constants';
+// import { SchemaMapperUtility } from '../../utility';
 
 const TeacherCertificationModel = database.model('Certification', TeacherCertificationSchema);
 /**
@@ -29,14 +30,32 @@ export default ({ id, policeCert, childrenCert }) => new Promise(async (resolve,
 				await S3Services.uploadToBucket({ Bucket, Key: childKey, data: childrenCert });
 			}
 
-			const checkCertificates = new TeacherCertificationModel({
-				ref: id,
-				policeCertificate: policeCert ? policeKey : undefined,
-				childrenCertificate: childrenCert ? childKey : undefined,
-			});
-			checkCertificates.save()
-				.then(() => resolve(ResponseUtility.SUCCESS))
-				.catch(err => reject(ResponseUtility.ERROR({ message: 'Error saving certs data', error: err })));
+			TeacherCertificationModel.findOne({ ref: id })
+				.then(async (certificates) => {
+					if (certificates) {
+						// update existing
+						const updateQuery = await SchemaMapperUitlity({
+							policeCertificate: policeCert ? policeKey : undefined,
+							childrenCertificate: childrenCert ? childKey : undefined,
+						});
+
+						TeacherCertificationModel.updateOne({ ref: id }, updateQuery)
+							.then(() => resolve(ResponseUtility.SUCCESS))
+							.catch(err => reject(ResponseUtility.ERROR({ message: 'Error updating', error: err })));
+					} else {
+						// create new
+						const checkCertificates = new TeacherCertificationModel({
+							ref: id,
+							policeCertificate: policeCert ? policeKey : undefined,
+							childrenCertificate: childrenCert ? childKey : undefined,
+						});
+						checkCertificates.save()
+							.then(() => resolve(ResponseUtility.SUCCESS))
+							.catch(err => reject(ResponseUtility.ERROR({ message: 'Error saving certs data', error: err })));
+					}
+				}).catch((err) => {
+					reject(ResponseUtility.ERROR({ message: 'Error looking for certificates', error: err }));
+				});
 		} catch (err) {
 			reject(ResponseUtility.ERROR({ message: 'Error uploading check document.', error: err }));
 		}
