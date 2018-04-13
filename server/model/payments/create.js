@@ -10,29 +10,36 @@ const PaymentModel = database.model('Payments', PaymentSchema);
  * user enters the payment details
  * @param {String} id of the user, to be injected by the controller
  * @param {String} email of the user, to be injected by the controller
- * @param {String} token of the card details to create a new user with.
+ * @param {String} cardToken the token reresenting the card detils
+ * @param {String} bankToken the token representing the bank account
  */
 export default ({
 	id,
 	email,
-	token,
+	cardToken,
+	bankToken,
 }) => new Promise(async (resolve, reject) => {
-	if (id && token && email) {
+	if (id && (cardToken || bankToken)) {
 		const payment = await PaymentModel.findOne({ ref: id }, { __v: 0 });
 		if (payment) {
 			// the payment method is defined
 			// return the data as it is...
 			return resolve(payment._doc);
 		}
-		StripeServices.CreateUser({ email, card: token })
-			.then((customer) => {
+		StripeServices.CreateUser({
+			email,
+			id,
+			card: cardToken,
+			bank: bankToken,
+		})
+			.then(({ altered, raw }) => {
 				// save the details in payment database
 				const paymentData = new PaymentModel({
 					ref: id,
-					stripeId: customer.id,
-					defaultSource: customer.default_source,
+					stripeId: altered.id,
+					defaultSource: altered.default_source,
 					deleted: false,
-					stripeCustomer: customer,
+					stripeCustomer: raw,
 				});
 				paymentData.save()
 					.then(() => resolve(ResponseUtility.SUCCESS_DATA(customer)))
