@@ -61,6 +61,7 @@ export default ({
 								time,
 								title,
 								timestamp,
+								slot,
 							},
 							$$populatedVirtuals: {
 								student,
@@ -92,6 +93,7 @@ export default ({
 							bookingRef,
 							time,
 							title,
+							slot,
 							timestamp,
 							student: studentDetails,
 							teacher: teacherDetails,
