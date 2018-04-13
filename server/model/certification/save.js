@@ -23,12 +23,12 @@ export default ({ id, policeCert, childrenCert }) => new Promise(async (resolve,
 		const policeKey = `police-check-${id}-${Date.now()}`;
 		const childKey = `child-check-${id}-${Date.now()}`;
 		try {
-			// if (policeCert) {
-			// 	await S3Services.uploadToBucket({ Bucket, Key: policeKey, data: policeCert });
-			// }
-			// if (childrenCert) {
-			// 	await S3Services.uploadToBucket({ Bucket, Key: childKey, data: childrenCert });
-			// }
+			if (policeCert) {
+				await S3Services.uploadToBucket({ Bucket, Key: policeKey, data: policeCert });
+			}
+			if (childrenCert) {
+				await S3Services.uploadToBucket({ Bucket, Key: childKey, data: childrenCert });
+			}
 
 			const query = { ref: id };
 			TeacherCertificationModel.findOne(query)
