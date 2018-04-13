@@ -92,7 +92,7 @@ export default ({ id, bookingId, confirmed }) => new Promise((resolve, reject) =
 						const payment = await PaymentsServices.PaymentsPayService({ id: student._id, bookingId, amount: classDetails.rate });
 						// send payment success email to teacher
 						// send invoice to student email
-						// console.log('payment accepted');
+						
 					} catch (err) {
 						// console.log('payment error');
 						return reject();
@@ -139,6 +139,7 @@ export default ({ id, bookingId, confirmed }) => new Promise((resolve, reject) =
 														id: student._id,
 														bookingRef: bookingId,
 														originator: id,
+														slot,
 														classId: ref,
 														time: eventTimeline,
 														title: 'Confirmed your request',
@@ -179,6 +180,7 @@ export default ({ id, bookingId, confirmed }) => new Promise((resolve, reject) =
 											id: student._id,
 											bookingRef: bookingId,
 											classId: ref,
+											slot,
 											originator: id,
 											time: eventTimeline,
 											title: 'Declined your request',

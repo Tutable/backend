@@ -140,6 +140,7 @@ export default ({
 									bookingRef: doc._id,	// the id of booking
 									originator: doc.by,		// id of the student
 									classId: ref,
+									slot,
 									time: eventTimeline,
 									title: 'Requested for class',
 									deleted: false,
