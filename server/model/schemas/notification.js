@@ -14,6 +14,7 @@ const Notification = new Schema({
 	 */
 	originator: String,
 	classId: String,
+	slot: {},
 	// for the class request. contains the timestamp of the requested time of class
 	// this is populated for teacher notification and is empty for student notification
 	// @see notifications user stories for more details
