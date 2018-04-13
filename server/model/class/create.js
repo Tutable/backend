@@ -27,12 +27,12 @@ export default ({
 	picture,
 	category,
 	level,
-	description,
+	// description,
 	timeline,
 	bio,
 	rate,
 }) => new Promise(async (resolve, reject) => {
-	if (id && name && picture && category && level && description && rate && timeline) {
+	if (id && name && picture && category && level && bio && rate && timeline) {
 		// @todo upload payload to s3
 		const Key = `class-${id}-${Date.now()}`;
 		try {
@@ -47,7 +47,7 @@ export default ({
 			payload: Key,
 			category,
 			level,
-			description,
+			// description,
 			bio,
 			rate,
 			timeline,
