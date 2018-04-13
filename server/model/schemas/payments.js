@@ -8,7 +8,9 @@ import { Schema } from 'mongoose';
 const Payment = new Schema({
 	ref: String, // corresponds to the user id
 	stripeId: String,
+	defaultSource: String, // the default card type
 	deleted: Boolean,
+	stripeCustomer: {},
 });
 
 export default Payment;

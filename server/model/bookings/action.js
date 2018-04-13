@@ -78,22 +78,26 @@ export default ({ id, bookingId, confirmed }) => new Promise((resolve, reject) =
 				// const lookupQuery = { $and: [{ _id: bookingId }, { teacher: id }] };
 				const updateQuery = confirmed ? { confirmed } : { cancelled: true };
 				// if confirmed, make a payment
-				// if (confirmed) {
-				// 	/**
-				// 	 * process the payment from  student account
-				// 	 * @todo handle money flow from student account to teacher account
-				// 	 */
-				// 	// const payment = await PaymentsModel({ ref: student._id });
-				// 	// if (!payment) {
-				// 	// 	return reject(ResponseUtility.ERROR({ message: 'Payment method is not defined by student.' }));
-				// 	// }
-				// 	// payment defined, now create a payment
-				// 	try {
-				// 		const payment = await PaymentsServices.PaymentsPayService({ id: student._id, bookingId, amount: classDetails.rate });
-				// 	} catch (err) {
-				// 		return reject();
-				// 	}
-				// }
+				if (confirmed) {
+					/**
+					 * process the payment from  student account
+					 * @todo handle money flow from student account to teacher account
+					 */
+					const payment = await PaymentsModel({ ref: student._id });
+					if (!payment) {
+						return reject(ResponseUtility.ERROR({ message: 'Payment method is not defined by student.' }));
+					}
+					// payment defined, now create a payment
+					try {
+						const payment = await PaymentsServices.PaymentsPayService({ id: student._id, bookingId, amount: classDetails.rate });
+						// send payment success email to teacher
+						// send invoice to student email
+						// console.log('payment accepted');
+					} catch (err) {
+						// console.log('payment error');
+						return reject();
+					}
+				}
 				BookingsModel.update(query, updateQuery)
 					.then(async ({ nModified }) => {
 						// const { nModified } = modified;

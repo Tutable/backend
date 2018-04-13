@@ -106,8 +106,6 @@ export default ({
 				const hours = Number(containsSlot.split('-')[0]);
 				const newDate = date.setHours(hours);
 
-				// console.log(newDate.getTime());
-				// console.log('Yes. It contains slot.');
 				const eventTimeline = newDate;
 				// add a new booking
 				const bookingObject = new BookingsModel({
