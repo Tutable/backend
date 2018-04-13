@@ -1,4 +1,6 @@
 import { TokenUtility } from '../utility';
+
+const validPaths = ['student', 'teacher'];
 /**
  * This moudule acts as a common handler for social login. This is only
  * used by a single controller route but is still separated to spearate
@@ -14,13 +16,20 @@ import { TokenUtility } from '../utility';
 */
 export default (req, res, modelPromise) => {
 	const { body } = req;
+	let role;
+	validPaths.map((path) => {
+		if (req.path.indexOf(path) !== -1) {
+			role = path;
+		}
+	});
 	modelPromise(body).then((success) => {
 		const { data } = success;
-		data.role = 'student';
+		// parse the base route to fetch the teacher or student role
+		data.role = role;
 		res.status(200).send({ code: 100, message: 'Authenticated', accessToken: TokenUtility.generateToken(data) });
 	}).catch((err) => {
 		const { data } = err;
-		data.role = 'student';
+		data.role = role;
 		res.status(200).send({ code: 100, message: 'Authenticated', accessToken: TokenUtility.generateToken(data) });
 	});
 };

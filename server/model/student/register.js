@@ -130,7 +130,7 @@ export default ({
 						firstLogin: true,
 						deleted: false,
 						blocked: false,
-						isVerified: false,
+						isVerified: (google || facebook) ? true : false,
 						notifications: 0,
 						address: address ? {
 							location: address,
@@ -139,10 +139,17 @@ export default ({
 						} : undefined,
 					});
 
+					let studentData;
 					Promise.all([
 						new Promise((_resolve, _reject) => {
 							studentObject.save()
-								.then(() => _resolve())
+								.then((doc) => {
+									const refactoredStudent = Object.assign({}, doc._doc);
+									keys.map(key => delete refactoredStudent[key]);
+
+									studentData = refactoredStudent;
+									_resolve();
+								})
 								.catch(err => _reject(err));
 						}),
 						new Promise((_resolve, _reject) => {
@@ -151,9 +158,13 @@ export default ({
 								.catch(err => _reject(err));
 						}),
 					]).then(() => {
-						TemplateMailServices.NewAccountMail({ to: email, name, verificationCode: verificationToken })
-							.then(() => resolve(ResponseUtility.SUCCESS))
-							.catch(err => reject(ResponseUtility.ERROR({ message: 'Error sending verification mail.', error: err })));
+						if (email && password) {
+							TemplateMailServices.NewAccountMail({ to: email, name, verificationCode: verificationToken })
+								.then(() => resolve(ResponseUtility.SUCCESS_DATA(studentData)))
+								.catch(err => reject(ResponseUtility.ERROR({ message: 'Error sending verification mail.', error: err })));
+						} else {
+							resolve(ResponseUtility.SUCCESS_DATA(studentData));
+						}
 					}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error creating user', error: err })));
 				}
 			}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error looking for student', error: err })));
