@@ -8,23 +8,24 @@ import { ResponseUtility } from '../../utility';
  * generate the token
  * @author gaurav sharma
  * @since 13th April 2018
+ * @deprecated @since 14th April 2018
  */
 export default ({
-	country,
-	currency,
+	country = 'AU',
+	currency = 'aud',
 	accountHolder,
-	holderType,
-	routingNumber,
+	holderType = 'individual',
+	bsb,
 	accountNumber,
 }) => new Promise((resolve, reject) => {
-	if (country && currency && accountHolder && holderType && routingNumber && accountNumber) {
+	if (accountHolder && holderType && bsb && accountNumber) {
 		StripeServices.stripe.tokens.create({
 			bank_account: {
 				country,
 				currency,
 				account_holder_name: accountHolder,
 				account_holder_type: holderType,
-				routing_number: routingNumber,
+				routing_number: bsb,
 				account_number: accountNumber,
 			},
 		}, (err, token) => {

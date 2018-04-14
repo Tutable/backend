@@ -15,11 +15,12 @@ import { ResponseUtility } from '../utility';
 import { STANDARD_IMAGE_SIZE, MB } from '../constants';
 
 export default (req, res, next) => {
-	const { files, body: { data, id } } = req;
+	const { files, body: { data, id, email } } = req;
 	if (data || files) {
 		req.body = data ? JSON.parse(data) : {};
 		if (id) {
 			req.body.id = id;
+			req.body.email = email;
 		}
 
 		if (files && Object.keys(files).length) {

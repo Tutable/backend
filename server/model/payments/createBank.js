@@ -10,10 +10,16 @@ const PaymentsModel = database.model('Payments', PaymentsSchema);
  * this model function to be used by the teacher to register
  * the money incoming sourece.
  * @see https://stripe.com/docs/connect/identity-verification-api
+ * @param {String} id of the teacher
+ * @param {String} email of the teacher
+ * @param {*} verificationDocumentData
+ * @param {*} account
+ * @param {*} personalDetails
  */
 export default ({
 	id,
 	email,
+	verificationDocumentData,	// required
 	account: {
 		country = 'AU',
 		currency = 'AUD',
@@ -41,7 +47,8 @@ export default ({
 	},
 }) => new Promise(async (resolve, reject) => {
 	if ((id || email) && accountHolder && bsb && accountNumber && city && line1 && postal &&
-		state && day && month && year && firstName && lastName && ip && type) {
+		state && day && month && year && firstName && lastName && ip && type
+		&& verificationDocumentData) {
 		const payment = await PaymentsModel.findOne({ ref: id }, { __v: 0 });
 		if (payment) {
 			return resolve(ResponseUtility.SUCCESS_DATA(payment._doc));
@@ -74,7 +81,9 @@ export default ({
 						type,
 						ip,
 					},
+					verificationDocumentData,
 				});
+				// process uploading verification document
 
 				const paymentData = new PaymentsModel({
 					ref: id,

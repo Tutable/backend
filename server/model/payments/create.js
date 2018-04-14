@@ -16,21 +16,19 @@ const PaymentModel = database.model('Payments', PaymentSchema);
 export default ({
 	id,
 	email,
-	cardToken,
-	bankToken,
+	card,
 }) => new Promise(async (resolve, reject) => {
-	if (id && (cardToken || bankToken)) {
+	if (id && card) {
 		const payment = await PaymentModel.findOne({ ref: id }, { __v: 0 });
 		if (payment) {
 			// the payment method is defined
-			// return the data as it is...
+			// return the data as it is.
 			return resolve(payment._doc);
 		}
 		StripeServices.CreateUser({
 			email,
 			id,
-			card: cardToken,
-			bank: bankToken,
+			card,
 		})
 			.then(({ altered, raw }) => {
 				// save the details in payment database
@@ -42,7 +40,7 @@ export default ({
 					stripeCustomer: raw,
 				});
 				paymentData.save()
-					.then(() => resolve(ResponseUtility.SUCCESS_DATA(customer)))
+					.then(customer => resolve(ResponseUtility.SUCCESS_DATA(customer)))
 					.catch((err) => {
 						/**
 						 * @todo handle errors

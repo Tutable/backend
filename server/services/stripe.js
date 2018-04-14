@@ -9,23 +9,133 @@ import { STRIPE_SECRET_KEY } from '../constants';
 import { ResponseUtility } from '../utility';
 
 const stripe = new Stripe(STRIPE_SECRET_KEY);
-
 /**
  * create a unique stripe user. Will check from database
  * regarding the existance and will be called if key has not
  * been generated alreday for an existing user.
+ * This will create the new user with credit card details.
+ * Usually, this will be created for the student account
  * @param {String} email
- * @param {String} card
+ * @param {String} id
+ * @param {String} card, to be provided for student profile
+ * @param {String} bank, to be provided for teacher profile
+ * either user email or id is required
+ * either card or bank token of the user is required.
  */
-const CreateUser = ({ email, card }) => new Promise((resolve, reject) => {
-	if (email && card) {
+const CreateUser = ({
+	email,
+	id,
+	card,
+}) => new Promise(async (resolve, reject) => {
+	if ((email || id) && card) {
 		stripe.customers.create({
-			email,
-			description: `Stipe details for ${email} customer`,
+			email: email || id,
+			description: `Stipe details for ${email || id} customer`,
 			source: card,
 		}).then((success) => {
+			const object = { altered: success, raw: success };
 			resolve(success);
 		}).catch(err => reject(err));
+	} else {
+		reject(ResponseUtility.MISSING_REQUIRED_PROPS);
+	}
+});
+
+/**
+ * Create a new bank user
+ */
+const CreateBankUser = ({
+	email,
+	token,	// the bank account id
+	personalDetails: {
+		address: {
+			city,
+			country,
+			line1,
+			postal,
+			state,
+		},
+		dob: {
+			day,
+			month,
+			year,
+		},
+		firstName,
+		lastName,
+		type,
+		ip,
+	},
+	verificationDocumentData,
+}) => new Promise(async (resolve, reject) => {
+	if (email && token && city && line1 && postal && state &&
+		day && month && year && firstName && lastName && type && ip) {
+		/**
+		 * create a user with bank account
+		 * process with sripe connect API
+		 * 1. create a new account with stripe connect API
+		 * 2. Add a bank account via token,
+		 */
+		const account = await stripe.account.create({ type: 'custom', country: 'AU', email });
+		if (account) {
+			const { id } = account;
+			const updatedAccount = await stripe.accounts.update(id, {
+				external_account: token,
+				tos_acceptance: {
+					date: Math.floor(Date.now() / 1000),
+					ip,
+				},
+				legal_entity: {
+					address: {
+						city,
+						country,
+						line1,
+						postal_code: postal,
+						state,
+					},
+					first_name: firstName,
+					last_name: lastName,
+					type,
+					dob: {
+						day,
+						month,
+						year,
+					},
+				},
+			});
+			// console.log(updatedAccount);
+			if (updatedAccount) {
+				// upload the verrificaiton document here.
+				const upload = await stripe.fileUploads.create(
+					{
+						purpose: 'identity_document',
+						file: {
+							data: verificationDocumentData,
+							name: '',
+							type: 'application/octect-stream',
+						},
+					},
+					{ stripe_account: id },
+				);
+
+				/**
+				 * @todo parse the returned token and attach it with the 
+				 * stripe account
+				 */
+				const attach = await stripe.accounts.update(id, {
+					legal_entity: {
+						verification: {
+							document: upload.id,
+						},
+					},
+				});
+				console.log(attach);
+				// added an partner account with bank account.
+				const response = { altered: { id: updatedAccount.id, default_source: updatedAccount.external_accounts.data[0].id }, raw: updatedAccount };
+				resolve(response);
+			} else {
+				reject(ResponseUtility.ERROR({ message: 'Erro adding external account to the created partner account '}));
+			}
+		}
 	} else {
 		reject(ResponseUtility.MISSING_REQUIRED_PROPS);
 	}
@@ -40,7 +150,7 @@ const CreateUser = ({ email, card }) => new Promise((resolve, reject) => {
  */
 const CreatePayment = ({
 	amount,
-	currency = 'USD',
+	currency = 'AUD',
 	source,
 	customer,
 	description,
@@ -60,8 +170,78 @@ const CreatePayment = ({
 	}
 });
 
+/**
+ * handle the payout to the teachers account
+ * @param amount
+ * @param description
+ * @param destination The ID of a bank account or a card to send the payout to.
+ * If no destination is supplied, the default external account for the specified
+ * currency will be used.
+ * @param sourceType The source balance to draw this payout from. Balances for
+ * different payment sources are kept separately. You can find the amounts with
+ * the balances API. Valid options are: alipay_account, bank_account, and card.
+ * @see https://stripe.com/docs/api/node#create_payout for more
+ * @return Promise
+ */
+const HandlePayout = ({
+	amount,
+	description,
+	destination,
+	sourceType,
+}) => new Promise((resolve, reject) => {
+	/**
+	 * @todo handle payouts implementation
+	 */
+	if (amount && description && destination) {
+		stripe.transfers.create({
+			amount,
+			destination,
+			currency: 'aud',
+			transfer_group: 'TEST_TRANSFERS',
+		})
+			.then(success => resolve(ResponseUtility.SUCCESS_DATA(success)))
+			.catch(err => reject(ResponseUtility.ERROR({ message: '', error: err })));
+	}
+});
+
+/**
+ * cerate a customer account to handle payouts
+ * @see https://stripe.com/docs/api/node#create_account
+ * @param {String} email
+ */
+const CreateCustomAccount = ({ email }) => new Promise((resolve, reject) => {
+	stripe.accounts.create({
+		type: 'custom',
+		country: 'AU',
+		email,
+	}).then((account) => {
+		resolve(account);
+	}).catch(err => reject(err));
+});
+
+/**
+ * add externa account to a stripe connect account.
+ * use the stripe account update function to add external account
+ */
+const AddExternalAccount = ({ account, businessName,  token }) => new Promise((resolve, reject) => {
+	if (account && (businessName || token)) {
+		stripe.accounts.update(account, {
+			business_name: businessName,
+			external_account: token,
+		}).then((success) => {
+			resolve(success);
+		}).catch(err => reject(err));
+	} else {
+		reject(ResponseUtility.MISSING_REQUIRED_PROPS);
+	}
+});
+
 export default {
 	stripe,
 	CreateUser,
 	CreatePayment,
+	HandlePayout,
+	CreateCustomAccount,
+	AddExternalAccount,
+	CreateBankUser,
 };
