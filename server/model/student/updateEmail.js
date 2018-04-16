@@ -36,8 +36,6 @@ export default ({ id, email, updateEmail }) => new Promise(async (resolve, rejec
 		} else {
 			teacherObject = await TeacherModel.findOne({ email: studentObject.email });
 		}
-		console.log(studentObject);
-		console.log(teacherObject);
 		// if (!mod) {
 		// 	// not student
 		// 	mod = await TeacherModel.findOne({ _id: id });
