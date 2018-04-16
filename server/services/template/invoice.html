@@ -1,0 +1,79 @@
+<link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+<section class='container' style='font-family: Montserrat, Arial; background: #fff; padding: 10px;'>
+	<section class='header' style='
+								background: rgb(170,237,181);
+								background: linear-gradient(90deg, rgba(170,237,181,1) 0%, rgba(74,214,168,1) 35%, rgba(65,212,167,1) 100%);
+								padding: 20px;
+								border-top-left-radius: 10px;
+								border-top-right-radius: 10px;'>
+		<h1 style='text-align: center'>
+			<img src='https://thumb.ibb.co/f0vePx/tutable_logo.png' height=50>
+		</h1>
+	</section>
+	<section style='padding: 50px; border: solid 1px rgb(170,237,181);'>
+		Hello {{name}}!,<br/><br/>
+		<section class='teacher-info'>
+			<p>
+				Here is the invoice regarding your recent class booking on tutable.
+				<table style='padding: 10px;border: solid 1px silver; border-radius: 3px; text-align: center' border=1>
+					INVOICE# {{txnId}}
+					
+					<thead>
+						<th style='border: solid 1px silver;border-radius: 3px;padding: 10px'>
+							<td style='border: solid 1px silver;border-radius: 3px;padding: 10px'>
+								S.No
+							</td>
+							<td style='border: solid 1px silver;border-radius: 3px;padding: 10px'>
+								Course Name
+							</td>
+							<td style='border: solid 1px silver;border-radius: 3px;padding: 10px'>
+								Amount (AUD)
+							</td>
+						</th>	
+					</thead>
+					<tbody>
+						<tr style=''>
+							<td style='border: none;border-bottom: solid 1px silver;padding: 10px;'>#</td>
+							<td style='border: none;border-bottom: solid 1px silver;'>1</td>
+							<td style='border: none;border-bottom: solid 1px silver;'>Learn digital photography</td>
+							<td style='border: none; border-bottom: solid 1px silver;'>56.67</td>
+						</tr>
+						<tr>
+							<td style='border: none;border-bottom: solid 1px silver;padding: 10px;e'>#</td>
+							<td style='border: none;border-bottom: solid 1px silver;padding: 10px;'>2</td>
+							<td style='border: none;border-bottom: solid 1px silver;padding: 10px;'>Stripe charges</td>
+							<td style='border: none;border-bottom: solid 1px silver;padding: 10px;'>1.33</td>
+						</tr>
+						<tr>
+							<td style='border: none;border-bottom: solid 1px silver;padding: 10px;'>#</td>
+							<td style='border: none;border-bottom: solid 1px silver;padding: 10px;'>3</td>
+							<td style='border: none;border-bottom: solid 1px silver;padding: 10px;'>Tutable charges</td>
+							<td style='border: none;border-bottom: solid 1px silver;padding: 10px;'>2</td>
+						</tr>
+						<tr>
+							<td colspan=3 style='border: none'>
+								Total
+							</td>
+							<td style='border: none'>60</td>
+						</tr>
+					</tbody>
+				</table>
+			</p>
+		</section>
+		<br/><br/>
+		Regards,<br/>
+		<b>Team Tutable</b><br/><br/>
+	</section>
+	<section class='footer' style='
+								background: rgb(170,237,181);
+								background: linear-gradient(90deg, rgba(170,237,181,1) 0%, rgba(74,214,168,1) 35%, rgba(65,212,167,1) 100%);
+								padding: 10px;
+								border-bottom-right-radius: 10px;
+								border-bottom-left-radius: 10px;
+								color: #fff;
+								text-align: center;'>
+		<p>
+			&copy;2018
+		</p>
+	</section>
+</section>
