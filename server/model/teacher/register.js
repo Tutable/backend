@@ -32,6 +32,7 @@ export default ({
 	google = undefined,
 	facebook = undefined,
 	address,
+	picture,
 }) => new Promise((resolve, reject) => {
 	if (name && ((name && email && password) || (google || facebook))) {
 		let query;
@@ -47,8 +48,8 @@ export default ({
 				if (teacher) {
 					const refactoredObject = Object.assign({}, teacher._doc);
 					keys.map(key => delete refactoredObject[key]);
-					reject(ResponseUtility.ERROR_DATA({ data: refactoredObject, message: 'User laready exists' }));
-					return reject(ResponseUtility.ERROR({ message: 'User already exists' }));
+					return reject(ResponseUtility.ERROR_DATA({ data: refactoredObject, message: 'User laready exists' }));
+					// return reject(ResponseUtility.ERROR({ message: 'User already exists' }));
 				}
 
 				let encryptedPassword;
@@ -60,10 +61,10 @@ export default ({
 				}
 				const verificationTokenTimestamp = Date.now();
 
-
 				const teacherModel = new TeacherModel({
 					name,
-					email: email || google.email || facebook.email,
+					email: email || google ? google.email : facebook ? facebook.email : undefined,
+					picture,
 					password: encryptedPassword,
 					verificationToken,
 					verificationTokenTimestamp,
@@ -83,8 +84,9 @@ export default ({
 
 				const studentModel = new StudentModel({
 					name,
-					email,
+					email: email || google ? google.email : facebook ? facebook.email : undefined,
 					password: encryptedPassword,
+					picture,
 					address: address ? {
 						location: address,
 						type: 'Point',
@@ -92,7 +94,7 @@ export default ({
 					} : undefined,
 					verificationToken,
 					verificationTokenTimestamp,
-					firstLogin: true,
+					firstLogin: email ? true : false, // in case of social login, no need to keep the flag
 					deleted: false,
 					blocked: false,
 					isVerified: (google || facebook) ? true : false,
@@ -124,7 +126,7 @@ export default ({
 					}),
 				]).then(() => {
 					// send the mail here
-					if (email) {
+					if (email && password && !google && !facebook) {
 						TemplateMailServices.NewAccountMail({
 							to: email,
 							verificationCode: verificationToken,
@@ -136,6 +138,9 @@ export default ({
 						resolve(ResponseUtility.SUCCESS_DATA(teacherData));
 					}
 				}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error creating new user', error: err })));
+			}).catch(err => {
+				console.log(err);
+				reject(ResponseUtility.ERROR({ message: 'Error looking for teacher', error: err }))
 			});
 	} else {
 		reject(ResponseUtility.MISSING_REQUIRED_PROPS);

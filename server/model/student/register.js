@@ -99,7 +99,7 @@ export default ({
 					// create a new student
 					const studentObject = new StudentModel({
 						name,
-						email: email || google.email || facebook.email,
+						email: email || google ? google.email : facebook ? facebook.email : undefined,
 						password: encryptedPassword,
 						address: address ? {
 							location: address,
@@ -120,7 +120,7 @@ export default ({
 
 					const teacherObject = new TeacherModel({
 						name,
-						email,
+						email: email || google ? google.email : facebook ? facebook.email : undefined,
 						password: encryptedPassword,
 						verificationToken,
 						google,
