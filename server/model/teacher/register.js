@@ -61,9 +61,10 @@ export default ({
 				}
 				const verificationTokenTimestamp = Date.now();
 
+				let parsedEmail = email ? email : google ? google.email : facebook ? facebook.email : undefined;
 				const teacherModel = new TeacherModel({
 					name,
-					email: email || google ? google.email : facebook ? facebook.email : undefined,
+					email: parsedEmail,
 					picture,
 					password: encryptedPassword,
 					verificationToken,
@@ -84,7 +85,7 @@ export default ({
 
 				const studentModel = new StudentModel({
 					name,
-					email: email || google ? google.email : facebook ? facebook.email : undefined,
+					email: parsedEmail,
 					password: encryptedPassword,
 					picture,
 					address: address ? {
