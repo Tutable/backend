@@ -32,6 +32,7 @@ export const {
 	BUSINESS_EMAIL_PASSWORD,
 	STRIPE_PUB_KEY,
 	STRIPE_SECRET_KEY,
+	DEDUCTIONS,
 } = process.env;
 
 export const MB = 1024 * 1024;
