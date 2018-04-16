@@ -236,6 +236,39 @@ const AddExternalAccount = ({ account, businessName,  token }) => new Promise((r
 	}
 });
 
+/**
+ * process the refeund based on the incurred charge
+ * @param {String} chargeId the id of the charge to process refund.
+ * @param {Number} amount if defined, the amount of money will be refunded, By deducting some charges
+ */
+const ProcessRefund  = ({ chargeId, amount }) => new Promise(async (resolve, reject) => {
+	if (!chargeId && !amount) {
+		return reject(ResponseUtility.MISSING_REQUIRES_PROPS);
+	}
+	console.log('here');
+	if (amount) {
+		try {
+			const chargeResponse = await stripe.refunds.create({
+				charge: chargeId,
+				amount,
+			});
+			return resolve(chargeResponse);
+		} catch (err) {
+			return reject(err);
+		}
+	}
+
+	try {
+		const response = await stripe.refunds.create({
+			charge: chargeId,
+		});
+		resolve(response);
+	} catch (err) {
+		console.log(err);
+		reject(err);
+	}
+});
+
 export default {
 	stripe,
 	CreateUser,
@@ -244,4 +277,5 @@ export default {
 	CreateCustomAccount,
 	AddExternalAccount,
 	CreateBankUser,
+	ProcessRefund,
 };
