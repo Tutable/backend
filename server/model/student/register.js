@@ -1,4 +1,4 @@
-import { token } from 'apn';
+// import { token } from 'apn';
 import {
 	StudentSchema,
 	TeacherSchema,
@@ -13,7 +13,7 @@ import {
 	S3Services,
 	TemplateMailServices,
 } from '../../services';
-import { S3_STUDENT_PROFILE, S3_TEACHER_PROFILE } from '../../constants';
+import { S3_STUDENT_PROFILE } from '../../constants';
 
 const StudentModel = database.model('Student', StudentSchema);
 const TeacherModel = database.model('Teacher', TeacherSchema);
