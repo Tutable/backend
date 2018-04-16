@@ -50,10 +50,10 @@ export default ({
 		 * - If details not found then return an error response so that
 		 * 	user could be redirected to the add payment source screen.
 		 */
-		// const usersPaymentOption = await PaymentsModel.findOne({ ref: id });
-		// if (!usersPaymentOption) {
-		// 	return reject(ResponseUtility.ERROR({ message: 'Cannot request booking without a vaild payment source. Add a payment source first.' }));
-		// }
+		const usersPaymentOption = await PaymentsModel.findOne({ ref: id });
+		if (!usersPaymentOption) {
+			return reject(ResponseUtility.ERROR({ message: 'Cannot request booking without a vaild payment source. Add a payment source first.' }));
+		}
 
 		/**
 		 * get the teacher id to fetch the teacher available slots and
