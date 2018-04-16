@@ -42,7 +42,7 @@ export default ({
 		}
 		const { defaultSource, stripeId, stripeCustomr } = payment;
 
-		const payoutDue = Number(classDate) + 86400000;	// one day after the class
+		const payoutDue = Number(classDate) + (7 * 86400000);	// seven days after the class
 		StripeServices.CreatePayment({
 			amount: amount * 100,
 			currency: 'AUD',
