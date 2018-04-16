@@ -46,6 +46,7 @@ export default ({ id }) => new Promise((resolve, reject) => {
 						description: `Payment by ${from} to teacher ${to} for bookking $${bookingId}`,
 						destination: stripeId,
 					}).then((success) => {
+						console.log(success);
 						/**
 						 * @todo mark the necessary flags in database
 						 */
@@ -53,7 +54,7 @@ export default ({ id }) => new Promise((resolve, reject) => {
 					}).catch((err) => {
 						reject(err);
 					});
-					resolve(ResponseUtility.SUCCESS);
+					// resolve(ResponseUtility.SUCCESS);
 				} else {
 					reject(ResponseUtility.ERROR({ message: 'No transaction found.' }));
 				}
