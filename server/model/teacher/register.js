@@ -63,11 +63,11 @@ export default ({
 
 				const teacherModel = new TeacherModel({
 					name,
-					email: email || google.email || google.email,
+					email: email || google.email || facebook.email,
 					password: encryptedPassword,
 					verificationToken,
 					verificationTokenTimestamp,
-					firstLogin: email ? true : false,
+					firstLogin: email ? true : false,	// in case of social login, no need to keep the flag
 					deleted: false,
 					blocked: false,
 					isVerified: (google || facebook) ? true : false,
