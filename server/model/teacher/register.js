@@ -138,7 +138,7 @@ export default ({
 						resolve(ResponseUtility.SUCCESS_DATA(teacherData));
 					}
 				}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error creating new user', error: err })));
-			}).catch(err => {
+			}).catch((err) => {
 				console.log(err);
 				reject(ResponseUtility.ERROR({ message: 'Error looking for teacher', error: err }))
 			});
