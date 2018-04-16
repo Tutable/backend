@@ -21,7 +21,7 @@ export default ({
 	gender,
 	bio,
 	availability,
-	email,
+	// email,
 	address,
 	degree,
 	qualification,
@@ -33,7 +33,7 @@ export default ({
 }) => new Promise(async (resolve, reject) => {
 	if (id && (name || dob || gender || bio || availability ||
 		address || degree || qualification || school || degreeAsset ||
-		picture || email || deviceId || notifications !== undefined)) {
+		picture /*|| email*/ || deviceId || notifications !== undefined)) {
 		// check if teacher exists
 		const query = { _id: id };
 		TeacherModel.findOne(query)
@@ -70,13 +70,13 @@ export default ({
 					}
 
 					// update
-					let updateQuery = await SchemaMapperUtility({
+					const updateQuery = await SchemaMapperUtility({
 						name,
 						dob,
 						gender,
 						bio,
 						availability,
-						email,
+						// email,
 						address,
 						degree,
 						qualification,
@@ -86,60 +86,60 @@ export default ({
 						deviceId,
 						notifications,
 					});
-					if (email) {
-						// check if email already assigned to someone else
-						TeacherModel.findOne({ email })
-							.then(async (teacherWithEmail) => {
-								if (teacherWithEmail) {
-									// do not include email
-									try {
-										updateQuery = await SchemaMapperUtility({
-											name,
-											dob,
-											gender,
-											bio,
-											availability,
-											address,
-											degree,
-											qualification,
-											school,
-											degreeAsset: degreeAssetURL,
-											picture: pictureURL,
-											deviceId,
-											notifications,
-										});
-									} catch (err) {
-										resolve(ResponseUtility.SUCCESS_MESSAGE({ message: 'Nothing updated' }));
-									}
-								}
+					TeacherModel.update(query, updateQuery, (err, modified) => {
+						if (err) {
+							return reject(ResponseUtility.ERROR({ message: 'Error updating teacher', error: err }));
+						}
+						const { nModified } = modified;
+						if (nModified >= 1) {
+							resolve(ResponseUtility.SUCCESS);
+						} else {
+							resolve(ResponseUtility.SUCCESS_MESSAGE({ message: 'Nothing modified' }));
+						}
+					});
+					// if (email) {
+					// 	// check if email already assigned to someone else
+					// 	TeacherModel.findOne({ email })
+					// 		.then(async (teacherWithEmail) => {
+					// 			if (teacherWithEmail) {
+					// 				// do not include email
+					// 				try {
+					// 					updateQuery = await SchemaMapperUtility({
+					// 						name,
+					// 						dob,
+					// 						gender,
+					// 						bio,
+					// 						availability,
+					// 						address,
+					// 						degree,
+					// 						qualification,
+					// 						school,
+					// 						degreeAsset: degreeAssetURL,
+					// 						picture: pictureURL,
+					// 						deviceId,
+					// 						notifications,
+					// 					});
+					// 				} catch (err) {
+					// 					resolve(ResponseUtility.SUCCESS_MESSAGE({ message: 'Nothing updated' }));
+					// 				}
+					// 			}
 
-								// update now
-								TeacherModel.update(query, updateQuery, (err, modified) => {
-									if (err) {
-										return reject(ResponseUtility.ERROR({ message: 'Error updating teacher', error: err }));
-									}
-									const { nModified } = modified;
-									if (nModified >= 1) {
-										resolve(ResponseUtility.SUCCESS);
-									} else {
-										resolve(ResponseUtility.SUCCESS_MESSAGE({ message: 'Nothing modified' }));
-									}
-								});
-							}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error looking for teacher', error: err })));
-					} else {
+					// 			// update now
+					// 			TeacherModel.update(query, updateQuery, (err, modified) => {
+					// 				if (err) {
+					// 					return reject(ResponseUtility.ERROR({ message: 'Error updating teacher', error: err }));
+					// 				}
+					// 				const { nModified } = modified;
+					// 				if (nModified >= 1) {
+					// 					resolve(ResponseUtility.SUCCESS);
+					// 				} else {
+					// 					resolve(ResponseUtility.SUCCESS_MESSAGE({ message: 'Nothing modified' }));
+					// 				}
+					// 			});
+					// 		}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error looking for teacher', error: err })));
+					// } else {
 						// update now
-						TeacherModel.update(query, updateQuery, (err, modified) => {
-							if (err) {
-								return reject(ResponseUtility.ERROR({ message: 'Error updating teacher', error: err }));
-							}
-							const { nModified } = modified;
-							if (nModified >= 1) {
-								resolve(ResponseUtility.SUCCESS);
-							} else {
-								resolve(ResponseUtility.SUCCESS_MESSAGE({ message: 'Nothing modified' }));
-							}
-						});
-					}
+					// }
 				} else {
 					resolve(ResponseUtility.SUCCESS_MMESSAGE({ message: 'Nothing updated. User not found.' }));
 				}

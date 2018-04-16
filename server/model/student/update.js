@@ -18,14 +18,14 @@ const StudentModel = database.model('Student', StudentSchema);
  */
 export default ({
 	id,
-	email,
+	// email,
 	picture,
 	name,
 	address,
 	deviceId,
 	notifications,
 }) => new Promise(async (resolve, reject) => {
-	if (id && (email || picture || name || address || deviceId || notifications !== undefined)) {
+	if (id && (picture || name || address || deviceId || notifications !== undefined)) {
 		const query = { _id: id };
 		const Key = `picture-${id}-${Date.now()}`;
 		if (picture) {
@@ -38,67 +38,67 @@ export default ({
 				return reject(ResponseUtility.ERROR({ message: 'Error uploading image to s3', error: err }));
 			}
 		}
-		let updateQuery;
-		if (email) {
-			// check if student already exusts with this new emil id
-			const lookupQuery = { email };
-			StudentModel.findOne(lookupQuery)
-				.then(async (student) => {
-					if (student) {
-						if (picture) {
-							// fetch the picture value and then delete it
-						}
-						// ignore email
-						updateQuery = await SchemaMapperUtility({
-							name,
-							picture: picture ? Key : undefined,
-							address: address ? {
-								location: address,
-							} : undefined,
-							deviceId,
-							notifications,
-						});
-					} else {
-						updateQuery = await SchemaMapperUtility({
-							name,
-							email,
-							picture: picture ? Key : undefined,
-							address: address ? {
-								location: address,
-							} : undefined,
-							deviceId,
-							notifications,
-						});
-					}
+		const updateQuery = await SchemaMapperUtility({
+			picture: picture ? Key : undefined,
+			name,
+			address: address ? {
+				location: address,
+			} : undefined,
+			deviceId,
+			notifications,
+		});
+		StudentModel.update(query, updateQuery)
+			.then((modified) => {
+				const { nModified } = modified;
+				if (nModified) {
+					return resolve(ResponseUtility.SUCCESS);
+				}
+				resolve(ResponseUtility.ERROR({ message: 'Nothing modified' }));
+			}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error updating student.', error: err })));
+		// if (email) {
+		// 	// check if student already exusts with this new emil id
+		// 	const lookupQuery = { email };
+		// 	StudentModel.findOne(lookupQuery)
+		// 		.then(async (student) => {
+		// 			if (student) {
+		// 				if (picture) {
+		// 					// fetch the picture value and then delete it
+		// 				}
+		// 				// ignore email
+		// 				updateQuery = await SchemaMapperUtility({
+		// 					name,
+		// 					picture: picture ? Key : undefined,
+		// 					address: address ? {
+		// 						location: address,
+		// 					} : undefined,
+		// 					deviceId,
+		// 					notifications,
+		// 				});
+		// 			} else {
+		// 				updateQuery = await SchemaMapperUtility({
+		// 					name,
+		// 					email,
+		// 					picture: picture ? Key : undefined,
+		// 					address: address ? {
+		// 						location: address,
+		// 					} : undefined,
+		// 					deviceId,
+		// 					notifications,
+		// 				});
+		// 			}
 
-					StudentModel.update({ _id: id }, updateQuery)
-						.then((modified) => {
-							const { nModified } = modified;
-							if (nModified) {
-								return resolve(ResponseUtility.SUCCESS);
-							}
-							resolve(ResponseUtility.ERROR({ message: 'Nothing modified' }));
-						}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error updating student.', error: err })));
-				}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error looking for student', error: err })));
-		} else {
-			updateQuery = await SchemaMapperUtility({
-				picture: picture ? Key : undefined,
-				name,
-				address: address ? {
-					location: address,
-				} : undefined,
-				deviceId,
-				notifications,
-			});
-			StudentModel.update({ _id: id }, updateQuery)
-				.then((modified) => {
-					const { nModified } = modified;
-					if (nModified) {
-						return resolve(ResponseUtility.SUCCESS);
-					}
-					resolve(ResponseUtility.ERROR({ message: 'Nothing modified' }));
-				}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error updating student.', error: err })));
-		}
+		// 			StudentModel.update({ _id: id }, updateQuery)
+		// 				.then((modified) => {
+		// 					const { nModified } = modified;
+		// 					if (nModified) {
+		// 						return resolve(ResponseUtility.SUCCESS);
+		// 					}
+		// 					resolve(ResponseUtility.ERROR({ message: 'Nothing modified' }));
+		// 				}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error updating student.', error: err })));
+		// 		}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error looking for student', error: err })));
+		// } else {
+			
+		// }
 	} else {
 		reject(ResponseUtility.MISSING_REQUIRED_PROPS);
 	}
