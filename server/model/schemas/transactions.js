@@ -24,6 +24,7 @@ const Transaction = new Schema({
 	amount: Number,
 	status: String,
 	type: Number,
+	timestamp: Number,
 	stripeChargeResponse: {},
 }, {
 	toJSON: { virtuals: true },

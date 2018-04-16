@@ -40,7 +40,7 @@ export default ({
 		if (!payment) {
 			return reject(ResponseUtility.ERROR({ messsage: 'Payment method not provided. Cannot continue booking.' }));
 		}
-		const { defaultSource, stripeId, stripeCustomr } = payment;
+		const { defaultSource, stripeId, stripeCustomer } = payment;
 
 		const payoutDue = Number(classDate) + (7 * 86400000);	// seven days after the class
 		StripeServices.CreatePayment({
@@ -63,6 +63,7 @@ export default ({
 					from,
 					to,
 					payoutDue,
+					timestamp: Date.now(),	// the date when transaction was initiated
 					payoutDone: false,	// will be done after the class is completed
 					stripeChargeResponse: charge,
 				});
