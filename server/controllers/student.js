@@ -15,6 +15,7 @@ export default {
 	details: (req, res) => commonResolver(req, res, StudentServices.StudentsDetailsService),
 	password: (req, res) => commonResolver(req, res, StudentServices.StudentsChangePasswordService),
 	update: (req, res) => commonResolver(req, res, StudentServices.StudentsUpdateService),
+	updateEmail: (req, res) => commonResolver(req, res, StudentServices.StudentsUpdateEmailService),
 	socialLogin: (req, res) => commonSocialLoginResolver(req, res, StudentServices.StudentsRegisterService),
 	resetNotifications: (req, res) => {
 		StudentServices.StudentsUpdateService({ id: req.body.id, notifications: 0 })

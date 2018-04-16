@@ -18,6 +18,7 @@ export default (app) => {
 	app.post(`${prefix}update`, AuthenticationControllers.authenticateStudent, CompressionServices, StudentControllers.update);
 	app.post(`${prefix}social`, StudentControllers.socialLogin);
 	app.post(`${prefix}resetNotifications`, AuthenticationControllers.authenticateStudent, StudentControllers.resetNotifications);
+	app.post(`${prefix}updateEmail`, AuthenticationControllers.authenticateStudent, StudentControllers.updateEmail);
 
 	app.get(`${prefix}asset/:bucket/:userType/:folder/:asset`, StudentControllers.asset);
 };
