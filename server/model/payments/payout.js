@@ -3,7 +3,10 @@ import {
 	PaymentsSchema,
 } from '../schemas';
 import database from '../../db';
-import { StripeServices } from '../../services';
+import {
+	StripeServices,
+	// EmailServices,
+} from '../../services';
 import { ResponseUtility } from '../../utility';
 
 const TransactionsModel = database.model('Transactions', TransactionsSchema);
@@ -11,8 +14,8 @@ const PaymentsModel = database.model('Payments', PaymentsSchema);
 
 /**
  * trigger the payout for a transaction
- * The payout will be triggered the next day after
- * the class
+ * The payout will be triggered weekly and all the due payments will be transferred by the
+ * end of the week.
  * @author gaurav sharma
  * @since 13th April 2018
  *
@@ -27,12 +30,12 @@ export default ({ id }) => new Promise((resolve, reject) => {
 					const {
 						_doc: {
 							bookingId,
-							stripeChargeId,
+							// stripeChargeId,
 							amount,
-							status,
+							// status,
 							from,
 							to,
-							payoutDue,
+							// payoutDue,
 						},
 					} = transaction;
 					// fethc the teacher bank details
@@ -46,11 +49,23 @@ export default ({ id }) => new Promise((resolve, reject) => {
 						description: `Payment by ${from} to teacher ${to} for bookking $${bookingId}`,
 						destination: stripeId,
 					}).then((success) => {
-						console.log(success);
+						// console.log(success);
 						/**
 						 * @todo mark the necessary flags in database
 						 */
-						resolve(success);
+						const payoutTimestamp = Date.now();
+						const payoutResponse = success;
+						const updateQuery = { payoutDone: true, payoutTimestamp, payoutResponse };
+						
+						TransactionsModel.updateOne({ _id: id }, updateQuery)
+							.then(({ nModified }) => {
+								if (!nModified) {
+									return reject(ResponseUtility.ERROR({ message: 'Nothing modified.' }));
+								}
+								// send an email alert to student about the card deduction
+								resolve(ResponseUtility.SUCCESS);
+							});
+						// resolve(success);
 					}).catch((err) => {
 						reject(err);
 					});

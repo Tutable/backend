@@ -19,6 +19,8 @@ const Transaction = new Schema({
 	 * Set this to true after the payout is complete.
 	 */
 	payoutDone: Boolean,
+	payoutTimestamp: Number, // the day when payout was done
+	payoutResponse: {},	// the response representing error/success transfer response
 	amount: Number,
 	status: String,
 	type: Number,
