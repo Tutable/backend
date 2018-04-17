@@ -1,9 +1,13 @@
-import { TeacherSchema } from '../schemas';
+import {
+	TeacherSchema,
+	PaymentsSchema,
+} from '../schemas';
 import database from '../../db';
 import { ResponseUtility } from '../../utility';
 import { S3_TEACHER_PROFILE } from '../../constants';
 
 const TeacherModel = database.model('Teacher', TeacherSchema);
+const PaymentsModel = database.model('Payments', PaymentsSchema);
 
 /**
  * default register microservice for teacher
@@ -20,7 +24,7 @@ export default ({ id, email }) => new Promise((resolve, reject) => {
 	if (id || email) {
 		const query = id ? { _id: id } : { email };
 		TeacherModel.findOne(query)
-			.then((teacher) => {
+			.then(async (teacher) => {
 				const {
 					_doc: {
 						_id,
@@ -45,6 +49,9 @@ export default ({ id, email }) => new Promise((resolve, reject) => {
 					},
 				} = teacher;
 
+
+				const paymentSource = await PaymentsModel.findOne({ ref: id });
+
 				resolve(ResponseUtility.SUCCESS_DATA({
 					id: _id,
 					name,
@@ -65,6 +72,7 @@ export default ({ id, email }) => new Promise((resolve, reject) => {
 					availability,
 					deviceId,
 					notifications,
+					payment: paymentSource || undefined,
 				}));
 			})
 			.catch(err => reject(ResponseUtility.ERROR({ message: 'Error looking for user', error: err })));
