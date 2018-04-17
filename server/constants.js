@@ -33,6 +33,8 @@ export const {
 	STRIPE_PUB_KEY,
 	STRIPE_SECRET_KEY,
 	DEDUCTIONS,
+	ADMIN,
+	ADMIN_PASS,
 } = process.env;
 
 export const MB = 1024 * 1024;
