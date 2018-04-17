@@ -34,7 +34,7 @@ const CreateUser = ({
 			source: card,
 		}).then((success) => {
 			const object = { altered: success, raw: success };
-			resolve(success);
+			resolve(object);
 		}).catch(err => reject(err));
 	} else {
 		reject(ResponseUtility.MISSING_REQUIRED_PROPS);
