@@ -36,10 +36,10 @@ export default ({
 		let populationQuery;
 		switch (role) {
 			case 'teacher':
-				populationQuery = { path: 'student', model: TeacherModel, select: 'name email picture' };
+				populationQuery = { path: 'teacher', model: TeacherModel, select: 'name email picture' };
 				break;
 			case 'student':
-				populationQuery = { path: 'teacher', model: StudentModel, select: 'name email picture' };
+				populationQuery = { path: 'student', model: StudentModel, select: 'name email picture' };
 				break;
 			default:
 				break;
