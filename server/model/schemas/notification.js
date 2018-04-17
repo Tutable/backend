@@ -29,13 +29,13 @@ const Notification = new Schema({
 
 Notification.virtual('student', {
 	ref: 'Students',
-	localField: 'ref',
+	localField: 'originator',
 	foreignField: '_id',
 	justOne: true,
 });
 Notification.virtual('teacher', {
 	ref: 'Teachers',
-	localField: 'ref',
+	localField: 'originator',
 	foreignField: '_id',
 	justOne: true,
 });
