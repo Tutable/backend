@@ -17,6 +17,7 @@ export default {
 	update: (req, res) => commonResolver(req, res, StudentServices.StudentsUpdateService),
 	updateEmail: (req, res) => commonResolver(req, res, StudentServices.StudentsUpdateEmailService),
 	socialLogin: (req, res) => commonSocialLoginResolver(req, res, StudentServices.StudentsRegisterService),
+	list: (req, res) => commonResolver(req, res, StudentServices.StudentsListService),
 	resetNotifications: (req, res) => {
 		StudentServices.StudentsUpdateService({ id: req.body.id, notifications: 0 })
 			.then(success => res.status(200).send(success))
