@@ -1,13 +1,17 @@
-import { TeacherSchema } from '../schemas';
+import {
+	TeacherSchema,
+	StudentSchema,
+} from '../schemas';
 import database from '../../db';
 import {
 	ResponseUtility,
 	SchemaMapperUtility,
 } from '../../utility';
 import { S3Services } from '../../services';
-import { S3_TEACHER_PROFILE } from '../../constants';
+import { S3_TEACHER_PROFILE, S3_STUDENT_PROFILE } from '../../constants';
 
 const TeacherModel = database.model('Teacher', TeacherSchema);
+const StudentModel = database.model('Student', StudentSchema);
 
 /**
  * update teacher microservice
@@ -49,11 +53,18 @@ export default ({
 					if (picture || degreeAsset) {
 						// upload picture to s3
 						const Bucket = S3_TEACHER_PROFILE;
+						const studentBucket = S3_STUDENT_PROFILE;
 						if (picture) {
 							// console.log('uplaoding profile pic');
 							try {
+								/**
+								 * @todo can handle a single path for profile picture.
+								 */
 								await S3Services.uploadToBucket({ Bucket, data: picture, Key: pictureKey });
-								// @todo delete the old picture from s3
+								await S3Services.uploadToBucket({ Bucket: studentBucket, data: picture, Key: pictureKey });
+								/**
+								 * @todo delete the old picture from s3
+								 */
 							} catch (err) {
 								reject(ResponseUtility.Error({ message: 'Error uploding profile picture', error: err }));
 							}
@@ -62,7 +73,9 @@ export default ({
 							// console.log('uplaoding user degree');
 							try {
 								await S3Services.uploadToBucket({ Bucket, data: degreeAsset, Key: degreeKey });
-								// @todo delete the old degree asset from s3 if exists
+								/**
+								 * @todo delete the old degree asset from s3 if exists
+								 */
 							} catch (err) {
 								reject(ResponseUtility.Error({ message: 'Error uploding degree. Please try again.', error: err }));
 							}
@@ -76,7 +89,6 @@ export default ({
 						gender,
 						bio,
 						availability,
-						// email,
 						address,
 						degree,
 						qualification,
@@ -86,17 +98,39 @@ export default ({
 						deviceId,
 						notifications,
 					});
-					TeacherModel.update(query, updateQuery, (err, modified) => {
-						if (err) {
-							return reject(ResponseUtility.ERROR({ message: 'Error updating teacher', error: err }));
-						}
-						const { nModified } = modified;
-						if (nModified >= 1) {
-							resolve(ResponseUtility.SUCCESS);
-						} else {
-							resolve(ResponseUtility.SUCCESS_MESSAGE({ message: 'Nothing modified' }));
-						}
-					});
+					Promise.all([
+						new Promise((_resolve, _reject) => {
+							TeacherModel.update(query, updateQuery)
+								.then(({ nModified }) => {
+									if (!nModified) {
+										return _reject(ResponseUtility.ERROR({ message: 'Nothing modified for teacher ' }));
+									}
+									_resolve();
+								}).catch(err => _reject(err));
+						}),
+						new Promise((_resolve, _reject) => {
+							StudentModel.update({ email: teacher.email }, { picture: pictureURL })
+								.then(({ nModified }) => {
+									if (!nModified) {
+										_reject(ResponseUtility.ERROR({ message: 'Nothing modified for student' }));
+									}
+									_resolve();
+								}).catch(err => _reject(err));
+						}),
+					]).then(() => {
+						resolve(ResponseUtility.SUCCESS);
+					}).catch(err => reject(err));
+					// TeacherModel.update(query, updateQuery, (err, modified) => {
+					// 	if (err) {
+					// 		return reject(ResponseUtility.ERROR({ message: 'Error updating teacher', error: err }));
+					// 	}
+					// 	const { nModified } = modified;
+					// 	if (nModified >= 1) {
+					// 		resolve(ResponseUtility.SUCCESS);
+					// 	} else {
+					// 		resolve(ResponseUtility.SUCCESS_MESSAGE({ message: 'Nothing modified' }));
+					// 	}
+					// });
 					// if (email) {
 					// 	// check if email already assigned to someone else
 					// 	TeacherModel.findOne({ email })
