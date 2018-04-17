@@ -264,7 +264,7 @@ const ProcessRefund  = ({ chargeId, amount }) => new Promise(async (resolve, rej
 		});
 		resolve(response);
 	} catch (err) {
-		console.log(err);
+		// console.log(err);
 		reject(err);
 	}
 });

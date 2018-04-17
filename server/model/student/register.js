@@ -38,6 +38,7 @@ export default ({
 	password,
 	address,
 	picture,
+	dob,
 	google = undefined,
 	facebook = undefined,
 }) => new Promise((resolve, reject) => {
@@ -110,6 +111,7 @@ export default ({
 						picture: Key,
 						google,
 						facebook,
+						dob,
 						profileCompleted: address ? true : false,
 						created: Date.now(),
 						isVerified: false,
@@ -125,6 +127,7 @@ export default ({
 						password: encryptedPassword,
 						verificationToken,
 						google,
+						dob,
 						facebook,
 						// picture: Key,	// upload a separate profile picture for teacher object
 						verificationTokenTimestamp,

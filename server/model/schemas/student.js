@@ -5,6 +5,7 @@ const Student = new Schema({
 	email: String,
 	picture: String,
 	password: String,
+	dob: Number,
 	google: {
 		id: String,
 		accessToken: String,

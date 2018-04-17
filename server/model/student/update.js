@@ -22,10 +22,11 @@ export default ({
 	picture,
 	name,
 	address,
+	dob,
 	deviceId,
 	notifications,
 }) => new Promise(async (resolve, reject) => {
-	if (id && (picture || name || address || deviceId || notifications !== undefined)) {
+	if (id && (picture || name || address || deviceId || notifications !== undefined || dob)) {
 		const query = { _id: id };
 		const Key = `picture-${id}-${Date.now()}`;
 		if (picture) {
@@ -45,6 +46,7 @@ export default ({
 				location: address,
 			} : undefined,
 			deviceId,
+			dob,
 			notifications,
 		});
 		StudentModel.update(query, updateQuery)
