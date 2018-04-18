@@ -109,13 +109,17 @@ export default ({
 								}).catch(err => _reject(err));
 						}),
 						new Promise((_resolve, _reject) => {
-							StudentModel.update({ email: teacher.email }, { picture: pictureURL })
-								.then(({ nModified }) => {
-									if (!nModified) {
-										_reject(ResponseUtility.ERROR({ message: 'Nothing modified for student' }));
-									}
-									_resolve();
-								}).catch(err => _reject(err));
+							if (picture) {
+								StudentModel.update({ email: teacher.email }, { picture: pictureURL })
+									.then(({ nModified }) => {
+										if (!nModified) {
+											_reject(ResponseUtility.ERROR({ message: 'Nothing modified for student' }));
+										}
+										_resolve();
+									}).catch(err => _reject(err));
+							} else {
+								_resolve();
+							}
 						}),
 					]).then(() => {
 						resolve(ResponseUtility.SUCCESS);
