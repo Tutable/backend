@@ -17,6 +17,7 @@ export default {
 	passwordToken: (req, res) => commonResolver(req, res, TeacherServices.TeacherPasswordTokenService),
 	changePassword: (req, res) => commonResolver(req, res, TeacherServices.TeacherChangePasswordService),
 	socialLogin: (req, res) => commonSocialLoginResolver(req, res, TeacherServices.TeacherRegisterService),
+	list: (req, res) => commonResolver(req, res, TeacherServices.TeacherListService),
 	// socialLogin: (req, res) => commonResolver(req, res, TeacherServices.TeacherRegisterService),
 	resetNotifications: (req, res) => {
 		TeacherServices.TeacherUpdateService({ id: req.body.id, notifications: 0 })
