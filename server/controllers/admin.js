@@ -15,4 +15,5 @@ export default {
 	},
 	update: (req, res) => commonResolver(req, res, AdminServices.AdminUpdateService),
 	verify: (req, res) => commonResolver(req, res, AdminServices.AdminVerifyService),
+	delete: (req, res) => commonResolver(req, res, AdminServices.AdminDeleteService),
 };
