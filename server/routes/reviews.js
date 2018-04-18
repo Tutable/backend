@@ -8,6 +8,6 @@ const prefix = '/api/reviews/';
  * @since 28th March 2018
  */
 export default (app) => {
-	app.post(`${prefix}create`, AuthenticationControllers.authenticateTeacher, ReviewsControllers.create);
+	app.post(`${prefix}create`, AuthenticationControllers.authenticateStudent, ReviewsControllers.create);
 	app.post(`${prefix}list`, AuthenticationControllers.authenticateGlobalEntity, ReviewsControllers.list);
 };
