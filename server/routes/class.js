@@ -11,6 +11,7 @@ export default (app) => {
 	app.post(`${prefix}create`, AuthenticationControllers.authenticateTeacher, CompressionServices, ClassControllers.create);
 	app.post(`${prefix}details`, AuthenticationControllers.authenticateGlobalEntity, ClassControllers.details);
 	app.post(`${prefix}list`, AuthenticationControllers.authenticateGlobalEntity, ClassControllers.list);
+	app.post(`${prefix}listAll`, AuthenticationControllers.authenticateAdmin, ClassControllers.list);
 	app.post(`${prefix}update`, AuthenticationControllers.authenticateTeacher, CompressionServices, ClassControllers.update);
 
 	app.get(`${prefix}asset/:bucket/:userType/:folder/:asset`, ClassControllers.assets);

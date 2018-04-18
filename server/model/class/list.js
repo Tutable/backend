@@ -32,67 +32,73 @@ export default ({
 	page = 1,
 	limit = 30,
 }) => new Promise((resolve, reject) => {
-	if (teacherId || categoryId) {
-		const skip = limit * (page - 1);
-		const query = { $and: [teacherId ? { ref: teacherId } : { category: categoryId }, { deleted: false }] };
-		const projection = { __v: 0 };
-		const options = { sort: { created: -1 }, skip, limit };
+	// if (teacherId || categoryId) {
+	const skip = limit * (page - 1);
+	// if teacherId or categoryId is defined then filter  out for the results for teaher or student
+	// if both are missing then this funtion will be used to admins listing and that would
+	// include the deleted classes as well.
+	const query = (teacherId || categoryId) ?
+		{ $and: [teacherId ? { ref: teacherId } : { category: categoryId }, { deleted: false }] } : 
+		{};
+	// const query = { $and: [teacherId ? { ref: teacherId } : { category: categoryId }, { deleted: false }] };
+	const projection = { __v: 0, timeline: 0, cancelled: 0 };
+	const options = { sort: { created: -1 }, skip, limit };
 
-		const categoryPopulation = { path: 'categoryName', model: CategoryModel, select: 'title parent' };
-		const teacherPopulation = { path: 'teacher', model: TeacherModel, select: 'name address picture' };
+	const categoryPopulation = { path: 'categoryName', model: CategoryModel, select: 'title parent' };
+	const teacherPopulation = { path: 'teacher', model: TeacherModel, select: 'name address picture' };
 
-		ClassModel.find(query, projection, options)
-			.populate(categoryPopulation)
-			.populate(teacherPopulation)
-			.then((classes) => {
-				const resultant = [];
-				if (classes.length) {
-					classes.map((singleClass, index) => {
-						const {
-							_doc: {
-								_id,
-								name,
-								level,
-								bio,
-								timeline,
-								created,
-								cancelled,
-								rate,
-								payload,
-							},
-							$$populatedVirtuals: {
-								categoryName,
-								teacher,
-							},
-						} = singleClass;
-						const teacherObject = Object.assign({}, teacher._doc, {
-							picture: teacher.picture ? `/teachers/assets/${S3_TEACHER_PROFILE}/${teacher.picture}` : undefined,
-							id: teacher._id,
-							_id: undefined,
-						});
-						resultant.push({
-							id: _id,
+	ClassModel.find(query, projection, options)
+		.populate(categoryPopulation)
+		.populate(teacherPopulation)
+		.then((classes) => {
+			const resultant = [];
+			if (classes.length) {
+				classes.map((singleClass, index) => {
+					const {
+						_doc: {
+							_id,
 							name,
-							teacher: teacherObject,
-							category: categoryName,
 							level,
 							bio,
 							timeline,
 							created,
 							cancelled,
 							rate,
-							payload: payload ? `/class/asset/${S3_TEACHER_CLASS}/${payload}` : undefined,
-						});
-						if (index === classes.length - 1) {
-							return resolve(ResponseUtility.SUCCESS_DATA(resultant));
-						}
+							payload,
+						},
+						$$populatedVirtuals: {
+							categoryName,
+							teacher,
+						},
+					} = singleClass;
+					const teacherObject = Object.assign({}, teacher._doc, {
+						picture: teacher.picture ? `/teachers/assets/${S3_TEACHER_PROFILE}/${teacher.picture}` : undefined,
+						id: teacher._id,
+						_id: undefined,
 					});
-				} else {
-					return resolve(ResponseUtility.SUCCESS_DATA(resultant));
-				}
-			})
-			.catch(err => reject(ResponseUtility.ERROR({ message: 'Error looking for classes', error: err })));
-	} else {
-		reject(ResponseUtility.MISSING_REQUIRED_PROPS);
-	}
+					resultant.push({
+						id: _id,
+						name,
+						teacher: teacherObject,
+						category: categoryName,
+						level,
+						bio,
+						timeline,
+						created,
+						cancelled,
+						rate,
+						payload: payload ? `/class/asset/${S3_TEACHER_CLASS}/${payload}` : undefined,
+					});
+					if (index === classes.length - 1) {
+						return resolve(ResponseUtility.SUCCESS_DATA(resultant));
+					}
+				});
+			} else {
+				return resolve(ResponseUtility.SUCCESS_DATA(resultant));
+			}
+		})
+		.catch(err => reject(ResponseUtility.ERROR({ message: 'Error looking for classes', error: err })));
+	// } else {
+	// 	reject(ResponseUtility.MISSING_REQUIRED_PROPS);
+	// }
 });
