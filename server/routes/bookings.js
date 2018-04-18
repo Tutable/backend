@@ -13,5 +13,5 @@ export default (app) => {
 	// only a teacher can perform confirm/reject actions on a booking.
 	app.post(`${prefix}action`, AuthenticationControllers.authenticateTeacher, BookingsControllers.action);
 	app.post(`${prefix}cancel`, AuthenticationControllers.authenticateGlobalEntity, BookingsControllers.cancel);
-	// app.post(`${prefix}list`, CategoriesControllers.list);
+	app.post(`${prefix}list`, AuthenticationControllers.authenticateAdmin, BookingsControllers.list);
 };
