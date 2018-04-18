@@ -45,7 +45,7 @@ export default ({
 	const options = { sort: { created: -1 }, skip, limit };
 
 	const categoryPopulation = { path: 'categoryName', model: CategoryModel, select: 'title parent' };
-	const teacherPopulation = { path: 'teacher', model: TeacherModel, select: 'name address picture' };
+	const teacherPopulation = { path: 'teacher', model: TeacherModel, select: 'name address picture email' };
 
 	ClassModel.find(query, projection, options)
 		.populate(categoryPopulation)
@@ -75,6 +75,7 @@ export default ({
 						picture: teacher.picture ? `/teachers/assets/${S3_TEACHER_PROFILE}/${teacher.picture}` : undefined,
 						id: teacher._id,
 						_id: undefined,
+						email: teacher.email,
 					});
 					resultant.push({
 						id: _id,

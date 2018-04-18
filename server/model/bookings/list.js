@@ -25,8 +25,8 @@ export default ({ page = 1, limit = 30 }) => new Promise((resolve, reject) => {
 	const projection = { __v: 0 };
 	const options = { sort: { timestamp: -1 }, skip, limit };
 
-	const populateStudent = { path: 'student', model: StudentModel, select: 'name picture' };
-	const populateTeacher = { path: 'teacherDetails', model: TeacherModel, select: 'name picture' };
+	const populateStudent = { path: 'student', model: StudentModel, select: 'name picture email' };
+	const populateTeacher = { path: 'teacherDetails', model: TeacherModel, select: 'name picture email' };
 	const populateClass = { path: 'classDetails', model: ClassModel, select: 'name rate level' };
 
 	BookingsModel.find({}, projection, options)
@@ -63,11 +63,13 @@ export default ({ page = 1, limit = 30 }) => new Promise((resolve, reject) => {
 						id: student._doc._id,
 						name: student._doc.name,
 						picture: student._doc.picture ? student._doc.picture.indexOf('http') !== -1 ? student._doc.picture :  `/student/asset/${S3_STUDENT_PROFILE}/${student._doc.picture}` : undefined,
+						email: student._doc.email,
 					},
 					teacher: {
 						id: teacherDetails._doc._id,
 						name: teacherDetails._doc.name,
 						picture: teacherDetails._doc.picture ? teacherDetails._doc.picture.indexOf('http') !== -1 ? teacherDetails._doc.picture :  `/teachers/assets/${S3_TEACHER_PROFILE}/${teacherDetails._doc.picture}` : undefined,
+						email: teacherDetails._doc.email,
 					},
 				});
 				refactoredResponse.push(refactoredObject);

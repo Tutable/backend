@@ -8,4 +8,5 @@ export default {
 	createBankAccount: (req, res) => commonResolver(req, res, PaymentsServices.PaymentsCreateBankService),
 	// pay: (req, res) => commonResolver(req, res, PaymentsServices.PaymentsPayServices),
 	token: (req, res) => commonResolver(req, res, PaymentsServices.PaymentsTokenService),
+	list: (req, res) => commonResolver(req, res, PaymentsServices.PaymentsListService),
 };
