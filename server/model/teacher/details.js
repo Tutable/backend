@@ -60,7 +60,7 @@ export default ({ id, email }) => new Promise((resolve, reject) => {
 					deleted,
 					blocked,
 					isVerified,
-					picture: picture ? `/teachers/assets/${S3_TEACHER_PROFILE}/${picture}` : undefined,
+					picture: picture ? picture.indexOf('http') !== -1 ? picture : `/teachers/assets/${S3_TEACHER_PROFILE}/${picture}` : undefined,
 					degreeAsset: degreeAsset ? `/teachers/assets/${S3_TEACHER_PROFILE}/${degreeAsset}` : undefined,
 					school,
 					qualification,
