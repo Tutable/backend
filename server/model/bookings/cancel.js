@@ -32,6 +32,8 @@ export default ({ id, bookingId }) => new Promise(async (resolve, reject) => {
 			return reject(ResponseUtility.ERROR({ message: 'No booking found.' }));
 		}
 
+		// set the booking status from confirmed to cancelled
+		await BookingsModel.update(query, { confirmed: false, cancelled: true, cancellationTimestamp: Date.now() });
 		let deductedAmount;
 		if (id === booking._doc.by) {
 			const {
@@ -70,7 +72,7 @@ export default ({ id, bookingId }) => new Promise(async (resolve, reject) => {
 		try {
 			const refundResponse = await StripeServices.ProcessRefund(refundRequest);
 			// update the transaction object
-			const updateQuery = { refunded: true, refundResponse };
+			const updateQuery = { refunded: true, refundResponse, refundTimestamp: Date.now() };
 			TransactionsModel.update({ bookingId }, updateQuery)
 				.then(({ nModified }) => {
 					if (!nModified) {

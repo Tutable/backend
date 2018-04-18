@@ -9,7 +9,9 @@ const Bookings = new Schema({
 	timestamp: Number,
 	deleted: Boolean,
 	confirmed: Boolean,
+	confirmationTimestamp: Number,
 	cancelled: Boolean,
+	cancellationTimestamp: Number,
 	completed: Boolean,
 }, {
 	toJSON: { virtuals: true },
