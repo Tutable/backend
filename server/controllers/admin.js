@@ -14,4 +14,5 @@ export default {
 			}).catch(err => res.status(200).send(err));
 	},
 	update: (req, res) => commonResolver(req, res, AdminServices.AdminUpdateService),
+	verify: (req, res) => commonResolver(req, res, AdminServices.AdminVerifyService),
 };

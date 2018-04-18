@@ -16,12 +16,15 @@ const TeacherModel = database.model('Teacher', TeacherSchema);
  * @author gaurav sharma
  * @since 18th April 2018
  */
-export default ({ userId, userEmail, name, updateEmail }) => new Promise(async (resolve, reject) => {
-	console.log(userId, userEmail, name, updateEmail);
+export default ({
+	userId,
+	userEmail,
+	name,
+	updateEmail,
+}) => new Promise(async (resolve, reject) => {
 	if (userId && userEmail && (updateEmail || name)) {
 		// the id could be either of teacher or student, derive it first and find the souce email id
 		const lookupQuery = { email: userEmail };
-		
 		// check if there is already a user with this email id
 		let definedEmail = false;
 		if (updateEmail) {

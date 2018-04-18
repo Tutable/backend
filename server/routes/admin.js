@@ -7,4 +7,5 @@ const prefix = '/api/admin/';
 export default (app) => {
 	app.post(`${prefix}authenticate`, AdminControllers.authenticate);
 	app.post(`${prefix}update`, AuthenticationControllers.authenticateAdmin, AdminControllers.update);
+	app.post(`${prefix}verify`, AuthenticationControllers.authenticateAdmin, AdminControllers.verify);
 };
