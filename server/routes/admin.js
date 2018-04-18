@@ -1,4 +1,4 @@
-import { AdminControllers } from '../controllers';
+import { AdminControllers, AuthenticationControllers } from '../controllers';
 
 const prefix = '/api/admin/';
 /**
@@ -6,4 +6,5 @@ const prefix = '/api/admin/';
  */
 export default (app) => {
 	app.post(`${prefix}authenticate`, AdminControllers.authenticate);
+	app.post(`${prefix}update`, AuthenticationControllers.authenticateAdmin, AdminControllers.update);
 };

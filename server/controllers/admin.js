@@ -3,13 +3,15 @@
  */
 import { AdminServices } from '../model';
 import { TokenUtility } from '../utility';
+import commonResolver from './commonResolver';
 
 export default {
 	authenticate: (req, res) => {
-		const { body } =  req;
+		const { body } = req;
 		AdminServices.AdminAuthenticateService(body)
 			.then((user) => {
 				res.status(200).send({ code: 100, message: 'Authenticated', accessToken: TokenUtility.generateToken(user) });
 			}).catch(err => res.status(200).send(err));
 	},
+	update: (req, res) => commonResolver(req, res, AdminServices.AdminUpdateService),
 };
