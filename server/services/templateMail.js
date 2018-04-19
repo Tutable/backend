@@ -98,7 +98,7 @@ const ClassDeclinedMail = ({ to, name, teacher, className }) => new Promise((res
 
 /**
  * the send the hange password email.
- * @param {*} param0 
+ * @param {*} param0
  */
 const ChangePasswordToken = ({ to, name, code }) => new Promise((resolve, reject) => {
 	if (to && name && code) {
