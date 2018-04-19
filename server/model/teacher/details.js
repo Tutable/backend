@@ -1,6 +1,7 @@
 import {
 	TeacherSchema,
 	PaymentsSchema,
+	TeacherCertificationSchema,
 } from '../schemas';
 import database from '../../db';
 import { ResponseUtility } from '../../utility';
@@ -8,6 +9,7 @@ import { S3_TEACHER_PROFILE } from '../../constants';
 
 const TeacherModel = database.model('Teacher', TeacherSchema);
 const PaymentsModel = database.model('Payments', PaymentsSchema);
+const TeacherCertificationModel = database.model('Certifications', TeacherCertificationSchema);
 
 /**
  * default register microservice for teacher
@@ -50,7 +52,12 @@ export default ({ id, email }) => new Promise((resolve, reject) => {
 				} = teacher;
 
 
-				const paymentSource = await PaymentsModel.findOne({ ref: id });
+				const paymentSource = await PaymentsModel.findOne({ ref: _id });
+				/**
+				 * @todo add certification details
+				 */
+				const certs = await TeacherCertificationModel.findOne({ ref: `${_id}` });
+				console.log(certs);
 
 				resolve(ResponseUtility.SUCCESS_DATA({
 					id: _id,
@@ -72,6 +79,7 @@ export default ({ id, email }) => new Promise((resolve, reject) => {
 					availability,
 					deviceId,
 					notifications,
+					certs,
 					payment: paymentSource || undefined,
 				}));
 			})
