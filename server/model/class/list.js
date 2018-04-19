@@ -2,6 +2,7 @@ import {
 	ClassSchema,
 	CategorySchema,
 	TeacherSchema,
+	ReviewSchema,
 } from '../schemas';
 import database from '../../db';
 import { ResponseUtility } from '../../utility';
@@ -10,6 +11,7 @@ import { S3_TEACHER_CLASS, S3_TEACHER_PROFILE } from '../../constants';
 const ClassModel = database.model('Classes', ClassSchema);
 const CategoryModel = database.model('Categories', CategorySchema);
 const TeacherModel = database.model('Teachers', TeacherSchema);
+const ReviewModel = database.model('Reviews', ReviewSchema);
 
 /**
  * microservice to get the details of the classes created by a
@@ -53,7 +55,7 @@ export default ({
 		.then((classes) => {
 			const resultant = [];
 			if (classes.length) {
-				classes.map((singleClass, index) => {
+				classes.map(async (singleClass, index) => {
 					const {
 						_doc: {
 							_id,
@@ -77,6 +79,56 @@ export default ({
 						_id: undefined,
 						email: teacher.email,
 					});
+
+					/**
+					 * @todo add review stats in individual class using awaited aggregation
+					 */
+					const aggregationQuery = [
+						{ $unwind: '$ref' },
+						{ $match: { ref: `${_id}`, deleted: false } },
+						{
+							$project: {
+								_id: '$_id',
+								ref: '$ref',
+								by: '$by',
+								posted: '$posted',
+								review: '$review',
+								stars: '$stars',
+							},
+						}, {
+							$group: {
+								_id: '$ref',
+								avgStars: { $avg: '$stars' },
+								count: { $sum: 1 },
+								id: { $last: '$_id' },
+								review: { $last: '$review' },
+								stars: { $last: '$stars' },
+								by: { $last: '$by' },
+								posted: { $last: '$posted' },
+							},
+						},
+					];
+
+					// console.log(aggregationQuery);
+					const reviews = await ReviewModel.aggregate(aggregationQuery);
+					// console.log(reviews);
+					let matching = reviews.find(review => review._id === `${_id}`);
+					if (!matching) {
+						matching = {
+							avgStars: 0,
+							count: 0,
+						};
+					}
+					const {
+						avgStars = 0,
+						count = 0,
+						id = undefined,
+						review = undefined,
+						posted = undefined,
+						by = undefined,
+						stars = undefined,
+					} = matching;
+
 					resultant.push({
 						id: _id,
 						name,
@@ -89,6 +141,17 @@ export default ({
 						cancelled,
 						rate,
 						payload: payload ? `/class/asset/${S3_TEACHER_CLASS}/${payload}` : undefined,
+						reviews: matching ? {
+							avgStars,
+							count,
+							lastReview: {
+								id,
+								review,
+								posted,
+								by,
+								stars,
+							},
+						} : undefined,
 					});
 					if (index === classes.length - 1) {
 						return resolve(ResponseUtility.SUCCESS_DATA(resultant));
@@ -99,7 +162,4 @@ export default ({
 			}
 		})
 		.catch(err => reject(ResponseUtility.ERROR({ message: 'Error looking for classes', error: err })));
-	// } else {
-	// 	reject(ResponseUtility.MISSING_REQUIRED_PROPS);
-	// }
 });
