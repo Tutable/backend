@@ -116,6 +116,7 @@ export default ({
 					timestamp: Date.now(),
 					timeline: eventTimeline,
 					deleted: false,
+					rate: _doc.rate,
 					confirmed: false,
 					cancelled: false,
 					completed: false,

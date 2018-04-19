@@ -7,6 +7,7 @@ const Bookings = new Schema({
 	slot: {}, // timestamp
 	timeline: Number,	// the timestamp representing the class time
 	timestamp: Number,
+	rate: Number,	// static rate for the class at the time of booking.
 	deleted: Boolean,
 	confirmed: Boolean,
 	confirmationTimestamp: Number,
