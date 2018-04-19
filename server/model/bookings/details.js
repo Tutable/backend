@@ -59,13 +59,19 @@ export default ({
 		}
 		let primaryQuery;
 		if (teacherId && teacherId === id) {
-			primaryQuery = { $and: [{ teacher: teacherId }, { deleted: false }] };
+			// primaryQuery = { $and: [{ teacher: teacherId }] };
+			primaryQuery = { teacher: teacherId };
 		} else if (studentId && studentId === id) {
-			primaryQuery = { $and: [{ by: studentId }, { deleted: false }] };
+			// primaryQuery = { $and: [{ by: studentId }] };
+			primaryQuery = { by: studentId };
 		} else {
 			return reject(ResponseUtility.ERROR({ message: 'You are not authorized to access booking history of other users.' }));
 		}
+
+		// console.log(timelineQuery.$and);
+
 		const query = { $and: [timelineQuery, primaryQuery, { deleted: false }, { confirmed: true }] };
+		// console.log(JSON.stringify(query));
 		const projection = { __v: 0 };
 		const options = { sort: { timestamp: -1 }, skip, limit };
 
@@ -74,70 +80,75 @@ export default ({
 			.populate(teacherPopulation)
 			.populate(classPopulation)
 			.then((bookings) => {
+				// console.log(bookings);
 				const finalBookings = [];
-				bookings.map(async (booking, index) => {
-					const {
-						_doc: {
-							_id,
+				if (bookings && bookings.length) {
+					bookings.map(async (booking, index) => {
+						const {
+							_doc: {
+								_id,
+								timestamp,
+								deleted,
+								ref,
+								slot,
+								rate,
+								confirmed,
+								completed,
+								cancelled,
+							},
+							$$populatedVirtuals: {
+								classDetails,
+								student,
+								teacherDetails,
+							},
+						} = booking;
+						/**
+						 * @todo project the user review if submitted to this class
+						 */
+						const lookupQuery = { $and: [{ by: `${id}` }, { ref: `${ref}` }, { bookingReference: `${_id}` }] };
+						const review = await ReviewModel.findOne(lookupQuery);
+						const {
+							stars = 0,
+						} = review || {};
+	
+						finalBookings.push({
+							id: _id,
+							_id: undefined,
+							slot,
 							timestamp,
 							deleted,
-							ref,
-							slot,
 							rate,
 							confirmed,
 							completed,
 							cancelled,
-						},
-						$$populatedVirtuals: {
-							classDetails,
-							student,
-							teacherDetails,
-						},
-					} = booking;
-					/**
-					 * @todo project the user review if submitted to this class
-					 */
-					const lookupQuery = { $and: [{ by: `${id}` }, { ref: `${ref}` }, { bookingReference: `${_id}` }] };
-					const review = await ReviewModel.findOne(lookupQuery);
-					const {
-						stars = 0,
-					} = review || {};
-
-					finalBookings.push({
-						id: _id,
-						_id: undefined,
-						slot,
-						timestamp,
-						deleted,
-						rate,
-						confirmed,
-						completed,
-						cancelled,
-						classDetails: {
-							id: classDetails._id,
-							name: classDetails.name,
-							rate: classDetails.rate,
-							picture: classDetails.payload ? `/class/asset/${S3_TEACHER_CLASS}/${classDetails.payload}` : undefined,
-						},
-						student: {
-							id: student._id,
-							name: student.name,
-							picture: student.picture ? `/student/asset/${S3_STUDENT_PROFILE}/${student.picture}` : undefined,
-						},
-						teacher: {
-							id: teacherDetails._id,
-							name: teacherDetails.name,
-							availability: teacherDetails.availability,
-							picture: teacherDetails.picture ? `/teachers/assets/${S3_TEACHER_PROFILE}/${teacherDetails.picture}` : undefined,
-						},
-						review: review ? {
-							stars,
-						} : undefined,
+							classDetails: {
+								id: classDetails._id,
+								name: classDetails.name,
+								rate: classDetails.rate,
+								picture: classDetails.payload ? `/class/asset/${S3_TEACHER_CLASS}/${classDetails.payload}` : undefined,
+							},
+							student: {
+								id: student._id,
+								name: student.name,
+								picture: student.picture ? `/student/asset/${S3_STUDENT_PROFILE}/${student.picture}` : undefined,
+							},
+							teacher: {
+								id: teacherDetails._id,
+								name: teacherDetails.name,
+								availability: teacherDetails.availability,
+								picture: teacherDetails.picture ? `/teachers/assets/${S3_TEACHER_PROFILE}/${teacherDetails.picture}` : undefined,
+							},
+							review: review ? {
+								stars,
+							} : undefined,
+						});
+						if (index === bookings.length - 1) {
+							return resolve(ResponseUtility.SUCCESS_PAGINATION(finalBookings, page, limit));
+						}
 					});
-					if (index === bookings.length - 1) {
-						return resolve(ResponseUtility.SUCCESS_PAGINATION(finalBookings, page, limit));
-					}
-				});
+				} else {
+					resolve(ResponseUtility.SUCCESS_PAGINATION(finalBookings, page, limit));
+				}
 			})
 			.catch(err => reject(ResponseUtility.ERROR({ message: 'Error looking for bookings', error: err })));
 	} else {

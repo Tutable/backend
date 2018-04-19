@@ -49,7 +49,6 @@ export default ({
 					const refactoredObject = Object.assign({}, teacher._doc);
 					keys.map(key => delete refactoredObject[key]);
 					return reject(ResponseUtility.ERROR_DATA({ data: refactoredObject, message: 'User laready exists' }));
-					// return reject(ResponseUtility.ERROR({ message: 'User already exists' }));
 				}
 
 				let encryptedPassword;
