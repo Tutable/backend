@@ -17,4 +17,5 @@ export default {
 	verify: (req, res) => commonResolver(req, res, AdminServices.AdminVerifyService),
 	delete: (req, res) => commonResolver(req, res, AdminServices.AdminDeleteService),
 	classUpdate: (req, res) => commonResolver(req, res, AdminServices.AdminUpdateClassService),
+	deleteClass: (req, res) => commonResolver(req, res, AdminServices.AdminDeleteClassService),
 };

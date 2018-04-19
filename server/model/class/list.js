@@ -67,6 +67,7 @@ export default ({
 							cancelled,
 							rate,
 							payload,
+							deleted,
 						},
 						$$populatedVirtuals: {
 							categoryName,
@@ -135,6 +136,7 @@ export default ({
 						teacher: teacherObject,
 						category: categoryName,
 						level,
+						deleted,
 						bio,
 						timeline,
 						created,
