@@ -16,6 +16,7 @@ export default {
 	update: (req, res) => commonResolver(req, res, AdminServices.AdminUpdateService),
 	verify: (req, res) => commonResolver(req, res, AdminServices.AdminVerifyService),
 	delete: (req, res) => commonResolver(req, res, AdminServices.AdminDeleteService),
+	deleteUser: (req, res) => commonResolver(req, res, AdminServices.AdminDeleteUserService),
 	classUpdate: (req, res) => commonResolver(req, res, AdminServices.AdminUpdateClassService),
 	deleteClass: (req, res) => commonResolver(req, res, AdminServices.AdminDeleteClassService),
 };

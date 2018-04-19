@@ -11,4 +11,5 @@ export default (app) => {
 	app.post(`${prefix}delete`, AuthenticationControllers.authenticateAdmin, AdminControllers.delete);
 	app.post(`${prefix}classUpdate`, AuthenticationControllers.authenticateAdmin, AdminControllers.classUpdate);
 	app.post(`${prefix}deleteClass`, AuthenticationControllers.authenticateAdmin, AdminControllers.deleteClass);
+	app.post(`${prefix}deleteUser`, AuthenticationControllers.authenticateGlobalEntity, AdminControllers.deleteUser);
 };
