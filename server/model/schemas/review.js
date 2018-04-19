@@ -8,6 +8,7 @@ import { Schema } from 'mongoose';
 const Review = new Schema({
 	ref: String, // id of class
 	by: String,	// id of student
+	bookingReference: String,	// the booking id in case of multiple class bookings
 	stars: Number, // count of stars given
 	review: String, // review given
 	blocked: Boolean,

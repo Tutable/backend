@@ -13,6 +13,7 @@ const ClassModel = database.model('Class', ClassSchema);
  *
  * @param {String} id of student posting review
  * @param {String} ref of the class
+ * @param {String} bookingReference in case the class is booked multiple times
  * @param {Number} stars
  * @param {String} review
  * @returns Promise
@@ -22,10 +23,11 @@ const ClassModel = database.model('Class', ClassSchema);
 export default ({
 	id,
 	ref,
+	bookingReference,
 	stars,
 	review,
 }) => new Promise((resolve, reject) => {
-	if (id && ref && stars && review) {
+	if (id && ref && stars && review && bookingReference) {
 		const query = { _id: ref };
 		const projection = { name: 1 };
 		// todo check the existence of class passed as ref
@@ -36,6 +38,7 @@ export default ({
 					const classReview = new ReviewModel({
 						ref,
 						by: id,
+						bookingReference,
 						stars,
 						review,
 						deleted: false,
