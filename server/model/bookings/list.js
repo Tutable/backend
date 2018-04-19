@@ -39,20 +39,14 @@ export default ({ page = 1, limit = 30 }) => new Promise((resolve, reject) => {
 			bookings.map((booking) => {
 				// console.log(booking);
 				const {
-					_doc: {
-						slot,
-						deleted,
-						confirmed,
-						cancelled,
-						timeline,
-					},
+					_doc,
 					$$populatedVirtuals: {
 						classDetails,
 						student,
 						teacherDetails,
 					},
 				} = booking;
-				const refactoredObject = Object.assign({}, booking._doc, {
+				const refactoredObject = Object.assign({}, _doc, {
 					classDetails: {
 						id: classDetails._doc._id,
 						name: classDetails._doc.name,
