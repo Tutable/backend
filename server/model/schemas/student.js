@@ -24,6 +24,8 @@ const Student = new Schema({
 	},	// if authenticated via facebook
 	address: {
 		location: String,
+		suburb: String,
+		state: String,
 		type: { type: String },
 		coordinates: [Number],
 	},
