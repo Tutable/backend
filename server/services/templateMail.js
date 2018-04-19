@@ -107,7 +107,7 @@ const ChangePasswordToken = ({ to, name, code }) => new Promise((resolve, reject
 		const props = { name, verification_code: code };
 		const compiled = template(props);
 
-		sendMail({ to, subject: 'Your tutable Password change token', html: compiled })
+		sendMail({ to, subject: 'Tutable Password Reset Request', html: compiled })
 			.then(success => resolve(success))
 			.catch(err => reject(err));
 	} else {
@@ -122,7 +122,7 @@ const VerificationToken = ({ to, name, code }) => new Promise((resolve, reject) 
 		const props = { name, verification_code: code };
 		const compiled = template(props);
 
-		sendMail({ to, subject: 'Your tutable verification code', html: compiled })
+		sendMail({ to, subject: 'Verify your Email for Tutable Account', html: compiled })
 			.then(success => resolve(success))
 			.catch(err => reject(err));
 	} else {
