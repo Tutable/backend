@@ -3,6 +3,7 @@ import {
 	TeacherSchema,
 	StudentSchema,
 	ClassSchema,
+	ReviewSchema,
 } from '../schemas';
 import database from '../../db';
 import { ResponseUtility } from '../../utility';
@@ -12,6 +13,7 @@ const BookingsModel = database.model('Bookings', BookingSchema);
 const TeacherModel = database.model('Teachers', TeacherSchema);
 const StudentModel = database.model('Students', StudentSchema);
 const ClassModel = database.model('Classes', ClassSchema);
+const ReviewModel = database.model('Reviews', ReviewSchema);
 /**
  * microservice to fetch the details about the users bookings.
  * The bookings might be upcomig or past bookings
@@ -63,7 +65,6 @@ export default ({
 		} else {
 			return reject(ResponseUtility.ERROR({ message: 'You are not authorized to access booking history of other users.' }));
 		}
-
 		const query = { $and: [timelineQuery, primaryQuery, { deleted: false }, { confirmed: true }] };
 		const projection = { __v: 0 };
 		const options = { sort: { timestamp: -1 }, skip, limit };
@@ -74,12 +75,13 @@ export default ({
 			.populate(classPopulation)
 			.then((bookings) => {
 				const finalBookings = [];
-				bookings.map((booking) => {
+				bookings.map(async (booking, index) => {
 					const {
 						_doc: {
 							_id,
 							timestamp,
 							deleted,
+							ref,
 							slot,
 							confirmed,
 							completed,
@@ -91,6 +93,15 @@ export default ({
 							teacherDetails,
 						},
 					} = booking;
+					/**
+					 * @todo project the user review if submitted to this class
+					 */
+					const lookupQuery = { $and: [{ by: `${id}` }, { ref: `${ref}` }, { bookingReference: `${_id}` }] };
+					const review = await ReviewModel.findOne(lookupQuery);
+					const {
+						stars = 0,
+					} = review || {};
+
 					finalBookings.push({
 						id: _id,
 						_id: undefined,
@@ -117,9 +128,14 @@ export default ({
 							availability: teacherDetails.availability,
 							picture: teacherDetails.picture ? `/teachers/assets/${S3_TEACHER_PROFILE}/${teacherDetails.picture}` : undefined,
 						},
+						review: review ? {
+							stars,
+						} : undefined,
 					});
+					if (index === bookings.length - 1) {
+						return resolve(ResponseUtility.SUCCESS_PAGINATION(finalBookings, page, limit));
+					}
 				});
-				resolve(ResponseUtility.SUCCESS_PAGINATION(finalBookings, page, limit));
 			})
 			.catch(err => reject(ResponseUtility.ERROR({ message: 'Error looking for bookings', error: err })));
 	} else {
