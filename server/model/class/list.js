@@ -40,7 +40,7 @@ export default ({
 	// if both are missing then this funtion will be used to admins listing and that would
 	// include the deleted classes as well.
 	const query = (teacherId || categoryId) ?
-		{ $and: [teacherId ? { ref: teacherId } : { category: categoryId }, { deleted: false }] } : 
+		{ $and: [teacherId ? { ref: teacherId } : { category: categoryId }, { deleted: false }] } :
 		{};
 	// const query = { $and: [teacherId ? { ref: teacherId } : { category: categoryId }, { deleted: false }] };
 	const projection = { __v: 0, timeline: 0, cancelled: 0 };

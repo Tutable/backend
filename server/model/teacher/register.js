@@ -76,11 +76,12 @@ export default ({
 					google,
 					facebook,
 					notifications: 0,
-					address: address ? {
-						location: address,
-						type: 'Point',
-						coordinates: [],
-					} : undefined,
+					address,
+					// address: address ? {
+					// 	location: address,
+					// 	type: 'Point',
+					// 	coordinates: [],
+					// } : undefined,
 				});
 
 				const studentModel = new StudentModel({
