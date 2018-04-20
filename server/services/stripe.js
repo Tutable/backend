@@ -47,12 +47,43 @@ const CreateUser = ({
  * @param {*} param0
  */
 const RemoveCard = ({ customerId, cardId }) => new Promise((resolve, reject) => {
-	console.log(customerId, cardId);
+	// console.log(customerId, cardId);
 	if (customerId && cardId) {
 		stripe.customers.deleteCard(customerId, cardId)
 			.then((success) => {
 				resolve(success);
 			}).catch(err => reject(err));
+	} else {
+		reject(ResponseUtility.MISSING_REQUIRED_PROPS);
+	}
+});
+/**
+ * delete an external stripe account
+ * This is invoked when a suer requests ot remove a linked banked
+ * account with the external account.
+ * @param {*} param0
+ */
+const RemoveExternalAccount = ({ accountId, bankId }) => new Promise((resolve, reject) => {
+	if (accountId) {
+		stripe.accounts.deleteExternalAccount(accountId, bankId)
+			.then(success => resolve(success))
+			.catch(err => reject(err));
+	} else {
+		reject(ResponseUtility.MISSING_REQUIRED_PROPS);
+	}
+});
+
+/**
+ * accept the new bank account details and replace it with the new ones
+ * @param {*} param0
+ */
+const UpdateExternalAccount = ({ accountId, externalAccount }) => new Promise((resolve, reject) => {
+	if (accountId && externalAccount) {
+		stripe.accounts.update(accountId, {
+			external_account: externalAccount,
+		})
+			.then(success => resolve(success))
+			.catch(err => reject(err));
 	} else {
 		reject(ResponseUtility.MISSING_REQUIRED_PROPS);
 	}
@@ -262,7 +293,7 @@ const ProcessRefund  = ({ chargeId, amount }) => new Promise(async (resolve, rej
 	if (!chargeId && !amount) {
 		return reject(ResponseUtility.MISSING_REQUIRES_PROPS);
 	}
-	console.log('here');
+	// console.log('here');
 	if (amount) {
 		try {
 			const chargeResponse = await stripe.refunds.create({
@@ -296,4 +327,6 @@ export default {
 	CreateBankUser,
 	ProcessRefund,
 	RemoveCard,
+	RemoveExternalAccount,
+	UpdateExternalAccount,
 };

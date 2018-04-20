@@ -15,25 +15,23 @@ export default ({ id, email }) => new Promise(async (resolve, reject) => {
 	if (id && email) {
 		const paymentSource = await PaymentModel.findOne({ ref: id });
 		// console.log(paymentSource)
-		if (paymentSource) {
-			const {
-				_doc: {
-					stripeId,
-					defaultSource,
-				},
-			} = paymentSource;
-			StripeServices.RemoveCard({
-				customerId: stripeId,
-				cardId: defaultSource,
-			}).then(async () => {
-				// console.log(success);
-				// remove the payment object
-				await PaymentModel.remove({ ref: id });
-				resolve(ResponseUtility.SUCCESS);
-			}).catch(err => reject(err));
-		} else {
+		if (!paymentSource) {
 			reject(ResponseUtility.ERROR({ message: 'No card to delete.' }));
 		}
+		const {
+			_doc: {
+				stripeId,
+				defaultSource,
+			},
+		} = paymentSource;
+		StripeServices.RemoveCard({
+			customerId: stripeId,
+			cardId: defaultSource,
+		}).then(async () => {
+			// remove the payment object
+			await PaymentModel.remove({ ref: id });
+			resolve(ResponseUtility.SUCCESS);
+		}).catch(err => reject(err));
 	} else {
 		reject(ResponseUtility.MISSING_REQUIRED_PROPS);
 	}

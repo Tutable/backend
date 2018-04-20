@@ -13,5 +13,6 @@ export default (app) => {
 	app.post(`${prefix}create`, AuthenticationControllers.authenticateStudent, PaymentsControllers.create);
 	app.post(`${prefix}remove`, AuthenticationControllers.authenticateStudent, PaymentsControllers.remove);
 	app.post(`${prefix}createBankAccount`, AuthenticationControllers.authenticateTeacher, CompressionServices, PaymentsControllers.createBankAccount);
+	app.post(`${prefix}updateBank`, AuthenticationControllers.authenticateTeacher, PaymentsControllers.updateBank);
 	app.post(`${prefix}list`, AuthenticationControllers.authenticateAdmin, PaymentsControllers.list);
 };
