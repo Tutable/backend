@@ -1,9 +1,13 @@
-import { StudentSchema } from '../schemas';
+import {
+	StudentSchema,
+	PaymentsSchema,
+} from '../schemas';
 import database from '../../db';
 import { ResponseUtility } from '../../utility';
 import { S3_STUDENT_PROFILE } from '../../constants';
 
 const StudentModel = database.model('Student', StudentSchema);
+const PaymentModel = database.model('Payments', PaymentsSchema);
 /**
  * microservice to fetch the student details based upon the user id
  * or email
@@ -30,7 +34,7 @@ export default ({ id, email }) => new Promise((resolve, reject) => {
 			__v: 0,
 		};
 		StudentModel.findOne(query, projection)
-			.then((student) => {
+			.then(async (student) => {
 				// console.log(student);
 				if (student) {
 					const {
@@ -51,6 +55,8 @@ export default ({ id, email }) => new Promise((resolve, reject) => {
 						},
 					} = student;
 
+					const payment = await PaymentModel.findOne({ ref: _id });
+
 					return resolve(ResponseUtility.SUCCESS_DATA({
 						id: _id,
 						name,
@@ -65,6 +71,10 @@ export default ({ id, email }) => new Promise((resolve, reject) => {
 						facebook,
 						address,
 						notifications,
+						card: payment ? {
+							type: payment.stripeCustomer.sources.data[0].brand,
+							number: payment.stripeCustomer.sources.data[0].last4,
+						} : undefined,
 					}));
 				}
 				reject(ResponseUtility.USER_NOT_FOUND);
