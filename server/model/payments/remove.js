@@ -14,7 +14,7 @@ const PaymentModel = database.model('Payments', Paymentschema);
 export default ({ id, email }) => new Promise(async (resolve, reject) => {
 	if (id && email) {
 		const paymentSource = await PaymentModel.findOne({ ref: id });
-		console.log(paymentSource)
+		// console.log(paymentSource)
 		if (paymentSource) {
 			const {
 				_doc: {
@@ -25,7 +25,7 @@ export default ({ id, email }) => new Promise(async (resolve, reject) => {
 			StripeServices.RemoveCard({
 				customerId: stripeId,
 				cardId: defaultSource,
-			}).then(async (success) => {
+			}).then(async () => {
 				// console.log(success);
 				// remove the payment object
 				await PaymentModel.remove({ ref: id });
