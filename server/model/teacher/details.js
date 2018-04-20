@@ -57,7 +57,11 @@ export default ({ id, email }) => new Promise((resolve, reject) => {
 				 * @todo add certification details
 				 */
 				const certs = await TeacherCertificationModel.findOne({ ref: `${_id}` });
-				console.log(certs);
+				
+				/**
+				 * @todo add payment details
+				 */
+				const payment = await PaymentsModel.findOne({ ref: `${_id}` });
 
 				resolve(ResponseUtility.SUCCESS_DATA({
 					id: _id,
@@ -81,6 +85,10 @@ export default ({ id, email }) => new Promise((resolve, reject) => {
 					notifications,
 					certs,
 					payment: paymentSource || undefined,
+					card: payment ? {
+						type: undefined,
+						number: payment.stripeCustomer.external_accounts.data[0].last4,
+					} : undefined,
 				}));
 			})
 			.catch(err => reject(ResponseUtility.ERROR({ message: 'Error looking for user', error: err })));
