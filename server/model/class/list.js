@@ -49,119 +49,116 @@ export default ({
 	const categoryPopulation = { path: 'categoryName', model: CategoryModel, select: 'title parent' };
 	const teacherPopulation = { path: 'teacher', model: TeacherModel, select: 'name address picture email' };
 
+	// console.log(query);
 	ClassModel.find(query, projection, options)
 		.populate(categoryPopulation)
 		.populate(teacherPopulation)
-		.then((classes) => {
+		.then(async (classes) => {
 			const resultant = [];
-			if (classes.length) {
-				classes.map(async (singleClass, index) => {
-					const {
-						_doc: {
-							_id,
-							name,
-							level,
-							bio,
-							timeline,
-							created,
-							cancelled,
-							rate,
-							payload,
-							deleted,
-						},
-						$$populatedVirtuals: {
-							categoryName,
-							teacher,
-						},
-					} = singleClass;
-					const teacherObject = Object.assign({}, teacher._doc, {
-						picture: teacher.picture ? `/teachers/assets/${S3_TEACHER_PROFILE}/${teacher.picture}` : undefined,
-						id: teacher._id,
-						_id: undefined,
-						email: teacher.email,
-					});
-
-					/**
-					 * @todo add review stats in individual class using awaited aggregation
-					 */
-					const aggregationQuery = [
-						{ $unwind: '$ref' },
-						{ $match: { ref: `${_id}`, deleted: false } },
-						{
-							$project: {
-								_id: '$_id',
-								ref: '$ref',
-								by: '$by',
-								posted: '$posted',
-								review: '$review',
-								stars: '$stars',
-							},
-						}, {
-							$group: {
-								_id: '$ref',
-								avgStars: { $avg: '$stars' },
-								count: { $sum: 1 },
-								id: { $last: '$_id' },
-								review: { $last: '$review' },
-								stars: { $last: '$stars' },
-								by: { $last: '$by' },
-								posted: { $last: '$posted' },
-							},
-						},
-					];
-
-					// console.log(aggregationQuery);
-					const reviews = await ReviewModel.aggregate(aggregationQuery);
-					// console.log(reviews);
-					let matching = reviews.find(review => review._id === `${_id}`);
-					if (!matching) {
-						matching = {
-							avgStars: 0,
-							count: 0,
-						};
-					}
-					const {
-						avgStars = 0,
-						count = 0,
-						id = undefined,
-						review = undefined,
-						posted = undefined,
-						by = undefined,
-						stars = undefined,
-					} = matching;
-
-					resultant.push({
-						id: _id,
+			for (let i=0; i < classes.length; i += 1) {
+				const singleClass = classes[i];
+				
+				const {
+					_doc: {
+						_id,
 						name,
-						teacher: teacherObject,
-						category: categoryName,
 						level,
-						deleted,
 						bio,
 						timeline,
 						created,
 						cancelled,
 						rate,
-						payload: payload ? `/class/asset/${S3_TEACHER_CLASS}/${payload}` : undefined,
-						reviews: matching ? {
-							avgStars,
-							count,
-							lastReview: {
-								id,
-								review,
-								posted,
-								by,
-								stars,
-							},
-						} : undefined,
-					});
-					if (index === classes.length - 1) {
-						return resolve(ResponseUtility.SUCCESS_DATA(resultant));
-					}
+						payload,
+						deleted,
+					},
+					$$populatedVirtuals: {
+						categoryName,
+						teacher,
+					},
+				} = singleClass;
+				const teacherObject = Object.assign({}, teacher._doc, {
+					picture: teacher.picture ? `/teachers/assets/${S3_TEACHER_PROFILE}/${teacher.picture}` : undefined,
+					id: teacher._id,
+					_id: undefined,
+					email: teacher.email,
 				});
-			} else {
-				return resolve(ResponseUtility.SUCCESS_DATA(resultant));
+
+				/**
+				 * @todo add review stats in individual class using awaited aggregation
+				 */
+				const aggregationQuery = [
+					{ $unwind: '$ref' },
+					{ $match: { ref: `${_id}`, deleted: false } },
+					{
+						$project: {
+							_id: '$_id',
+							ref: '$ref',
+							by: '$by',
+							posted: '$posted',
+							review: '$review',
+							stars: '$stars',
+						},
+					}, {
+						$group: {
+							_id: '$ref',
+							avgStars: { $avg: '$stars' },
+							count: { $sum: 1 },
+							id: { $last: '$_id' },
+							review: { $last: '$review' },
+							stars: { $last: '$stars' },
+							by: { $last: '$by' },
+							posted: { $last: '$posted' },
+						},
+					},
+				];
+
+				// console.log(aggregationQuery);
+				const reviews = await ReviewModel.aggregate(aggregationQuery);
+				// console.log(reviews);
+				let matching = reviews.find(review => review._id === `${_id}`);
+				if (!matching) {
+					matching = {
+						avgStars: 0,
+						count: 0,
+					};
+				}
+				const {
+					avgStars = 0,
+					count = 0,
+					id = undefined,
+					review = undefined,
+					posted = undefined,
+					by = undefined,
+					stars = undefined,
+				} = matching;
+
+				resultant.push({
+					id: _id,
+					name,
+					teacher: teacherObject,
+					category: categoryName,
+					level,
+					deleted,
+					bio,
+					timeline,
+					created,
+					cancelled,
+					rate,
+					payload: payload ? `/class/asset/${S3_TEACHER_CLASS}/${payload}` : undefined,
+					reviews: matching ? {
+						avgStars,
+						count,
+						lastReview: {
+							id,
+							review,
+							posted,
+							by,
+							stars,
+						},
+					} : undefined,
+				});
 			}
+			resolve(ResponseUtility.SUCCESS_PAGINATION(resultant, page, limit));
 		})
 		.catch(err => reject(ResponseUtility.ERROR({ message: 'Error looking for classes', error: err })));
 });
