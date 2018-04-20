@@ -110,7 +110,7 @@ export default ({
 						const {
 							stars = 0,
 						} = review || {};
-	
+
 						finalBookings.push({
 							id: _id,
 							_id: undefined,

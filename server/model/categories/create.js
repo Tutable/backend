@@ -17,12 +17,12 @@ export default ({ title, parent, picture }) => new Promise(async (resolve, rejec
 				if (result) {
 					return reject(ResponseUtility.ERROR({ message: 'Duplicate category name.' }));
 				}
-				const Key = typeof picture === 'object' ? `category-${Date.now()}` : picture;
+				const Key = picture ? typeof picture === 'object' ? `category-${Date.now()}` : picture : undefined;
 				if (typeof picture === 'object') {
 					// trigger uploading on s3
 					const Bucket = S3_CATEGORY;
 					try {
-						await S3Services.uploadToBucket({ Bucket, Key, data: picture })
+						await S3Services.uploadToBucket({ Bucket, Key, data: picture });
 					} catch (err) {
 						return reject(ResponseUtility.ERROR({ message: 'Error uploading to S3', error: err }));
 					}
