@@ -10,7 +10,8 @@ const prefix = '/api/payments/';
  */
 export default (app) => {
 	app.post(`${prefix}token`, AuthenticationControllers.authenticateTeacher, PaymentsControllers.token);
-	app.post(`${prefix}create`, AuthenticationControllers.authenticateGlobalEntity, PaymentsControllers.create);
+	app.post(`${prefix}create`, AuthenticationControllers.authenticateStudent, PaymentsControllers.create);
+	app.post(`${prefix}remove`, AuthenticationControllers.authenticateStudent, PaymentsControllers.remove);
 	app.post(`${prefix}createBankAccount`, AuthenticationControllers.authenticateTeacher, CompressionServices, PaymentsControllers.createBankAccount);
 	app.post(`${prefix}list`, AuthenticationControllers.authenticateAdmin, PaymentsControllers.list);
 };

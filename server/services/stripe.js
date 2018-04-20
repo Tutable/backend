@@ -42,6 +42,23 @@ const CreateUser = ({
 });
 
 /**
+ * remove the requested card from the list
+ *@see https://stripe.com/docs/api#delete_card
+ * @param {*} param0
+ */
+const RemoveCard = ({ customerId, cardId }) => new Promise((resolve, reject) => {
+	console.log(customerId, cardId);
+	if (customerId && cardId) {
+		stripe.customers.deleteCard(customerId, cardId)
+			.then((success) => {
+				resolve(success);
+			}).catch(err => reject(err));
+	} else {
+		reject(ResponseUtility.MISSING_REQUIRED_PROPS);
+	}
+});
+
+/**
  * Create a new bank user
  */
 const CreateBankUser = ({
@@ -278,4 +295,5 @@ export default {
 	AddExternalAccount,
 	CreateBankUser,
 	ProcessRefund,
+	RemoveCard,
 };

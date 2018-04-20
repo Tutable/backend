@@ -5,8 +5,8 @@ import commonResolver from './commonResolver';
  */
 export default {
 	create: (req, res) => commonResolver(req, res, PaymentsServices.PaymentsCreateService),
+	remove: (req, res) => commonResolver(req, res, PaymentsServices.PaymentsRemoveService),
 	createBankAccount: (req, res) => commonResolver(req, res, PaymentsServices.PaymentsCreateBankService),
-	// pay: (req, res) => commonResolver(req, res, PaymentsServices.PaymentsPayServices),
 	token: (req, res) => commonResolver(req, res, PaymentsServices.PaymentsTokenService),
 	list: (req, res) => commonResolver(req, res, PaymentsServices.PaymentsListService),
 };
