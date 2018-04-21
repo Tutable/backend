@@ -27,7 +27,7 @@ export default ({
 	stars,
 	review,
 }) => new Promise((resolve, reject) => {
-	if (id && ref && stars && review && bookingReference) {
+	if (id && ref && stars && bookingReference) {
 		const query = { _id: ref };
 		const projection = { name: 1 };
 		// todo check the existence of class passed as ref
