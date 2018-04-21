@@ -22,17 +22,20 @@ export default ({ email, upassword }) => new Promise((resolve, reject) => {
 				if (student) {
 					const { _doc: { password, blocked, isVerified } } = student;
 					if (blocked) {
-						return reject(ResponseUtility.ERROR({ message: 'You are blocked from login. Contact admin for support.' }));
+						const error = { code: 104, message: 'You are blocked from login. Contact admin for support.' };
+						return reject(error);
 					}
 					if (!isVerified) {
-						return reject(ResponseUtility.NOT_VERIFIED);
+						const error = { code: 105, message: 'User is not verified' };
+						return reject(error);
 					}
 					HashUtility.compare(password, upassword)
 						.then((matched) => {
 							if (matched) {
 								resolve({ matched, user: student });
 							} else {
-								reject(ResponseUtility.ERROR({ message: 'Password is incoreect.' }));
+								const err = { code: 106, message: 'Password is incoreect' };
+								reject(err);
 							}
 						}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error comparing hash', error: err })));
 				} else {
