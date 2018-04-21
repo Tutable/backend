@@ -1,10 +1,14 @@
-import { TeacherSchema } from '../schemas';
+import {
+	TeacherSchema,
+	TeacherCertificationSchema,
+} from '../schemas';
 import database from '../../db';
 
 import { ResponseUtility } from '../../utility';
-import { S3_TEACHER_PROFILE } from '../../constants';
+import { S3_TEACHER_PROFILE, S3_TEACHER_CERTS } from '../../constants';
 
 const TeacherModel = database.model('Teacher', TeacherSchema);
+const TeacherCertificationModel = database.model('certifications', TeacherCertificationSchema);
 /**
  * microservice to list down all the teachers
  * @author gaurav sharma
@@ -18,16 +22,31 @@ export default ({ page = 1, limit = 30 }) => new Promise((resolve, reject) => {
 		.then((teachers) => {
 			// reafactor the response
 			const refactoredResponse = [];
-			teachers.map((doc) => {
+			teachers.map(async (doc, index) => {
 				const teacher = doc._doc;
+
+				/**
+				 * @todo popultae the certifications data for the teachers
+				 */
+				const certs = await TeacherCertificationModel.findOne({ ref: teacher._id });
 				const refactoredObject = Object.assign({}, teacher, {
 					picture: teacher.picture ? teacher.picture.indexOf('http') !== -1 ? teacher.picture :  `/teachers/assets/${S3_TEACHER_PROFILE}/${teacher.picture}` : undefined,
 					google: teacher.google.id || undefined,
 					facebook: teacher.facebook.id || undefined,
+					/**
+					 * @todo refactor the certs links and object
+					 */
+					certs: certs ? {
+						childrenCertificate: certs._doc.childrenCertificate ? `/certificates/asset/${S3_TEACHER_CERTS}/${certs._doc.childrenCertificate}` : undefined,
+						policeCertificate: certs._doc.policeCertificate ? `/certificates/asset/${S3_TEACHER_CERTS}/${certs._doc.policeCertificate}` : undefined,
+					} : undefined,
 				});
 				refactoredResponse.push(refactoredObject);
+
+				if (index === teachers.length - 1) {
+					resolve(ResponseUtility.SUCCESS_PAGINATION(refactoredResponse, page, limit));
+				}
 			});
-			resolve(ResponseUtility.SUCCESS_PAGINATION(refactoredResponse, page, limit));
 		}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error looking for teachers', error: err })));
 });
 
