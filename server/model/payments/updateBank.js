@@ -59,7 +59,8 @@ export default ({
 				} = success;
 				const addedBankAccount = data[0].id;
 				await PaymentModel.update({ ref: id }, { defaultSource: addedBankAccount, stripeCustomer: success });
-				resolve(success);
+				resolve(ResponseUtility.SUCCESS);
+				// resolve(success);
 			}).catch(_err => reject(_err));
 		});
 	} else {
