@@ -39,7 +39,7 @@ export const teacherLoginHandler = (req, res, next) => {
 		if (teacher) {
 			res.status(200).send(teacher);
 		} else {
-			res.status(200).send(ResponseUtility.ERROR(err || info));
+			res.status(200).send(err);
 		}
 	})(req, res, next);
 };
@@ -63,7 +63,7 @@ export const studentLoginHandler = (req, res, next) => {
 		if (student) {
 			res.status(200).send(student);
 		} else {
-			res.status(200).send(ResponseUtility.ERROR(err || info));
+			res.status(200).send(err);
 		}
 	})(req, res, next);
 };
