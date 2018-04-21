@@ -84,10 +84,13 @@ export default ({ id, email }) => new Promise((resolve, reject) => {
 					deviceId,
 					notifications,
 					certs,
-					payment: paymentSource || undefined,
+					// payment: paymentSource || undefined,
 					card: payment ? {
 						type: undefined,
 						number: payment.stripeCustomer.external_accounts.data[0].last4,
+						bank: payment.stripeCustomer.external_accounts.data[0].bank_name,
+						holder: payment.stripeCustomer.external_accounts.data[0].account_holder_name,
+						bsb: payment.stripeCustomer.external_accounts.data[0].routing_number,
 					} : undefined,
 				}));
 			})
