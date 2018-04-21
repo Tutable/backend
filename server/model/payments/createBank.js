@@ -43,7 +43,7 @@ export default ({
 		firstName,
 		lastName,
 		type,
-		ip,
+		ip = '127.0.0.1',
 	},
 }) => new Promise(async (resolve, reject) => {
 	if ((id || email) && accountHolder && bsb && accountNumber && city && line1 && postal &&
