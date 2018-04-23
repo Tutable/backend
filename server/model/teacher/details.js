@@ -48,6 +48,7 @@ export default ({ id, email }) => new Promise((resolve, reject) => {
 						availability,
 						deviceId,
 						notifications,
+						experience,
 					},
 				} = teacher;
 
@@ -84,6 +85,7 @@ export default ({ id, email }) => new Promise((resolve, reject) => {
 					deviceId,
 					notifications,
 					certs,
+					experience,
 					// payment: paymentSource || undefined,
 					card: payment ? {
 						type: undefined,

@@ -34,6 +34,7 @@ const Teacher = new Schema({
 	availability: {},
 	isVerified: Boolean,
 	degree: String,
+	experience: Number,	// the number representing the experience count in years
 	qualification: String,
 	school: String,
 	degreeAsset: String,

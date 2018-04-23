@@ -32,6 +32,7 @@ export default ({
 	google = undefined,
 	facebook = undefined,
 	address,
+	experience = 0,
 	picture,
 }) => new Promise((resolve, reject) => {
 	if (name && ((name && email && password) || (google || facebook))) {
@@ -75,12 +76,8 @@ export default ({
 					google,
 					facebook,
 					notifications: 0,
+					experience,
 					address,
-					// address: address ? {
-					// 	location: address,
-					// 	type: 'Point',
-					// 	coordinates: [],
-					// } : undefined,
 				});
 
 				const studentModel = new StudentModel({
