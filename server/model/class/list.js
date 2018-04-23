@@ -76,6 +76,10 @@ export default ({
 						teacher,
 					},
 				} = singleClass;
+				if (!teacher) {
+					// skip the classes whose teacher is not defined
+					continue;
+				}
 				const teacherObject = teacher ? Object.assign({}, teacher._doc, {
 					picture: teacher.picture ? `/teachers/assets/${S3_TEACHER_PROFILE}/${teacher.picture}` : undefined,
 					id: teacher._id,
