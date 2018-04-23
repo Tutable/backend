@@ -55,9 +55,9 @@ export default ({
 		.populate(teacherPopulation)
 		.then(async (classes) => {
 			const resultant = [];
-			for (let i=0; i < classes.length; i += 1) {
+			for (let i = 0; i < classes.length; i += 1) {
 				const singleClass = classes[i];
-				
+
 				const {
 					_doc: {
 						_id,
@@ -76,12 +76,13 @@ export default ({
 						teacher,
 					},
 				} = singleClass;
-				const teacherObject = Object.assign({}, teacher._doc, {
+				const teacherObject = teacher ? Object.assign({}, teacher._doc, {
 					picture: teacher.picture ? `/teachers/assets/${S3_TEACHER_PROFILE}/${teacher.picture}` : undefined,
 					id: teacher._id,
 					_id: undefined,
 					email: teacher.email,
-				});
+				}) : undefined;
+				// console.log(_id);
 
 				/**
 				 * @todo add review stats in individual class using awaited aggregation
