@@ -62,7 +62,7 @@ export default ({
 					// the this function was previously sending.
 					const refactoredObject = Object.assign({}, student._doc);
 					keys.map(key => delete refactoredObject[key]);
-					reject(ResponseUtility.ERROR_DATA({ data: refactoredObject, message: 'User already exists' }));
+					reject(ResponseUtility.ERROR_DATA({ data: refactoredObject, message: 'Account already exists under this email' }));
 					// reject(ResponseUtility.ERROR({ message: 'User already exists' }));
 				} else {
 					/**
