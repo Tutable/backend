@@ -70,6 +70,7 @@ export default ({
 						rate,
 						payload,
 						deleted,
+						whyQualified,
 					},
 					$$populatedVirtuals: {
 						categoryName,
@@ -146,6 +147,7 @@ export default ({
 					deleted,
 					bio,
 					timeline,
+					whyQualified,
 					created,
 					cancelled,
 					rate,
