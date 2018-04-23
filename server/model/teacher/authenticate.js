@@ -14,7 +14,7 @@ const TeacherModel = database.model('Teacher', TeacherSchema);
  */
 export default ({ email, upassword }) => new Promise((resolve, reject) => {
 	if (email && upassword) {
-		const query = { $and: [{ email }, { deleted: false }] };
+		const query = { $and: [{ email: { $regex: new RegExp(email.toLowerCase(), 'i') } }, { deleted: false }] };
 		const projection = { __v: 0, passChangeToken: 0, passChangeTimestamp: 0 };
 		// const query = { email };
 		TeacherModel.findOne(query, projection)
