@@ -16,7 +16,7 @@ const TeacherCertificationModel = database.model('certifications', TeacherCertif
  */
 export default ({ page = 1, limit = 30 }) => new Promise((resolve, reject) => {
 	const skip = limit * (page - 1);
-	const projection = { name: 1, email: 1, google: 1, facebook: 1, deleted: 1, isVerified: 1, picture: 1 };
+	const projection = { name: 1, email: 1, google: 1, facebook: 1, deleted: 1, isVerified: 1, picture: 1, degreeAsset: 1 };
 	const options = { skip, limit };
 	TeacherModel.find({}, projection, options)
 		.then((teachers) => {
@@ -33,6 +33,7 @@ export default ({ page = 1, limit = 30 }) => new Promise((resolve, reject) => {
 					picture: teacher.picture ? teacher.picture.indexOf('http') !== -1 ? teacher.picture :  `/teachers/assets/${S3_TEACHER_PROFILE}/${teacher.picture}` : undefined,
 					google: teacher.google.id || undefined,
 					facebook: teacher.facebook.id || undefined,
+					degree: teacher.degreeAsset ? `/teachers/assets/${S3_TEACHER_PROFILE}/${teacher.degreeAsset}` : undefined,
 					/**
 					 * @todo refactor the certs links and object
 					 */
