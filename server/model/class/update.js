@@ -22,7 +22,7 @@ export default ({
 	rate,
 	whyQualified,
 }) => new Promise((resolve, reject) => {
-	if (id && classId && (name || payload || level || bio || rate)) {
+	if (id && classId && (name || payload || level || bio || rate || whyQualified)) {
 		const lookupQuery = { $and: [{ _id: classId }, { ref: id }, { deleted: false }] };
 		ClassModel.findOne(lookupQuery)
 			.then(async (classDetails) => {
