@@ -20,6 +20,7 @@ export default ({
 	level,
 	bio,
 	rate,
+	whyQualified,
 }) => new Promise((resolve, reject) => {
 	if (id && classId && (name || payload || level || bio || rate)) {
 		const lookupQuery = { $and: [{ _id: classId }, { ref: id }, { deleted: false }] };
@@ -49,6 +50,7 @@ export default ({
 					level,
 					bio,
 					rate,
+					whyQualified,
 				});
 
 				ClassModel.update(lookupQuery, updateQuery)

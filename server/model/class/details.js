@@ -87,6 +87,7 @@ export default ({ classId }) => new Promise((resolve, reject) => {
 								created,
 								cancelled,
 								payload,
+								whyQualified,
 							},
 							$$populatedVirtuals: {
 								categoryName,
@@ -119,6 +120,7 @@ export default ({ classId }) => new Promise((resolve, reject) => {
 							timeline,
 							rate,
 							created,
+							whyQualified,
 							cancelled,
 							payload: payload ? `/class/asset/${S3_TEACHER_CLASS}/${payload}` : undefined,
 							reviews: matching ? {

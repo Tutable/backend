@@ -13,6 +13,7 @@ const Class = new Schema({
 	timeline: Number,
 	deleted: Boolean,
 	cancelled: Boolean,
+	whyQualified: String,
 }, {
 	toJSON: { virtuals: true },
 	toObject: { virtuals: true },
