@@ -7,7 +7,10 @@ import {
 	PaymentsSchema,
 } from '../schemas';
 import database from '../../db';
-import { ResponseUtility } from '../../utility';
+import {
+	ResponseUtility,
+	TimeUtility,
+} from '../../utility';
 import {
 	TemplateMailServices,
 	APNServices,
@@ -134,7 +137,8 @@ export default ({ id, bookingId, confirmed }) => new Promise((resolve, reject) =
 												teacher: teacherDetails.name,
 												teacherImage: teacherDetails.picture ? `http://localhost:3000/api/${teacherDetails}` : undefined,
 												className: classDetails.name,
-												time: moment(eventTimeline).format('LLLL'),
+												time: TimeUtility.deriveTime(eventTimeline),
+												date: TimeUtility.deriveDate(eventTimeline),
 											})
 												.then(() => {
 													/**

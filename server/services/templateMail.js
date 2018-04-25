@@ -62,11 +62,11 @@ const NewAccountMail = ({ to, name, verificationCode }) => new Promise((resolve,
  * send the class confirmation mail to the student
  * @param {} param0 
  */
-const ClassConfirmedMail = ({ to, name, teacher, className, time, teacherImage = 'https://image.freepik.com/free-icon/male-user-shadow_318-34042.jpg' }) => new Promise((resolve, reject) => {
+const ClassConfirmedMail = ({ to, name, teacher, className, time, date, teacherImage = 'https://image.freepik.com/free-icon/male-user-shadow_318-34042.jpg' }) => new Promise((resolve, reject) => {
 	if (to && name && teacher && className && time && teacherImage) {
 		const html = fs.readFileSync(path.resolve(__dirname, 'template', 'class_confirmed.html'), { encoding: 'utf-8' });
 		const template = handlebars.compile(html);
-		const props = { name, teacher, class_name: className, time, teacher_image: teacherImage };
+		const props = { name, teacher, class_name: className, time, teacher_image: teacherImage, date };
 		const compiled = template(props);
 
 		sendMail({ to, subject: 'Class confirmed!', html: compiled })
@@ -133,11 +133,11 @@ const VerificationToken = ({ to, name, code }) => new Promise((resolve, reject) 
 /**
  * send the class request mail to teacher
 */
-const ClassRequest = ({ to, name, student, className, time }) => new Promise((resolve, reject) => {
-	if (to && name && student && className && time) {
+const ClassRequest = ({ to, name, student, className, time, date }) => new Promise((resolve, reject) => {
+	if (to && name && student && className && time && date) {
 		const html = fs.readFileSync(path.resolve(__dirname, 'template', 'class_request.html'), { encoding: 'utf-8' });
 		const template = handlebars.compile(html);
-		const props = { name, student, class_name: className, time };
+		const props = { name, student, class_name: className, time, date };
 		const compiled = template(props);
 
 		sendMail({ to, subject: 'Request for new class', html: compiled })
