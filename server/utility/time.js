@@ -3,7 +3,13 @@
  * @author gaurav sharma
  * @since 27th March 2018
  */
+import moment from 'moment';
 
+const deriveDate = (timestamp) => {
+	const timeline = moment(timestamp);
+	return `${timeline.format('ddd')}, ${timeline.format('MMM')} ${timeline.date()}, ${timeline.year()}`;
+};
+const deriveTime = timestamp => moment(timestamp).format('HH:mm a');
 /**
  * Converts the minutes into millis
  * @param {number} minutes -> number of minutes to convert to minutes
@@ -42,5 +48,7 @@ export default {
 	hoursToMillis,
 	daysToMillis,
 	formatTimestamp,
-	monthName
-}
+	monthName,
+	deriveDate,
+	deriveTime,
+};
