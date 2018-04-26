@@ -62,7 +62,15 @@ const NewAccountMail = ({ to, name, verificationCode }) => new Promise((resolve,
  * send the class confirmation mail to the student
  * @param {} param0 
  */
-const ClassConfirmedMail = ({ to, name, teacher, className, time, date, teacherImage = 'https://image.freepik.com/free-icon/male-user-shadow_318-34042.jpg' }) => new Promise((resolve, reject) => {
+const ClassConfirmedMail = ({
+	to,
+	name,
+	teacher,
+	className,
+	time,
+	date,
+	teacherImage = 'https://image.freepik.com/free-icon/male-user-shadow_318-34042.jpg',
+}) => new Promise((resolve, reject) => {
 	if (to && name && teacher && className && time && teacherImage) {
 		const html = fs.readFileSync(path.resolve(__dirname, 'template', 'class_confirmed.html'), { encoding: 'utf-8' });
 		const template = handlebars.compile(html);
@@ -81,7 +89,12 @@ const ClassConfirmedMail = ({ to, name, teacher, className, time, date, teacherI
  * email template for the declined request
  * @param {*} param0
  */
-const ClassDeclinedMail = ({ to, name, teacher, className }) => new Promise((resolve, reject) => {
+const ClassDeclinedMail = ({
+	to,
+	name,
+	teacher,
+	className,
+}) => new Promise((resolve, reject) => {
 	if (to && name && teacher && className) {
 		const html = fs.readFileSync(path.resolve(__dirname, 'template', 'class_declined.html'), { encoding: 'utf-8' });
 		const template = handlebars.compile(html);
@@ -132,8 +145,21 @@ const VerificationToken = ({ to, name, code }) => new Promise((resolve, reject) 
 
 /**
  * send the class request mail to teacher
+ * @param {String} to, email of teacher
+ * @param {String} name, name of teacher
+ * @param {String} student, name of student
+ * @param {String} className, name of class
+ * @param {String} time, the time when the class is requested
+ * @param {String} date, the date when the class is requested
 */
-const ClassRequest = ({ to, name, student, className, time, date }) => new Promise((resolve, reject) => {
+const ClassRequest = ({
+	to,
+	name,
+	student,
+	className,
+	time,
+	date,
+}) => new Promise((resolve, reject) => {
 	if (to && name && student && className && time && date) {
 		const html = fs.readFileSync(path.resolve(__dirname, 'template', 'class_request.html'), { encoding: 'utf-8' });
 		const template = handlebars.compile(html);
