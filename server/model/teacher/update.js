@@ -27,6 +27,9 @@ export default ({
 	availability,
 	// email,
 	address,
+	// boolean indicator representing whether the teacher has relevant degree..
+	// remove the degree if already exists
+	hasDegree = undefined,
 	degree,
 	qualification,
 	school,
@@ -105,7 +108,7 @@ export default ({
 							TeacherModel.update(query, updateQuery)
 								.then(({ nModified }) => {
 									if (!nModified) {
-										return _reject(ResponseUtility.ERROR({ message: 'Nothing modified for teacher ' }));
+										return _resolve(ResponseUtility.ERROR({ message: 'Nothing modified for teacher ' }));
 									}
 									_resolve();
 								}).catch(err => _reject(err));
@@ -115,7 +118,7 @@ export default ({
 								StudentModel.update({ email: teacher.email }, { picture: pictureURL })
 									.then(({ nModified }) => {
 										if (!nModified) {
-											_reject(ResponseUtility.ERROR({ message: 'Nothing modified for student' }));
+											return _resolve(ResponseUtility.ERROR({ message: 'Nothing modified for student' }));
 										}
 										_resolve();
 									}).catch(err => _reject(err));
@@ -123,63 +126,27 @@ export default ({
 								_resolve();
 							}
 						}),
+						new Promise(async (_resolve, _reject) => {
+							// handle the qualicfication related updates
+							if (hasDegree !== undefined && !hasDegree) {
+								const { _doc: { degreeAsset } } = teacher;
+								// console.log(degreeAsset);
+								const Bucket = S3_TEACHER_PROFILE;
+								const Key = degreeAsset;
+								// remove degree asset from s3
+								if (degreeAsset) {
+									const unsetQuery = { $unset: { qualification: 1, school: 1, degreeAsset: 1 } };
+									await TeacherModel.update(query, unsetQuery);
+									await S3Services.removeFile({ Bucket, Key });
+								}
+								// console.log(unsetQuery);
+								return _resolve();
+							}
+							_resolve();
+						}),
 					]).then(() => {
 						resolve(ResponseUtility.SUCCESS);
 					}).catch(err => reject(err));
-					// TeacherModel.update(query, updateQuery, (err, modified) => {
-					// 	if (err) {
-					// 		return reject(ResponseUtility.ERROR({ message: 'Error updating teacher', error: err }));
-					// 	}
-					// 	const { nModified } = modified;
-					// 	if (nModified >= 1) {
-					// 		resolve(ResponseUtility.SUCCESS);
-					// 	} else {
-					// 		resolve(ResponseUtility.SUCCESS_MESSAGE({ message: 'Nothing modified' }));
-					// 	}
-					// });
-					// if (email) {
-					// 	// check if email already assigned to someone else
-					// 	TeacherModel.findOne({ email })
-					// 		.then(async (teacherWithEmail) => {
-					// 			if (teacherWithEmail) {
-					// 				// do not include email
-					// 				try {
-					// 					updateQuery = await SchemaMapperUtility({
-					// 						name,
-					// 						dob,
-					// 						gender,
-					// 						bio,
-					// 						availability,
-					// 						address,
-					// 						degree,
-					// 						qualification,
-					// 						school,
-					// 						degreeAsset: degreeAssetURL,
-					// 						picture: pictureURL,
-					// 						deviceId,
-					// 						notifications,
-					// 					});
-					// 				} catch (err) {
-					// 					resolve(ResponseUtility.SUCCESS_MESSAGE({ message: 'Nothing updated' }));
-					// 				}
-					// 			}
-
-					// 			// update now
-					// 			TeacherModel.update(query, updateQuery, (err, modified) => {
-					// 				if (err) {
-					// 					return reject(ResponseUtility.ERROR({ message: 'Error updating teacher', error: err }));
-					// 				}
-					// 				const { nModified } = modified;
-					// 				if (nModified >= 1) {
-					// 					resolve(ResponseUtility.SUCCESS);
-					// 				} else {
-					// 					resolve(ResponseUtility.SUCCESS_MESSAGE({ message: 'Nothing modified' }));
-					// 				}
-					// 			});
-					// 		}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error looking for teacher', error: err })));
-					// } else {
-						// update now
-					// }
 				} else {
 					resolve(ResponseUtility.SUCCESS_MMESSAGE({ message: 'Nothing updated. User not found.' }));
 				}
