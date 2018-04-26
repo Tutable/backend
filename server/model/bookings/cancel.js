@@ -26,10 +26,10 @@ export default ({ id, bookingId }) => new Promise(async (resolve, reject) => {
 	if (id && bookingId) {
 		// only the clasess that have been confirmed could be cancelled
 		const classPopulation = { path: 'classDetails', model: ClassModel, select: 'name rate' };
-		const query = { $and: [{ _id: bookingId }, { $or: [{ by: id }, { teacher: id }] }, { confirmed: true }] };
-		const booking  = await BookingsModel.findOne(query).populate(classPopulation);
+		const query = { $and: [{ _id: bookingId }, { $or: [{ by: id }, { teacher: id }] }, { confirmed: true }, { cancelled: false }] };
+		const booking = await BookingsModel.findOne(query).populate(classPopulation);
 		if (!booking) {
-			return reject(ResponseUtility.ERROR({ message: 'No booking found.' }));
+			return reject(ResponseUtility.ERROR({ message: 'No booking found. The class needs to be confirmed in order to delete or It might be cancelled already.' }));
 		}
 
 		// set the booking status from confirmed to cancelled
