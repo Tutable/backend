@@ -181,6 +181,35 @@ const ClassRequest = ({
 	}
 });
 
+/**
+ * Funtion to send the class cancellation email to respective users.
+ * @param {String} to, the email recipient address
+ * @param {String} recepientName, name of the recepient
+ * @param {String} refText, reference text
+ */
+const ClassCancelEmail = ({
+	to,
+	name,
+	className,
+	salutation,
+}) => new Promise((resolve, reject) => {
+	if (to && name && salutation) {
+		const html = fs.readFileSync(path.resolve(__dirname, 'template', 'class_cancelled.html'), { encoding: 'utf-8' });
+		const template = handlebars.compile(html);
+		const props = {
+			name,
+			class_name: className,
+			salutation,
+		};
+		const compiled = template(props);
+		sendMail({ to, subject: 'Class Cancelled', html: compiled })
+			.then(success => resolve(success))
+			.catch(err => reject(err));
+	} else {
+		reject(ResponseUtility.MISSING_REQUIRED_PROPS);
+	}
+});
+
 export default {
 	NewAccountMail,
 	ClassConfirmedMail,
@@ -188,4 +217,5 @@ export default {
 	ChangePasswordToken,
 	VerificationToken,
 	ClassRequest,
+	ClassCancelEmail,
 };
