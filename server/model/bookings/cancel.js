@@ -1,16 +1,23 @@
 import {
 	BookingsSchema,
 	ClassSchema,
+	TeacherSchema,
+	StudentSchema,
 	TransactionsSchema,
 } from '../schemas';
 import database from '../../db';
 import { ResponseUtility } from '../../utility';
 import { DEDUCTIONS } from '../../constants';
-import { StripeServices } from '../../services';
+import {
+	StripeServices,
+	TemplateMailServices,
+} from '../../services';
 
 const BookingsModel = database.model('Bookings', BookingsSchema);
 const TransactionsModel = database.model('Transactions', TransactionsSchema);
 const ClassModel = database.model('Class', ClassSchema);
+const TeacherModel = database.model('Teachers', TeacherSchema);
+const StudentModel = database.model('Students', StudentSchema);
 /**
  * microservice to handle the cacellation proess of the
  * booking. Both the teacher and student can cancel the bookings
@@ -34,25 +41,36 @@ export default ({ id, bookingId }) => new Promise(async (resolve, reject) => {
 			return reject(ResponseUtility.ERROR({ message: 'No booking found. The class needs to be confirmed in order to delete or It might be cancelled already.' }));
 		}
 
+		const { _doc: { by, teacher, slot } } = booking;
+
 		// set the booking status from confirmed to cancelled
 		await BookingsModel.update(query, { confirmed: false, cancelled: true, cancellationTimestamp: Date.now() });
-		let deductedAmount;
-		if (id === booking._doc.by) {
-			const {
-				$$populatedVirtuals: {
-					classDetails: {
-						rate,
-					},
+		const {
+			$$populatedVirtuals: {
+				classDetails: {
+					name,
+					rate,
 				},
-			} = booking;
+			},
+		} = booking;
+		let deductedAmount;
+		if (id === by) {
+			// const {
+			// 	$$populatedVirtuals: {
+			// 		classDetails: {
+			// 			name,
+			// 			rate,
+			// 		},
+			// 	},
+			// } = booking;
 			// booking is by student
 			// cancellation request by student
 			// if class is within 24 hours, refund with 20% deductions
 			// otherwise refund all
-			const day = Object.keys(booking._doc.slot)[0];
+			const day = Object.keys(slot)[0];
 			const date = new Date(Number(day));
 			// console.log((booking._doc.slot[day]).split('-')[0]);
-			date.setHours(Number(booking._doc.slot[day].split('-')[0]));
+			date.setHours(Number(slot[day].split('-')[0]));
 
 			if (Date.now() + 86400000 >= date.getTime()) {
 				// within 24 hours
@@ -76,7 +94,7 @@ export default ({ id, bookingId }) => new Promise(async (resolve, reject) => {
 			// update the transaction object
 			const updateQuery = { refunded: true, refundResponse, refundTimestamp: Date.now() };
 			TransactionsModel.update({ bookingId }, updateQuery)
-				.then(({ nModified }) => {
+				.then(async ({ nModified }) => {
 					if (!nModified) {
 						return reject(ResponseUtility.ERROR({ message: 'Nothing modified. ' }));
 					}
@@ -84,6 +102,22 @@ export default ({ id, bookingId }) => new Promise(async (resolve, reject) => {
 					/**
 					 * @todo make slot available again
 					 */
+					// send the verification email to both student and teacher.
+					const _teacher = await TeacherModel.findOne({ _id: teacher });
+					const student = await StudentModel.findOne({ _id: by });
+
+					await TemplateMailServices.ClassCancelEmail({
+						to: _teacher._doc.email,
+						name: _teacher._doc.name,
+						className: name,
+						salutation: id === by ? `Student ${student._doc.name}` : 'You',
+					});
+					await TemplateMailServices.ClassCancelEmail({
+						to: student._doc.email,
+						name: student._doc.name,
+						className: name,
+						salutation: id === by ? 'You' : `Teacher ${_teacher._doc.name}`,
+					});
 					resolve(ResponseUtility.SUCCESS);
 				}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error updating transactions', error: err })));
 			// resolve();
