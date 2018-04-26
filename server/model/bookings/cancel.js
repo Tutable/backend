@@ -24,10 +24,11 @@ const ClassModel = database.model('Class', ClassSchema);
  */
 export default ({ id, bookingId }) => new Promise(async (resolve, reject) => {
 	if (id && bookingId) {
-		console.log(id, bookingId);
+		// console.log(id, bookingId);
 		// only the clasess that have been confirmed could be cancelled
 		const classPopulation = { path: 'classDetails', model: ClassModel, select: 'name rate' };
 		const query = { $and: [{ _id: bookingId }, { $or: [{ by: id }, { teacher: id }] }, { confirmed: true }, { cancelled: false }] };
+		// console.log(JSON.stringify(query));
 		const booking = await BookingsModel.findOne(query).populate(classPopulation);
 		if (!booking) {
 			return reject(ResponseUtility.ERROR({ message: 'No booking found. The class needs to be confirmed in order to delete or It might be cancelled already.' }));
