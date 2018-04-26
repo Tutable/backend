@@ -137,7 +137,13 @@ const ClassRequest = ({ to, name, student, className, time, date }) => new Promi
 	if (to && name && student && className && time && date) {
 		const html = fs.readFileSync(path.resolve(__dirname, 'template', 'class_request.html'), { encoding: 'utf-8' });
 		const template = handlebars.compile(html);
-		const props = { name, student, class_name: className, time, date };
+		const props = {
+			name,
+			student,
+			class_name: className,
+			time,
+			date,
+		};
 		const compiled = template(props);
 
 		sendMail({ to, subject: 'Request for new class', html: compiled })
