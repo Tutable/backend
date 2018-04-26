@@ -7,7 +7,10 @@ import {
 	PaymentsSchema,
 } from '../schemas';
 import database from '../../db';
-import { ResponseUtility } from '../../utility';
+import {
+	ResponseUtility,
+	TimeUtility,
+} from '../../utility';
 import {
 	// EmailServices,
 	TemplateMailServices,
@@ -126,7 +129,14 @@ export default ({
 					.then(async (doc) => {
 						// fetch the the student details
 						const student = await StudentModel.findOne({ _id: id }, { name: 1 });
-						TemplateMailServices.ClassRequest({ to: email, name, student: student.name, className: _doc.name, time: new Date(Number(eventTimeline)).toString() })
+						TemplateMailServices.ClassRequest({
+							to: email,
+							name,
+							student: student.name,
+							className: _doc.name,
+							time: TimeUtility.deriveTime(eventTimeline),
+							date: TimeUtility.deriveDate(eventTimeline),
+						})
 							.then(() => {
 								// trigger removing the assigned slot from the teachers
 								// availability
