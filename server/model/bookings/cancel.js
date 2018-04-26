@@ -24,6 +24,7 @@ const ClassModel = database.model('Class', ClassSchema);
  */
 export default ({ id, bookingId }) => new Promise(async (resolve, reject) => {
 	if (id && bookingId) {
+		console.log(id, bookingId);
 		// only the clasess that have been confirmed could be cancelled
 		const classPopulation = { path: 'classDetails', model: ClassModel, select: 'name rate' };
 		const query = { $and: [{ _id: bookingId }, { $or: [{ by: id }, { teacher: id }] }, { confirmed: true }, { cancelled: false }] };
