@@ -155,18 +155,6 @@ export default ({ id, bookingId }) => new Promise(async (resolve, reject) => {
 							otherUser: _teacher._doc.name,
 						});
 					}
-					// await TemplateMailServices.ClassCancelEmail({
-					// 	to: _teacher._doc.email,
-					// 	name: _teacher._doc.name,
-					// 	className: name,
-					// 	salutation: id === by ? `Student ${student._doc.name}` : 'You',
-					// });
-					// await TemplateMailServices.ClassCancelEmail({
-					// 	to: student._doc.email,
-					// 	name: student._doc.name,
-					// 	className: name,
-					// 	salutation: id === by ? 'You' : `Teacher ${_teacher._doc.name}`,
-					// });
 					resolve(ResponseUtility.SUCCESS);
 				}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error updating transactions', error: err })));
 			// resolve();

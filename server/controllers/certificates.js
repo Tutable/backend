@@ -9,6 +9,11 @@ import commonPictureResolver from './commonPictureResolver';
 
 export default {
 	save: (req, res) => commonResolver(req, res, CertificationServices.CertificationSaveService),
-	details: (req, res) => commonResolver(req, res, CertificationServices.CertificationDetailsService),
+	details: (req, res) => commonResolver(
+		req,
+		res,
+		CertificationServices.CertificationDetailsService,
+	),
+	delete: (req, res) => commonResolver(req, res, CertificationServices.CertificationDeleteService),
 	asset: commonPictureResolver,
 };
