@@ -222,7 +222,7 @@ const ClassCancelInitiater = ({
 	date,
 	otherUser,
 }) => new Promise((resolve, reject) => {
-	if (to && name && className && time && otherUser) {
+	if (to && name && className && date && otherUser) {
 		const html = fs.readFileSync(path.resolve(__dirname, 'template', 'class_cancelled_by.html'), { encoding: 'utf-8' });
 		const template = handlebars.compile(html);
 		const props = {
@@ -265,6 +265,7 @@ const ClassCancelNotify = ({
 			user: otherUser,
 		};
 		const compiled = template(props);
+		// console.log(compiled);
 		sendMail({ to, subject: 'Class Cancelled', html: compiled })
 			.then(success => resolve(success))
 			.catch(err => reject(err));

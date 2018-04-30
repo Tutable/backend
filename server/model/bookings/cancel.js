@@ -119,36 +119,39 @@ export default ({ id, bookingId }) => new Promise(async (resolve, reject) => {
 
 					// send the verification email to both student and teacher
 					// const date = new Date(Number(Object.keys(slot)[0]));
+					const date = new Date(Number(day));
+					const eventTimeline = date.getTime();
 					if (id === by) {
 						// student cancelled the class
 						await TemplateMailServices.ClassCancelInitiater({
 							to: student._doc.email,
 							name: student._doc.name,
 							className: name,
-							date: TimeUtility.deriveDate(Number(Object.keys(slot)[0])),
+							date: TimeUtility.deriveDate(eventTimeline),
 							otherUser: _teacher._doc.name,
 						});
 						await TemplateMailServices.ClassCancelNotify({
 							to: _teacher._doc.email,
 							name: _teacher._doc.name,
 							className: name,
-							date: TimeUtility.deriveDate(Number(Object.keys(slot)[0])),
+							date: TimeUtility.deriveDate(eventTimeline),
 							otherUser: student._doc.name,
 						});
 					} else {
 						// teacher cancelled the class
+						// console.log(TimeUtility.deriveDate(eventTimeline));
 						await TemplateMailServices.ClassCancelInitiater({
 							to: _teacher._doc.email,
 							name: _teacher._doc.name,
 							className: name,
-							date: TimeUtility.deriveDate(Number(Object.keys(slot)[0])),
+							date: TimeUtility.deriveDate(eventTimeline),
 							otherUser: student._doc.name,
 						});
 						await TemplateMailServices.ClassCancelNotify({
 							to: student._doc.email,
 							name: student._doc.name,
 							className: name,
-							date: TimeUtility.deriveDate(Number(Object.keys(slot)[0])),
+							date: TimeUtility.deriveDate(eventTimeline),
 							otherUser: _teacher._doc.name,
 						});
 					}
