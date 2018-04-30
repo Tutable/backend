@@ -23,7 +23,7 @@ const ClassModel = database.model('Classes', ClassSchema);
 export default ({ page = 1, limit = 30 }) => new Promise((resolve, reject) => {
 	const skip = limit * (page - 1);
 	const projection = { __v: 0 };
-	const options = { sort: { timestamp: -1 }, skip, limit };
+	const options = { sort: { timeline: 1 }, skip, limit };
 
 	const populateStudent = { path: 'student', model: StudentModel, select: 'name picture email' };
 	const populateTeacher = { path: 'teacherDetails', model: TeacherModel, select: 'name picture email' };
