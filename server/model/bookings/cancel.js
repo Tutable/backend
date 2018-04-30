@@ -6,7 +6,10 @@ import {
 	TransactionsSchema,
 } from '../schemas';
 import database from '../../db';
-import { ResponseUtility } from '../../utility';
+import {
+	ResponseUtility,
+	TimeUtility,
+} from '../../utility';
 import { DEDUCTIONS } from '../../constants';
 import {
 	StripeServices,
@@ -115,18 +118,52 @@ export default ({ id, bookingId }) => new Promise(async (resolve, reject) => {
 					await TeacherModel.update({ _id: teacher }, updateSlotQuery);
 
 					// send the verification email to both student and teacher
-					await TemplateMailServices.ClassCancelEmail({
-						to: _teacher._doc.email,
-						name: _teacher._doc.name,
-						className: name,
-						salutation: id === by ? `Student ${student._doc.name}` : 'You',
-					});
-					await TemplateMailServices.ClassCancelEmail({
-						to: student._doc.email,
-						name: student._doc.name,
-						className: name,
-						salutation: id === by ? 'You' : `Teacher ${_teacher._doc.name}`,
-					});
+					// const date = new Date(Number(Object.keys(slot)[0]));
+					if (id === by) {
+						// student cancelled the class
+						await TemplateMailServices.ClassCancelInitiater({
+							to: student._doc.email,
+							name: student._doc.name,
+							className: name,
+							date: TimeUtility.deriveDate(Number(Object.keys(slot)[0])),
+							otherUser: _teacher._doc.name,
+						});
+						await TemplateMailServices.ClassCancelNotify({
+							to: _teacher._doc.email,
+							name: _teacher._doc.name,
+							className: name,
+							date: TimeUtility.deriveDate(Number(Object.keys(slot)[0])),
+							otherUser: student._doc.name,
+						});
+					} else {
+						// teacher cancelled the class
+						await TemplateMailServices.ClassCancelInitiater({
+							to: _teacher._doc.email,
+							name: _teacher._doc.name,
+							className: name,
+							date: TimeUtility.deriveDate(Number(Object.keys(slot)[0])),
+							otherUser: student._doc.name,
+						});
+						await TemplateMailServices.ClassCancelNotify({
+							to: student._doc.email,
+							name: student._doc.name,
+							className: name,
+							date: TimeUtility.deriveDate(Number(Object.keys(slot)[0])),
+							otherUser: _teacher._doc.name,
+						});
+					}
+					// await TemplateMailServices.ClassCancelEmail({
+					// 	to: _teacher._doc.email,
+					// 	name: _teacher._doc.name,
+					// 	className: name,
+					// 	salutation: id === by ? `Student ${student._doc.name}` : 'You',
+					// });
+					// await TemplateMailServices.ClassCancelEmail({
+					// 	to: student._doc.email,
+					// 	name: student._doc.name,
+					// 	className: name,
+					// 	salutation: id === by ? 'You' : `Teacher ${_teacher._doc.name}`,
+					// });
 					resolve(ResponseUtility.SUCCESS);
 				}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error updating transactions', error: err })));
 			// resolve();

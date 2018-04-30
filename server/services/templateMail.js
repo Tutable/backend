@@ -210,6 +210,69 @@ const ClassCancelEmail = ({
 	}
 });
 
+/**
+ * Send the confirmation email to the user who initiated the class cancel
+ * request.
+ * @param {*} param0 
+ */
+const ClassCancelInitiater = ({
+	to,
+	name,
+	className,
+	date,
+	otherUser,
+}) => new Promise((resolve, reject) => {
+	if (to && name && className && time && otherUser) {
+		const html = fs.readFileSync(path.resolve(__dirname, 'template', 'class_cancelled_by.html'), { encoding: 'utf-8' });
+		const template = handlebars.compile(html);
+		const props = {
+			name,
+			class_name: className,
+			date,
+			user: otherUser,
+		};
+		const compiled = template(props);
+		sendMail({ to, subject: 'Class Cancelled', html: compiled })
+			.then(success => resolve(success))
+			.catch(err => reject(err));
+	} else {
+		reject(ResponseUtility.MISSING_REQUIRED_PROPS);
+	}
+});
+
+/**
+ * send the calass cancellation email notificaiton to other user
+ * @param {String} to, email of the other uer
+ * @param {String} name of the user to whom the email is sent
+ * @param {String} className, name of the class that has been cancelled
+ * @param {String} date, class date
+ * @param {String} otherUser the name of other user.
+ */
+const ClassCancelNotify = ({
+	to,
+	name,
+	className,
+	date,
+	otherUser,
+}) => new Promise((resolve, reject) => {
+	if (to && name && className && date && otherUser) {
+		const html = fs.readFileSync(path.resolve(__dirname, 'template', 'class_cancelled_alertto.html'), { encoding: 'utf-8' });
+		const template = handlebars.compile(html);
+		const props = {
+			name,
+			class_name: className,
+			date,
+			user: otherUser,
+		};
+		const compiled = template(props);
+		sendMail({ to, subject: 'Class Cancelled', html: compiled })
+			.then(success => resolve(success))
+			.catch(err => reject(err));
+	} else {
+		reject(ResponseUtility.MISSING_REQUIRED_PROPS);
+	}
+});
+
 export default {
 	NewAccountMail,
 	ClassConfirmedMail,
@@ -218,4 +281,6 @@ export default {
 	VerificationToken,
 	ClassRequest,
 	ClassCancelEmail,
+	ClassCancelInitiater,
+	ClassCancelNotify,
 };
