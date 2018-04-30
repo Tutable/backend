@@ -54,6 +54,7 @@ export default ({ id, bookingId }) => new Promise(async (resolve, reject) => {
 			},
 		} = booking;
 		let deductedAmount;
+		const day = Object.keys(slot)[0];
 		if (id === by) {
 			// const {
 			// 	$$populatedVirtuals: {
@@ -67,7 +68,7 @@ export default ({ id, bookingId }) => new Promise(async (resolve, reject) => {
 			// cancellation request by student
 			// if class is within 24 hours, refund with 20% deductions
 			// otherwise refund all
-			const day = Object.keys(slot)[0];
+			// day = Object.keys(slot)[0];
 			const date = new Date(Number(day));
 			// console.log((booking._doc.slot[day]).split('-')[0]);
 			date.setHours(Number(slot[day].split('-')[0]));
@@ -88,24 +89,32 @@ export default ({ id, bookingId }) => new Promise(async (resolve, reject) => {
 		// console.log(response);
 		const { _doc: { stripeChargeResponse } } = await TransactionsModel.findOne({ bookingId });
 		// console.log(transactionData);
-		const refundRequest = deductedAmount ? { chargeId: stripeChargeResponse.id, deductedAmount } : { chargeId: stripeChargeResponse.id };
+		const refundRequest = deductedAmount ?
+			{ chargeId: stripeChargeResponse.id, deductedAmount } :
+			{ chargeId: stripeChargeResponse.id };
 		try {
 			const refundResponse = await StripeServices.ProcessRefund(refundRequest);
 			// update the transaction object
 			const updateQuery = { refunded: true, refundResponse, refundTimestamp: Date.now() };
+
 			TransactionsModel.update({ bookingId }, updateQuery)
 				.then(async ({ nModified }) => {
 					if (!nModified) {
 						return reject(ResponseUtility.ERROR({ message: 'Nothing modified. ' }));
 					}
 					// refund completed
+
+					const _teacher = await TeacherModel.findOne({ _id: teacher });
+					const student = await StudentModel.findOne({ _id: by });
 					/**
 					 * @todo make slot available again
 					 */
-					// send the verification email to both student and teacher.
-					const _teacher = await TeacherModel.findOne({ _id: teacher });
-					const student = await StudentModel.findOne({ _id: by });
+					const { _doc: { availability } } = _teacher;
+					availability[day].push(slot[day]);
+					const updateSlotQuery = { availability };
+					await TeacherModel.update({ _id: teacher }, updateSlotQuery);
 
+					// send the verification email to both student and teacher
 					await TemplateMailServices.ClassCancelEmail({
 						to: _teacher._doc.email,
 						name: _teacher._doc.name,
