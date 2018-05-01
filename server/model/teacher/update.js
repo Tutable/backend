@@ -40,7 +40,7 @@ export default ({
 	experience = 0,
 }) => new Promise(async (resolve, reject) => {
 	if (id && (name || dob || gender || bio || availability ||
-		address || degree || qualification || school || degreeAsset || experience ||
+		address || hasDegree !== undefined || degree || qualification || school || degreeAsset || experience ||
 		picture /*|| email*/ || deviceId || notifications !== undefined)) {
 		// check if teacher exists
 		const query = { _id: id };
