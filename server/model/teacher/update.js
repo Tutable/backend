@@ -74,12 +74,12 @@ export default ({
 							}
 						}
 						if (degreeAsset) {
-							// console.log('uplaoding user degree');
 							try {
 								// remove old one if exists
-								const { _doc: { degreeAsset } } = teacher;
-								if (degreeAsset) {
-									await S3Services.removeFile({ Bucket: S3_TEACHER_PROFILE, Key: degreeAsset });
+								// console.log(degreeAsset);
+								// const { _doc: { degreeAsset } } = teacher;
+								if (teacher._doc.degreeAsset) {
+									await S3Services.removeFile({ Bucket: S3_TEACHER_PROFILE, Key: teacher._doc.degreeAsset });
 								}
 								await S3Services.uploadToBucket({ Bucket, data: degreeAsset, Key: degreeKey });
 								/**
