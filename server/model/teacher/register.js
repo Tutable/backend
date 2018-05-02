@@ -38,9 +38,9 @@ export default ({
 	if (name && ((name && email && password) || (google || facebook))) {
 		let query;
 		if (facebook) {
-			query = { $and: [{ 'facebook.id': facebook.id }, { deleted: false }] };
+			query = { $or: [{ $and: [{ 'facebook.id': facebook.id }, { deleted: false }] }, { $and: [{ email }, { deleted: false }] }] };
 		} else if (google) {
-			query = { $and: [{ 'google.id': google.id }, { deleted: false }] };
+			query = { $or: [{ $and: [{ 'google.id': google.id }, { deleted: false }] }, { $and: [{ email }, { deleted: false }] }] };
 		} else {
 			query = { $and: [{ email }, { deleted: false }] };
 		}
