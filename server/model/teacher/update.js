@@ -37,7 +37,7 @@ export default ({
 	picture,
 	deviceId,
 	notifications,
-	experience = 0,
+	experience = undefined,
 }) => new Promise(async (resolve, reject) => {
 	if (id && (name || dob || gender || bio || availability ||
 		address || hasDegree !== undefined || degree || qualification || school || degreeAsset || experience ||
