@@ -41,6 +41,15 @@ services:
     container_name: 'tutable-admin'
     ports:
       - 8001:8001
+  
+  transfer-script:
+    image: index.docker.io/tutable/transfer-script:latest
+    container_name: 'transfer-script'
+    environment:
+      - NODE_ENV=production
+      - MONGO_HOST=database
+      - MONGO_DB=tutable
+    restart: always
 
   # database configuration for the project
   database:

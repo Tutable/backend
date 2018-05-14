@@ -10,7 +10,16 @@ const host = process.env.MONGO_HOST || 'localhost';
 const db = process.env.MONGO_DB || 'tutable-app';
 const port = 27017;
 
-export const mongoConnectionString = `mongodb://${host}:${port}/${db}`;
+const {
+	ATLAS_USER,
+	ATLAS_PASSWORD,
+	CLUSTER1,
+	CLUSTER2,
+	CLUSTER3,
+} = process.env;
+
+// export const mongoConnectionString = `mongodb://${host}:${port}/${db}`;
+export const mongoConnectionString = `mongodb://${ATLAS_USER}:${ATLAS_PASSWORD}@${CLUSTER1},${CLUSTER2},${CLUSTER3}/${db}?ssl=true&replicaSet=tutable-app-shard-0&authSource=admin&retryWrites=true`;
 // this string is unique for each project construction
 export const secretString = '1iXXiNc6D07eQ7ynoMqh66wbIbl4GlcT';
 
