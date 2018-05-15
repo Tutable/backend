@@ -15,7 +15,7 @@ mongoose.connect(mongoConnectionString, { useMongoClient }, (err) => {
 	if (err) {
 		console.log('mongo connection err', err);
 	} else {
-		console.log('database connected');
+		console.log(`database connected to ${mongoConnectionString}`);
 	}
 });
 
