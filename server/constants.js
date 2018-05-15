@@ -19,7 +19,7 @@ const {
 } = process.env;
 
 // export const mongoConnectionString = `mongodb://${host}:${port}/${db}`;
-export const mongoConnectionString = `mongodb://${ATLAS_USER}:${ATLAS_PASSWORD}@${CLUSTER1},${CLUSTER2},${CLUSTER3}/${db}?ssl=true&replicaSet=tutable-app-shard-0&authSource=admin&retryWrites=true`;
+export const mongoConnectionString = process.env.NODE_ENV ? `mongodb://${ATLAS_USER}:${ATLAS_PASSWORD}@${CLUSTER1},${CLUSTER2},${CLUSTER3}/${db}?ssl=true&replicaSet=tutable-app-shard-0&authSource=admin&retryWrites=true` : `mongodb://localhost:${port}/${db}`;
 // this string is unique for each project construction
 export const secretString = '1iXXiNc6D07eQ7ynoMqh66wbIbl4GlcT';
 

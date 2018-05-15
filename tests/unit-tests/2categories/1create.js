@@ -7,7 +7,7 @@ import { SUCCESS_CODE } from '../../../server/constants';
  * Test case for creating new categories
  */
 export default () => {
-	describe.skip('This should test the creation of new category', () => {
+	describe('This should test the creation of new category', () => {
 		it('Should create a new parent category', (done) => {
 			const title = 'Test service';
 			CategoriesServices.CategoriesCreateService({ title })
