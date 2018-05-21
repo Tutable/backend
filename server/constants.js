@@ -41,16 +41,15 @@ export const {
 	APPLE_TEAM_ID,
 	BUSINESS_EMAIL,
 	BUSINESS_EMAIL_PASSWORD,
-	STRIPE_PUB_KEY = process.env.NODE_ENV === 'development' ? process.env.STRIPE_PUB_KEY : process.env.STRIPE_PUB_KEY_LIVE,
-	STRIPE_SECRET_KEY = process.env.NODE_ENV === 'development' ? process.env.STRIPE_SECRET_KEY : process.env.STRIPE_SECRET_KEY_LIVE,
 	DEDUCTIONS,
 	ADMIN,
 	ADMIN_PASS,
 } = process.env;
 
-export const MB = 1024 * 1024;
+export const STRIPE_PUB_KEY = process.env.NODE_ENV === 'development' ? process.env.STRIPE_PUB_KEY : process.env.STRIPE_PUB_KEY_LIVE;
+export const STRIPE_SECRET_KEY = process.env.NODE_ENV === 'development' ? process.env.STRIPE_SECRET_KEY : process.env.STRIPE_SECRET_KEY_LIVE;
 
-console.log(STRIPE_PUB_KEY, STRIPE_SECRET_KEY);
+export const MB = 1024 * 1024;
 /**
  * S3 utility URLs
  */
