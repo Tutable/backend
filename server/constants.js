@@ -50,6 +50,7 @@ export const {
 
 export const MB = 1024 * 1024;
 
+console.log(STRIPE_PUB_KEY, STRIPE_SECRET_KEY);
 /**
  * S3 utility URLs
  */
