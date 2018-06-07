@@ -77,7 +77,7 @@ services:
       # - ./certs:/etc/letsencrypt
       # - ./certs-data:/data/letsencrypt
       # - ./letsencrypt:/etc/nginx/letsencrypt/acme-challenge
-      - ./configurations/ssl/:/etc/nginx/certs
+      - ./certs/newcerts/:/etc/nginx/certs
       # - ./certs:/etc/nginx/certs
 
   watchtower:
