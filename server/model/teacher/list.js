@@ -16,7 +16,7 @@ const TeacherCertificationModel = database.model('certifications', TeacherCertif
  */
 export default ({ page = 1, limit = 30 }) => new Promise((resolve, reject) => {
 	const skip = limit * (page - 1);
-	const projection = { name: 1, email: 1, google: 1, facebook: 1, deleted: 1, isVerified: 1, picture: 1, degreeAsset: 1 };
+	const projection = { name: 1, email: 1, google: 1, facebook: 1, deleted: 1, isVerified: 1, picture: 1, degreeAsset: 1, address: 1 };
 	const options = { skip, limit };
 	TeacherModel.find({}, projection, options)
 		.then((teachers) => {
@@ -24,6 +24,7 @@ export default ({ page = 1, limit = 30 }) => new Promise((resolve, reject) => {
 			const refactoredResponse = [];
 			teachers.map(async (doc, index) => {
 				const teacher = doc._doc;
+				// console.log(teacher);
 
 				/**
 				 * @todo popultae the certifications data for the teachers
@@ -43,6 +44,7 @@ export default ({ page = 1, limit = 30 }) => new Promise((resolve, reject) => {
 					} : undefined,
 					address: teacher.address,
 				});
+				// console.log(refactoredObject);
 				refactoredResponse.push(refactoredObject);
 
 				if (index === teachers.length - 1) {
