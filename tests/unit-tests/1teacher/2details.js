@@ -4,7 +4,7 @@ import { TeacherServices } from '../../../server/model';
 import { SUCCESS_CODE } from '../../../server/constants';
 
 export default () => {
-	describe('This will test the Teacher details service', () => {
+	describe.skip('This will test the Teacher details service', () => {
 		it('should fetch user details', (done) => {
 			const email = 'sharma02gaurav@gmail.com';
 			TeacherServices.TeacherDetailsService({ email })
