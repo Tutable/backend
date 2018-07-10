@@ -41,6 +41,7 @@ export default ({ page = 1, limit = 30 }) => new Promise((resolve, reject) => {
 						childrenCertificate: certs._doc.childrenCertificate ? `/certificates/asset/${S3_TEACHER_CERTS}/${certs._doc.childrenCertificate}` : undefined,
 						policeCertificate: certs._doc.policeCertificate ? `/certificates/asset/${S3_TEACHER_CERTS}/${certs._doc.policeCertificate}` : undefined,
 					} : undefined,
+					address: teacher.address,
 				});
 				refactoredResponse.push(refactoredObject);
 
