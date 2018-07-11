@@ -51,6 +51,8 @@ export default ({ page = 1, limit = 30 }) => new Promise((resolve, reject) => {
 					certs: certs ? {
 						childrenCertificate: certs._doc.childrenCertificate ? `/certificates/asset/${S3_TEACHER_CERTS}/${certs._doc.childrenCertificate}` : undefined,
 						policeCertificate: certs._doc.policeCertificate ? `/certificates/asset/${S3_TEACHER_CERTS}/${certs._doc.policeCertificate}` : undefined,
+						childrenCertificateVerified: certs._doc.childrenCertificateVerified,
+						policeCertificateVerified: certs._doc.policeCertificateVerified,
 					} : undefined,
 					address: teacher.address,
 				});

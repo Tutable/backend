@@ -7,6 +7,7 @@ import {
 
 const TeacherCertificationModel = database.model('Certifications', TeacherCertificationSchema);
 /**
+ * ADMIN SERVICE
  * This is the service that deals with the  verification of the certs
  * taht a teacher uploads fir the verification
  * @author gaurav sharma
@@ -16,14 +17,14 @@ const TeacherCertificationModel = database.model('Certifications', TeacherCertif
  * @param {Boolean} childrenCertificateVerified
  */
 export default ({
-	id,
+	userId,
 	policeCertificateVerified,
 	childrenCertificateVerified,
 }) => new Promise(async (resolve, reject) => {
-	if (!policeCertificateVerified && !childrenCertificateVerified) {
+	if (!userId || (!policeCertificateVerified && !childrenCertificateVerified)) {
 		return reject(ResponseUtility.MISSING_REQUUIRED_PROPS);
 	}
-	const lookupQuery = { ref: id };
+	const lookupQuery = { ref: userId };
 	const updateQuery = await SchemaMapperUtility({
 		policeCertificateVerified,
 		childrenCertificateVerified,

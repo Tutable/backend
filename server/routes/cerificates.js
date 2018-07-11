@@ -11,6 +11,6 @@ export default (app) => {
 	app.post(`${prefix}save`, AuthenticationControllers.authenticateTeacher, CompressionServices, CertificatesControllers.save);
 	app.post(`${prefix}details`, AuthenticationControllers.authenticateTeacher, CertificatesControllers.details);
 	app.post(`${prefix}delete`, AuthenticationControllers.authenticateTeacher, CertificatesControllers.delete);
-	app.post(`${prefix}verifyCerts`, AuthenticationControllers.authenticateTeacher, CertificatesControllers.verify);
+	app.post(`${prefix}verifyCerts`, AuthenticationControllers.authenticateAdmin, CertificatesControllers.verify);
 	app.get(`${prefix}asset/:bucket/:userType/:folder/:asset`, CertificatesControllers.asset);
 };
