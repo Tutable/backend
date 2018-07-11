@@ -16,4 +16,5 @@ export default {
 	),
 	delete: (req, res) => commonResolver(req, res, CertificationServices.CertificationDeleteService),
 	asset: commonPictureResolver,
+	verify: (req, res) => commonResolver(req, res, CertificationServices.CertificationVerifyService),
 };

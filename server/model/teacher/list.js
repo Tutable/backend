@@ -16,7 +16,17 @@ const TeacherCertificationModel = database.model('certifications', TeacherCertif
  */
 export default ({ page = 1, limit = 30 }) => new Promise((resolve, reject) => {
 	const skip = limit * (page - 1);
-	const projection = { name: 1, email: 1, google: 1, facebook: 1, deleted: 1, isVerified: 1, picture: 1, degreeAsset: 1, address: 1 };
+	const projection = {
+		name: 1,
+		email: 1,
+		google: 1,
+		facebook: 1,
+		deleted: 1,
+		isVerified: 1,
+		picture: 1,
+		degreeAsset: 1,
+		address: 1,
+	};
 	const options = { skip, limit };
 	TeacherModel.find({}, projection, options)
 		.then((teachers) => {

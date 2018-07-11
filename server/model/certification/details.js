@@ -17,10 +17,20 @@ export default ({ id }) => new Promise(async (resolve, reject) => {
 		TeacherCertificationModel.findOne(query)
 			.then((certificate) => {
 				if (certificate) {
-					const { _doc: { ref, policeCertificate, childrenCertificate } } = certificate;
+					const {
+						_doc: {
+							ref,
+							policeCertificate,
+							childrenCertificate,
+							policeCertificateVerified,
+							childrenCertificateVerified,
+						},
+					} = certificate;
 					resolve(ResponseUtility.SUCCESS_DATA({
 						ref,
 						policeCertificate: policeCertificate ? `/certificates/asset/${S3_BUCKET}/teacher/certificates/${policeCertificate}` : undefined,
+						policeCertificateVerified,
+						childrenCertificateVerified,
 						childrenCertifiate: childrenCertificate ? `/certificates/asset/${S3_BUCKET}/teacher/certificates/${childrenCertificate}` : undefined,
 					}));
 				} else {

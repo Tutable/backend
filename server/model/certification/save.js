@@ -1,6 +1,6 @@
 import { TeacherCertificationSchema } from '../schemas';
 import database from '../../db';
-import { ResponseUtility, SchemaMapperUitlity } from '../../utility';
+import { ResponseUtility } from '../../utility';
 import { S3Services } from '../../services';
 import { S3_TEACHER_CERTS } from '../../constants';
 // import { SchemaMapperUtility } from '../../utility';
@@ -51,7 +51,9 @@ export default ({ id, policeCert, childrenCert }) => new Promise(async (resolve,
 						const checkCertificates = new TeacherCertificationModel({
 							ref: id,
 							policeCertificate: policeCert ? policeKey : undefined,
+							policeCertificateVerified: false,
 							childrenCertificate: childrenCert ? childKey : undefined,
+							childrenCertificateVerified: false,
 						});
 						checkCertificates.save()
 							.then(() => resolve(ResponseUtility.SUCCESS))
