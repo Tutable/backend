@@ -47,6 +47,16 @@ const Teacher = new Schema({
 	passChangeTimestamp: Number,
 	deviceId: String,
 	notifications: Number,
+}, {
+	toJSON: { virtuals: true },
+	toObject: { virtuals: true },
+});
+
+Teacher.virtual('certs', {
+	ref: 'certifications',
+	localField: '_id',
+	foreignField: 'ref',
+	justOne: true,
 });
 
 export default Teacher;
