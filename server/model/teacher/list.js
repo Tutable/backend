@@ -1,3 +1,4 @@
+
 import {
 	TeacherSchema,
 	TeacherCertificationSchema,
@@ -31,7 +32,7 @@ export default ({ page = 1, limit = 30 }) => new Promise(async (resolve, reject)
 	const populationQuery = {
 		path: 'certs',
 		model: TeacherCertificationModel,
-		select: 'childrenCertificate policeCertificate',
+		select: 'childrenCertificate policeCertificate childrenCertificateVerified policeCertificateVerified',
 	};
 	TeacherModel
 		.find({}, projection, options)
