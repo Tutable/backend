@@ -21,8 +21,9 @@ export default ({
 	userEmail,
 	name,
 	updateEmail,
+	degreeAssetVerified,
 }) => new Promise(async (resolve, reject) => {
-	if (userId && userEmail && (updateEmail || name)) {
+		if (userId && userEmail && (updateEmail || name || degreeAssetVerified)) {
 		// the id could be either of teacher or student, derive it first and find the souce email id
 		const lookupQuery = { email: userEmail };
 		// check if there is already a user with this email id
@@ -35,7 +36,7 @@ export default ({
 			}
 		}
 		try {
-			const updateQuery = await SchemaMapperUtility({ name, email: definedEmail ? undefined : updateEmail });
+			const updateQuery = await SchemaMapperUtility({ name, email: definedEmail ? undefined : updateEmail, degreeAssetVerified });
 			await StudentModel.update(lookupQuery, updateQuery);
 			await TeacherModel.update(lookupQuery, updateQuery);
 
