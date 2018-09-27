@@ -38,6 +38,7 @@ const Teacher = new Schema({
 	qualification: String,
 	school: String,
 	degreeAsset: String,
+	degreeAssetVerified: { type: Boolean, default: false },	// added to verify the degree asset.
 	deleted: Boolean,
 	blocked: Boolean,
 	firstLogin: Boolean,
