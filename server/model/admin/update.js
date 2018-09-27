@@ -23,7 +23,7 @@ export default ({
 	updateEmail,
 	degreeAssetVerified,
 }) => new Promise(async (resolve, reject) => {
-		if (userId && userEmail && (updateEmail || name || degreeAssetVerified)) {
+	if (userId && userEmail && (updateEmail || name || degreeAssetVerified)) {
 		// the id could be either of teacher or student, derive it first and find the souce email id
 		const lookupQuery = { email: userEmail };
 		// check if there is already a user with this email id

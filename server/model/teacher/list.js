@@ -27,6 +27,7 @@ export default ({ page = 1, limit = 30 }) => new Promise(async (resolve, reject)
 		picture: 1,
 		degreeAsset: 1,
 		address: 1,
+		degreeAssetVerified: 1,
 	};
 	const options = { skip, limit };
 	const populationQuery = {
@@ -66,53 +67,8 @@ export default ({ page = 1, limit = 30 }) => new Promise(async (resolve, reject)
 				});
 				// console.log(`adding doctor #${index + 1} out of ${teachers.length}`);
 				refactoredResponse.push(refactoredObject);
-
-				// if (index === teachers.length - 1) {
-				// 	console.log(index, teachers.length);
-
-				// }
 			});
 			return resolve(ResponseUtility.SUCCESS_PAGINATION(refactoredResponse, page, limit));
 		}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error looking for teachers.', error: err })));
-	// return resolve(ResponseUtility.SUCCESS_PAGINATION([], page, limit));
-	// 	}).catch(err => {
-
-	// 	});
-	// if (teachers && teachers.length) {
-	// TeacherModel.find({}, projection, options)
-	// 	.then((teachers) => {
-	// 		// reafactor the response
-	// 		const refactoredResponse = [];
-	// 		teachers.map(async (doc, index) => {
-	// 			const teacher = doc._doc;
-	// 			// console.log(teacher);
-
-	// 			/**
-	// 			 * @todo popultae the certifications data for the teachers
-	// 			 */
-	// 			const certs = await TeacherCertificationModel.findOne({ ref: teacher._id });
-	// 			const refactoredObject = Object.assign({}, teacher, {
-	// 				picture: teacher.picture ? teacher.picture.indexOf('http') !== -1 ? teacher.picture :  `/teachers/assets/${S3_TEACHER_PROFILE}/${teacher.picture}` : undefined,
-	// 				google: teacher.google.id || undefined,
-	// 				facebook: teacher.facebook.id || undefined,
-	// 				degree: teacher.degreeAsset ? `/teachers/assets/${S3_TEACHER_PROFILE}/${teacher.degreeAsset}` : undefined,
-	// 				/**
-	// 				 * @todo refactor the certs links and object
-	// 				 */
-	// 				certs: certs ? {
-	// 					childrenCertificate: certs._doc.childrenCertificate ? `/certificates/asset/${S3_TEACHER_CERTS}/${certs._doc.childrenCertificate}` : undefined,
-	// 					policeCertificate: certs._doc.policeCertificate ? `/certificates/asset/${S3_TEACHER_CERTS}/${certs._doc.policeCertificate}` : undefined,
-	// 				} : undefined,
-	// 				address: teacher.address,
-	// 			});
-	// 			console.log(`adding doctor #${index + 1} out of ${teachers.length}`);
-	// 			refactoredResponse.push(refactoredObject);
-
-	// 			if (index === teachers.length - 1) {
-	// 				console.log(index, teachers.length);
-	// 				return resolve(ResponseUtility.SUCCESS_PAGINATION(refactoredResponse, page, limit));
-	// 			}
-	// 		});
-	// 	}).catch(err => reject(ResponseUtility.ERROR({ message: 'Error looking for teachers', error: err })));
 });
 
