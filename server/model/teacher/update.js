@@ -34,6 +34,7 @@ export default ({
 	qualification,
 	school,
 	degreeAsset,
+	degreeAssetVerified,
 	picture,
 	deviceId,
 	notifications,
@@ -41,7 +42,7 @@ export default ({
 }) => new Promise(async (resolve, reject) => {
 	if (id && (name || dob || gender || bio || availability ||
 		address || hasDegree !== undefined || degree || qualification || school || degreeAsset || experience ||
-		picture /*|| email*/ || deviceId || notifications !== undefined)) {
+		picture /*|| email*/ || deviceId || notifications !== undefined || degreeAssetVerified !== undefined)) {
 		// check if teacher exists
 		const query = { _id: id };
 		TeacherModel.findOne(query)
@@ -107,6 +108,7 @@ export default ({
 						deviceId,
 						notifications,
 						experience,
+						degreeAssetVerified,
 					});
 					Promise.all([
 						new Promise((_resolve, _reject) => {
