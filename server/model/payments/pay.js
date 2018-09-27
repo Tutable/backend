@@ -2,6 +2,9 @@ import {
 	PaymentSchema,
 	TransactionsSchema,
 	BookingSchema,
+	TeacherSchema,
+	StudentSchema,
+	ClassSchema,
 } from '../schemas';
 import database from '../../db';
 import { ResponseUtility } from '../../utility';
@@ -10,6 +13,9 @@ import { StripeServices } from '../../services';
 const PaymentModel = database.model('Payments', PaymentSchema);
 const BookingModel = database.model('Bookings', BookingSchema);
 const TransactionsModel = database.model('Transactions', TransactionsSchema);
+const TeachersModel = database.model('Teachers', TeacherSchema);
+const StudentsModel = database.model('Students', StudentSchema);
+const ClassModel = database.model('Classes', ClassSchema);
 /**
  * handle a payment transaction
  * The process will be done like this.
@@ -42,13 +48,16 @@ export default ({
 		}
 		const { defaultSource, stripeId, stripeCustomer } = payment;
 
+		const teacherObject = await TeachersModel.findOne({ _id: teacher });
+		const studentObject = await StudentsModel.findOne({ _id: by });
+		const classObject = await ClassModel.findOne({ _id: ref });
 		const payoutDue = Number(classDate) + (7 * 86400000);	// seven days after the class
 		StripeServices.CreatePayment({
 			amount: amount * 100,
 			currency: 'AUD',
 			customer: stripeId,
 			source: defaultSource,
-			description: `Payment for class ${ref} by ${by} to ${teacher}`,
+			description: `Payment for class ${classObject.name} by ${studentObject.name} to ${teacherObject.name}`,
 		})
 			.then((charge) => {
 				const { id, status } = charge;
@@ -77,7 +86,6 @@ export default ({
 				 */
 				reject(err);
 			});
-
 	} else {
 		reject(ResponseUtility.MISSING_REQUIRED_PROPS);
 	}
