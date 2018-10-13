@@ -24,6 +24,7 @@ export default ({ page = 1, limit = 30 }) => new Promise(async (resolve, reject)
 		facebook: 1,
 		deleted: 1,
 		isVerified: 1,
+		dob: 1,
 		picture: 1,
 		degreeAsset: 1,
 		address: 1,
