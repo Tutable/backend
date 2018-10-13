@@ -13,7 +13,17 @@ const StudentModel = database.model('Student', StudentSchema);
  */
 export default ({ page = 1, limit = 30 }) => new Promise((resolve, reject) => {
 	const skip = limit * (page - 1);
-	const projection = { name: 1, email: 1, picture: 1, isVerified: 1, deleted: 1, address: 1, facebook: 1, google: 1 }; 
+	const projection = {
+		name: 1,
+		email: 1,
+		picture: 1,
+		isVerified: 1,
+		deleted: 1,
+		address: 1,
+		facebook: 1,
+		google: 1,
+		dob: 1,
+	};
 	StudentModel.find({}, projection, { sort: { created: -1 }, skip, limit })
 		.then((students) => {
 			// need to refactor the picture urls
