@@ -4,7 +4,7 @@ import { TeacherServices } from '../../../server/model';
 // import { SUCCESS_CODE } from '../../../server/constants';
 
 export default () => {
-	describe('This will authenticate the teacher details', () => {
+	describe.skip('This will authenticate the teacher details', () => {
 		it('should fail beacuse user is not verified', (done) => {
 			const email = 'sharma02gaurav@gmail.com';
 			const upassword = 'password';
